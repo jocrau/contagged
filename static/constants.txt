@@ -1,0 +1,39 @@
+contagged {
+	allWrap = <dl>|</dl>
+	termWrap = <dt>|</dt>
+	descriptionWrap = <dd>|</dd>
+	#<div style="clear:both;"></div>
+	back = zurück
+	backWrap = <p>|</p>
+	allTerms = Alle Begriffe
+	allTermsWrap = <p>|</p>
+	orderBy = term_main
+
+	# cat=plugin.contagged//10; type=int; label=[Link to list page]:Set this to 1 if all types of terms shold be linked to the list page specified by "listPage". This could be overwritten by the type configuration. you have to configure a list page globally (see below) or in the configuration of a type of term.
+	linkToListPage = 1
+
+	# cat=plugin.contagged//20; type=int; label=[Default List Page (PID)]:PID of the default list page if no special list page in the configuration of a type of term is selected. This could be overwritten by the type configuration.
+	listPage =
+
+	# cat=plugin.contagged//30; type=string; label=[Root Pages (List of PID) to be included]: A comma separated list of root pages of branches to be parsed. This could be overwritten by the type configuration.
+	includeRootPages = 0
+
+	# cat=plugin.contagged//40; type=string; label=[Root Pages (List of PID) to be excluded]: A comma separated list of root pages of branches to be excluded from parsing. Overwrites the settings of "includeRootPages".
+	excludeRootPages =
+
+	# cat=plugin.contagged//50; type=string; label=[Pages (List of PID) to be included]: A comma separated list of pages to be included. Overwrites the settings of "excludeRootPages".
+	includePages =
+
+	# cat=plugin.contagged//60; type=string; label=[Pages (List of PID) to be excluded]: A comma separated list of pages to be excluded from parsing. Overwrites the settings of "includePages" and "includeRootPages".
+	excludePages =
+
+	# cat=plugin.contagged//70; type=boolean; label=[Add title attribute]: Should the "title" attribute containing a short description of the term be added to the tag?
+	addTitleAttribute = 1
+
+	# cat=plugin.contagged//80; type=boolean; label=[Add language attribute]: Should a "lang" attribute be added to the tag?
+	addLangAttribute = 1
+
+	# cat=plugin.contagged//90; type=boolean; label=[Add css class]: Should a css class name be added to the tag? By default the class name is the name of the type of term (e.g. "dfn_inline") headed by the extension prefix.
+	addCssClassAttribute = 0
+
+}

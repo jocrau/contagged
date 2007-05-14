@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'contagged'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tx_contagged_terms">Terms</label>
+			<label index="tx_contagged_terms.plugin">List (contagged)</label>
+			<label index="tx_contagged_terms.term_main">Term</label>
+			<label index="tx_contagged_terms.term_alt">Alternative terms</label>
+			<label index="tx_contagged_terms.term_type">Type of term</label>
+			<label index="tx_contagged_terms.term_lang.I.1">English</label>
+			<label index="tx_contagged_terms.term_lang.I.2">French</label>
+			<label index="tx_contagged_terms.term_lang.I.3">German</label>
+			<label index="tx_contagged_terms.term_lang.I.4">Italian</label>
+			<label index="tx_contagged_terms.term_lang.I.5">Spanish</label>
+			<label index="tx_contagged_terms.term_lang">Language of term</label>
+			<label index="tx_contagged_terms.term_replace">Replacement</label>
+			<label index="tx_contagged_terms.desc_short">Short Description (e.g. Tool Tip Text)</label>
+			<label index="tx_contagged_terms.desc_long">Long Description</label>
+			<label index="tx_contagged_terms.link">Link</label>
+			<label index="tx_contagged_terms.exclude">Exclude from front-end lists</label>
+			<label index="pages.tx_contagged_dont_parse">Don't parse text</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="tx_contagged_terms">Ausdrücke</label>
+			<label index="tx_contagged_terms.plugin">Liste (contagged)</label>
+			<label index="tx_contagged_terms.term_main">Ausdruck</label>
+			<label index="tx_contagged_terms.term_alt">Alternative Ausdrücke</label>
+			<label index="tx_contagged_terms.term_type">Art des Ausdrucks</label>
+			<label index="tx_contagged_terms.term_lang.I.1">Englisch</label>
+			<label index="tx_contagged_terms.term_lang.I.2">Französisch</label>
+			<label index="tx_contagged_terms.term_lang.I.3">Deutsch</label>
+			<label index="tx_contagged_terms.term_lang.I.4">Italienisch</label>
+			<label index="tx_contagged_terms.term_lang.I.5">Spanisch</label>
+			<label index="tx_contagged_terms.term_lang">Sprache des Ausdrucks</label>
+			<label index="tx_contagged_terms.term_replace">Ausdruck, der anstelle des Begriffs eingesetzt wird</label>
+			<label index="tx_contagged_terms.desc_short">Kurzbeschreibung (z. B. Tool-Tip-Text)</label>
+			<label index="tx_contagged_terms.desc_long">Ausführliche Beschreibung</label>
+			<label index="tx_contagged_terms.link">Verweis</label>
+			<label index="tx_contagged_terms.exclude">Von Frontend-Listen ausschließen</label>
+			<label index="pages.tx_contagged_dont_parse">Text der Seite nicht parsen</label>
+		</languageKey>
+	</data>
+</T3locallang>

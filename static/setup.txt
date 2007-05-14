@@ -1,0 +1,131 @@
+# setup the content element by calling the user function 'main' of the class tx_contagged
+tt_content.text.20.parseFunc.userFunc = tx_contagged->main
+
+plugin.tx_contagged {
+	linkToListPage = {$contagged.linkToListPage}
+	listPage = {$contagged.listPage}
+	includeRootPages = {$contagged.includeRootPages}
+	excludeRootPages = {$contagged.excludeRootPages}
+	includePages = {$contagged.includePages}
+	excludePages = {$contagged.excludePages}
+	addTitleAttribute = {$contagged.addTitleAttribute}
+	addLangAttribute = {$contagged.addLangAttribute}
+	addCssClassAttribute = {$contagged.addCssClassAttribute}
+	types {
+
+		definition {
+			label = Definition
+			tag = dfn
+		}
+
+		dfn_block {
+			label = Definition (block)
+			tag = dfn
+			addCssClassAttribute = 1
+			stdWrap.innerWrap.cObject = COA
+			stdWrap.innerWrap.cObject {
+				10 = TEXT
+				10.value = | <span><p>
+				20 = TEXT
+				20.data = register:matchedTerm
+				30 = TEXT
+				30.value = </p>
+				40 = TEXT
+				40.required = 1
+				40.data = register:desc_long
+				50 = TEXT
+				50.value = </span>
+			}
+		}
+
+		dfn_inline {
+			label = Definition (inline)
+			linkToList = 0
+			addCssClassAttribute = 1
+			stdWrap.innerWrap.cObject = COA
+			stdWrap.innerWrap.cObject {
+				10 = TEXT
+				10.value = | <span>&nbsp;[
+				20 = TEXT
+				20.required = 1
+				20.stripHtml = 1
+				20.data = register:desc_long
+				30 = TEXT
+				30.value = ]&nbsp;</span>
+			}
+		}
+
+		acronym {
+			label = Kurzwort aus Anfangsbuchstaben (Beispiel: NATO)
+			tag = acronym
+		}
+
+		abbrevation {
+			label = Abk&uuml;rzung (Beispiel: u.s.w.)
+			tag = abbr
+		}
+
+		location {
+			label = Ortsbezeichnung
+			tag = strong
+			listPage = 111
+			replaceTerm = 1
+		}
+	}
+}
+
+
+# configuration of the list display
+tx_contagged_terms = COA
+tx_contagged_terms {
+	10 = TEXT
+	10.if.isTrue.field = term_main
+	10.field = term_main
+	10.wrap = {$contagged.termWrap}
+	20 = TEXT
+	20.if.isTrue.field = desc_long
+	20.field = desc_long
+	20.parseFunc < lib.parseFunc_RTE
+	20.wrap = {$contagged.descriptionWrap}
+}
+
+# configuration of the list plugin
+tt_content.list.20.contagged = CONTENT
+tt_content.list.20.contagged {
+	table = tx_contagged_terms
+	stdWrap.wrap = {$contagged.allWrap}
+	stdWrap {
+		append = COA
+		append.stdWrap.if.isTrue.data = GPvar:tx_contagged|back
+		append.10 = TEXT
+		append.10.value = {$contagged.back}
+		append.10.wrap = {$contagged.backWrap}
+		append.10.typolink.parameter.data = GPvar:tx_contagged|back
+		append.10.typolink.useCacheHash = 1
+		append.20 = TEXT
+		append.20.value = {$contagged.allTerms}
+		append.20.wrap = {$contagged.allTermsWrap}
+		append.20.typolink.parameter.data = TSFE:id
+#		append.20.typolink.additionalParams.stdWrap.cObject = COA
+#		append.20.typolink.additionalParams.stdWrap.cObject {
+#			10 = TEXT
+#			10.data = GPvar:tx_contagged|uid
+#		}
+	}
+	select {
+		pidInList.field = pages
+		orderBy = {$contagged.orderBy}
+		where = exclude=0
+		andWhere.cObject = COA
+		andWhere.cObject {
+			10 = TEXT
+			10.required = 1
+			10.data = GPvar:tx_contagged|uid
+			10.wrap = uid=|
+#			20 = TEXT
+#			20.value = "location"
+#			20.noTrimWrap = | AND term_type=| |
+		}
+		#term_lang = sys_language_uid
+	}
+}

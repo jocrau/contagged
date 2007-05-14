@@ -1,0 +1,50 @@
+###
+# This are the default CSS Styles for the contagged extension
+##
+
+plugin.tx_contagged {
+	_CSS_DEFAULT_STYLE (
+
+		acronym, abbr, dfn {
+			font-style: normal;
+			border-bottom: 1px dotted #FF9900;
+			cursor: help;
+			position: relative;
+		}
+		/* position:relative is necessary for correct positioning of inline descriptions */
+		dfn.tx-contagged-dfn_block {
+			position: relative;
+		}
+		/* z-index makes shure the block is the top most element */
+		dfn.tx-contagged-dfn_block>span {
+			background: #FFF7CE;
+			display: none;
+			z-index: 9999;
+		}
+		dfn.tx-contagged-dfn_block:hover>span {
+			display: block;
+			position: absolute;
+			top: -2px;
+			left: -11px;
+			width: 300px;
+			margin-top: -1px;
+			border: 1px #FFCC00 solid;
+			padding: 0px 10px 10px 10px;
+		}
+		dfn.tx-contagged-dfn_block p {
+			margin:0;
+			padding:0;
+		}
+
+		dfn.tx-contagged-dfn_inline {
+		}
+		dfn.tx-contagged-dfn_inline>span {
+			color: #009900;
+			display: none;
+		}
+		dfn.tx-contagged-dfn_inline:active>span {
+			position:relative;
+			display:inline;
+		}
+	)
+}

@@ -1,0 +1,1 @@
+This extension is a proof-of-concept. It enables searching, tagging and replacing terms in a content object.
