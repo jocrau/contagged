@@ -7,7 +7,7 @@ plugin.tx_contagged {
 
 		acronym, abbr, dfn {
 			font-style: normal;
-			border-bottom: 1px dotted #FF9900;
+			border-bottom: 1px dotted #333333;
 			cursor: help;
 			position: relative;
 		}
@@ -17,7 +17,7 @@ plugin.tx_contagged {
 		}
 		/* z-index makes shure the block is the top most element */
 		dfn.tx-contagged-dfn_block>span {
-			background: #FFF7CE;
+			background: #EEEEEE;
 			display: none;
 			z-index: 9999;
 		}
@@ -28,7 +28,7 @@ plugin.tx_contagged {
 			left: -11px;
 			width: 300px;
 			margin-top: -1px;
-			border: 1px #FFCC00 solid;
+			border: 1px #CCCCCC solid;
 			padding: 0px 10px 10px 10px;
 		}
 		dfn.tx-contagged-dfn_block p {

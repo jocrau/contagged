@@ -3,7 +3,8 @@ if (!defined ('TYPO3_MODE')) die ('Access denied.');
 
 t3lib_extMgm::allowTableOnStandardPages('tx_contagged_terms');
 t3lib_extMgm::addToInsertRecords('tx_contagged_terms');
-t3lib_extMgm::addPItoST43($_EXTKEY,'class.tx_contagged.php','','includeLib',1);
+
+// t3lib_extMgm::addPItoST43($_EXTKEY,'class.tx_contagged.php','','includeLib',1);
 
 // add contagged to the "insert plugin" content element
 t3lib_extMgm::addPlugin(Array('LLL:EXT:contagged/locallang_db.php:tx_contagged_terms.plugin','contagged'));

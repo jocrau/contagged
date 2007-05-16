@@ -1,5 +1,13 @@
 (add new changes on top of this file)
 
-07-04-27 Jochen Rau  <j.rau@web.de>
+2007-05-16 Jochen Rau  <j.rau@web.de>
+
+	* Changed from tt_content.text.20.parseFunc.userFunc to .postUserFunc
+	* Changed the separator of alternative terms from '|' (Pipe) to chr(10) (CR); the backend field is now multiline
+	* Added a prefix 'contagged_' to the registered values in $GLOBALS['TSFE'] to prevend name conflicts
+	* Some bugfixes in the type configuration and the css-class of dfn_inline
+	* Added option 'updateKeywords': It is now possible to auto-update page keywords based on the terms found on a page
+
+2007-04-27 Jochen Rau  <j.rau@web.de>
 
 	* Initial release

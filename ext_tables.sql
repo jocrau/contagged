@@ -45,5 +45,6 @@ CREATE TABLE tx_contagged_terms (
 # Table structure for table 'pages'
 #
 CREATE TABLE pages (
-	tx_contagged_dont_parse tinyint(3) DEFAULT '0' NOT NULL
+	tx_contagged_dont_parse tinyint(3) DEFAULT '0' NOT NULL,
+	tx_contagged_keywords text NOT NULL,
 );

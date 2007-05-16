@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Content parser and tagger',
-	'description' => 'This extension parses the text of a content element to tag, replace and link specific terms. It is useful to auto-generate a glossary - but not only. Because it is configurable through TS.',
+	'description' => 'The extension parses your content to tag, replace and link specific terms. It is useful to auto-generate a glossary - but not only. And it is configurable through TS.',
 	'category' => 'fe',
 	'author' => 'Jochen Rau',
 	'author_email' => 'j.rau@web.de',

@@ -111,8 +111,9 @@ $TCA["tx_contagged_terms"] = array (
 				"exclude" => 1,
 				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_alt",
 				"config" => Array (
-					"type" => "input",
-					"size" => "30",
+					"type" => "text",
+					"cols" => "30",
+					"rows" => "5",
 				)
 			),
 			"term_type" => Array (

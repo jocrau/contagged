@@ -36,4 +36,6 @@ contagged {
 	# cat=plugin.contagged//90; type=boolean; label=[Add css class]: Should a css class name be added to the tag? By default the class name is the name of the type of term (e.g. "dfn_inline") headed by the extension prefix.
 	addCssClassAttribute = 0
 
+	# cat=plugin.contagged//95; type=boolean; label=[Update page keywords]: Should the matched terms be used as keywords for the page they are on. If there is a replaced term it will be used as keyword. If no the main term will be the keyword. The list of matched terms will be stored in a separate database field (not in the field 'keywords'), so your own keywords are preserved.
+	updateKeywords = 0
 }
