@@ -49,6 +49,7 @@ class tx_contagged extends tslib_pibase {
 	var $dataTable = 'tx_contagged_terms';
 	var $conf; // the TypoScript configuration array
 	var $termsFoundArray = array(); // an array of main terms for each term found in the cObj
+	var $specialExcludeTag = 'exparse'; // content tagged by this term will not be parsed
 
 	/**
 		* The method for parsing, tagging and linking the terms in a cObj
@@ -77,9 +78,10 @@ class tx_contagged extends tslib_pibase {
 			}
 			$tagList = implode(',',$tagArray);
 		}
-		if ($this->conf['tagsExclude']) {
-			$tagList .= ',' . $this->conf['tagsExclude'];
+		if ($this->conf['excludeTags']) {
+			$tagList .= ',' . $this->conf['excludeTags'];
 		}
+		$tagList .= ',' . $this->specialExcludeTag;
 
 		// iterate through all terms
 		foreach ($this->termsArray as $termArray) {
