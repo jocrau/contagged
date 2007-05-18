@@ -24,8 +24,11 @@ contagged {
 	# cat=plugin.contagged//50; type=string; label=[Pages (List of PID) to be included]: A comma separated list of pages to be included. Overwrites the settings of "excludeRootPages".
 	includePages =
 
-	# cat=plugin.contagged//60; type=string; label=[Pages (List of PID) to be excluded]: A comma separated list of pages to be excluded from parsing. Overwrites the settings of "includePages" and "includeRootPages".
+	# cat=plugin.contagged//55; type=string; label=[Pages (List of PID) to be excluded]: A comma separated list of pages to be excluded from parsing. Overwrites the settings of "includePages" and "includeRootPages".
 	excludePages =
+
+	# cat=plugin.contagged//60; type=string; label=[Tags to be excluded]: A comma separated list of tags to be excluded from parsing.
+	excludeTags = h1,h2,h3,h4,h5,h6
 
 	# cat=plugin.contagged//70; type=boolean; label=[Add title attribute]: Should the "title" attribute containing a short description of the term be added to the tag?
 	addTitleAttribute = 1

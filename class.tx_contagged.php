@@ -77,6 +77,9 @@ class tx_contagged extends tslib_pibase {
 			}
 			$tagList = implode(',',$tagArray);
 		}
+		if ($this->conf['tagsExclude']) {
+			$tagList .= ',' . $this->conf['tagsExclude'];
+		}
 
 		// iterate through all terms
 		foreach ($this->termsArray as $termArray) {
@@ -179,6 +182,7 @@ class tx_contagged extends tslib_pibase {
 		// build an array passed to the UPDATE query
 		$updateArray = array($this->prefixId . '_keywords' => $termsFoundList);
 //		$updateArray = array('keywords' => $termsFoundList);
+//		debug($updateArray);
 		// execute sql-query
 		$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery('pages', // TABLE ...
 			'uid=' . $GLOBALS['TSFE']->id, // WHERE ...
