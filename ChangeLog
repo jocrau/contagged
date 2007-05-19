@@ -1,6 +1,9 @@
-(add new changes on top of this file)
+2007-05-20 Jochen Rau <j.rau@web.de>
 
-2007-05-16 Jochen Rau  <j.rau@web.de>
+	* Tags can be selected to be excluded from parsing.
+	* New special tag <exparse></exparse> to exclude content from parsing.
+
+2007-05-16 Jochen Rau <j.rau@web.de>
 
 	* Changed from tt_content.text.20.parseFunc.userFunc to .postUserFunc
 	* Changed the separator of alternative terms from '|' (Pipe) to chr(10) (CR); the backend field is now multiline
@@ -8,6 +11,6 @@
 	* Some bugfixes in the type configuration and the css-class of dfn_inline
 	* Added option 'updateKeywords': It is now possible to auto-update page keywords based on the terms found on a page
 
-2007-04-27 Jochen Rau  <j.rau@web.de>
+2007-05-14 Jochen Rau <j.rau@web.de>
 
 	* Initial release
