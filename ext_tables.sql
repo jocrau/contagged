@@ -40,11 +40,17 @@ CREATE TABLE tx_contagged_terms (
 	KEY t3ver_oid (t3ver_oid,t3ver_wsid)
 );
 
-
 #
 # Table structure for table 'pages'
 #
 CREATE TABLE pages (
 	tx_contagged_dont_parse tinyint(3) DEFAULT '0' NOT NULL,
 	tx_contagged_keywords text NOT NULL,
+);
+
+#
+# Table structure for table 'tt_content'
+#
+CREATE TABLE tt_content (
+	tx_contagged_dont_parse tinyint(3) DEFAULT '0' NOT NULL,
 );

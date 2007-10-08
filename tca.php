@@ -121,9 +121,10 @@ $TCA["tx_contagged_terms"] = array (
 				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_type",
 				"config" => Array (
 					"type" => "select",
-					"itemsProcFunc" => "user_addItemsToTCA",
+					"itemsProcFunc" => "user_addTermTypes",
 					"size" => 1,
 					"maxitems" => 1,
+					"disableNoMatchingValueElement" => 1,
 				)
 			),
 			"term_lang" => Array (		
@@ -131,6 +132,7 @@ $TCA["tx_contagged_terms"] = array (
 				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang",		
 				"config" => Array (
 					"type" => "select",
+// TODO Make selectable languages configurable. 
 					"items" => Array (
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.0", ""),
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.1", "en"),
@@ -215,38 +217,46 @@ $TCA["tx_contagged_terms"] = array (
 			"1" => array("showitem" => "starttime, endtime, fe_group")
 		)
 	);
-	
 require_once (PATH_t3lib.'class.t3lib_page.php');
 require_once (PATH_t3lib.'class.t3lib_tstemplate.php');
 require_once (PATH_t3lib.'class.t3lib_tsparser_ext.php');
-
-function user_addItemsToTCA(&$params,&$pObj) {
-
+require_once (PATH_typo3.'sysext/lang/lang.php');
+	
+function user_addTermTypes(&$params,&$pObj) {
 	// get extension configuration
 	$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
-	if ( intval($extConfArray['mainConfigStorageUid']) > 0 ) {
-		$mainConfigStorageUid = intval($extConfArray['mainConfigStorageUid']);
+	if ( (int)$extConfArray['mainConfigStoragePid']>0 ) {
+		$mainConfigStoragePid = intval($extConfArray['mainConfigStoragePid']);
 	} else {
 		// TODO parse static setup
 	}
-
-		
-	$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
-	// FIXME: pageUid is static; make it configurable
-	$rootLine = $sysPageObj->getRootLine($mainConfigStorageUid);
+	
+	$rootLine = t3lib_BEfunc::BEgetRootLine($mainConfigStoragePid);
 	$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
 	$TSObj->tt_track = 0;
 	$TSObj->init();
 	$TSObj->runThroughTemplates($rootLine);
 	$TSObj->generateConfig();
 	$conf = $TSObj->setup['plugin.']['tx_contagged.'];
-	
-	// 
-	if ($conf['types.']) {
+
+	// make localized labels	
+	$LANG = t3lib_div::makeInstance('language');
+//	$LANG->init($BE_USER->uc['lang']); // FIXIT This doesn't work because no BE-User is configured at this time of execution. Any suggestions?
+	$LANG->init($conf['backendLanguage']); // a quick solution
+	$LOCAL_LANG_ARRAY = array();
+	if (!empty($conf['types.'])) {
 		foreach ($conf['types.'] as $typeName => $typeConfigArray ) {
-			$params['items'][]= Array( $typeConfigArray['label'], substr($typeName,0,-1) );
+			unset($label);
+			if ( !$typeConfigArray['hideSelection']>0 ) {
+				$label['default'] = $typeConfigArray['label.']['default'];
+				$label['default'] = $typeConfigArray['label'];
+				foreach ($label as $langKey => $labelText) {
+					$LOCAL_LANG_ARRAY[$langKey] = array('label'=>$labelText);
+				}
+				$label = array_merge($label,$typeConfigArray['label.']);
+				$params['items'][]= Array( $LANG->getLLL('label',$LOCAL_LANG_ARRAY,1), substr($typeName,0,-1) );
+			}
 		}
 	}
-
 }
 ?>

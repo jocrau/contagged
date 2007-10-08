@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<description>language labels for contagged FE plugin</description>
+		<type>database</type>
+		<fileId>EXT:contagged/pi1/locallang.xml</fileId>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="header">Glossary</label>
+			<label index="indexChars">A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</label>
+			<label index="na">-</label>
+			<label index="details">more details</label>
+			<label index="all">all items</label>
+			<label index="toList">all items</label>
+			<label index="back">back</label>
+			<label index="backToPage">back to page</label>
+			<label index="term_type">Type of term</label>
+			<label index="term">Term</label>
+			<label index="term_main">Term</label>
+			<label index="term_alt">Alternative Terms</label>
+			<label index="term_replace">Replaced with</label>
+			<label index="term_lang">Term Language</label>
+			<label index="desc_short">Short Description</label>
+			<label index="desc_long">Long Description</label>
+			<label index="lang.en">en.</label>
+			<label index="lang.fr">fr.</label>
+			<label index="lang.de">ger.</label>
+			<label index="lang.it">it.</label>
+			<label index="lang.es">span.</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="header">Glossar</label>
+			<label index="indexChars">A|Ä|AE,B,C,D,E,F,G,H,I,J,K,L,M,N,O|Ö|OE,P,Q,R,S,T,U|Ü|UE,V,W,X,Y,Z</label>
+			<label index="na">-</label>
+			<label index="details">mehr Details</label>
+			<label index="all">alle Einträge</label>
+			<label index="toList">alle Einträge</label>
+			<label index="back">zurück</label>
+			<label index="backToPage">zurück zur Seite</label>
+			<label index="term_type">Art des Ausdrucks</label>
+			<label index="term">Ausdruck</label>
+			<label index="term_main">Ausdruck</label>
+			<label index="term_alt">Alternativen</label>
+			<label index="term_replace">Ersetzt durch</label>
+			<label index="term_lang">Sprache</label>
+			<label index="desc_short">Kurzbeschreibung</label>
+			<label index="desc_long">Ausführliche Beschreibung</label>
+			<label index="lang.en">engl.</label>
+			<label index="lang.fr">franz.</label>
+			<label index="lang.de">dt.</label>
+			<label index="lang.it">ital.</label>
+			<label index="lang.es">span.</label>
+		</languageKey>
+	</data>
+</T3locallang>

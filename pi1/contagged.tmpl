@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<!--
+		IMPORTANT: The stylesheet link below is only for testing the template file directly in a browser while editing it.
+		On the website the css styles for contagged have to be include with the static TS template "default CSS style (contagged)" or
+		with an external file (see contagged/static/css/setup.css) which you include via TypoSript in the "page" object.
+
+	-->
+	<title>contagged example template</title>
+	<link href="../static/css/setup.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<h1>CONTAGGED TEMPLATES</h1>
+
+	<h2>Markers</h2>
+	<pre>
+		###TERM_LABEL### ###TERM###
+		###TERM_TYPE_LABEL######TERM_TYPE###
+		###TERM_MAIN_LABEL######TERM_MAIN###
+		###TERM_ALT_LABEL######TERM_ALT###
+		###TERM_REPLACE_LABEL######TERM_REPLACE###
+		###DESC_SHORT_LABEL######DESC_SHORT###
+		###DESC_LONG_LABEL######DESC_LONG###
+		###TERM_LANG_LABEL######TERM_LANG###
+	</pre>
+
+
+	<h2>TEMPLATE_INDEX</h2>
+
+	<!-- ###TEMPLATE_INDEX### begin -->
+	<div class="tx-contagged-index">
+		###INDEX_ALL### 
+		<!-- ###INDEX_CONTENT###-->
+			<!-- ###ITEM###-->		
+				###SINGLE_CHAR###
+			<!-- ###ITEM### begin -->
+		<!-- ###INDEX_CONTENT###-->
+	</div>
+	<!-- ###TEMPLATE_INDEX### end -->
+
+
+
+	<h2>TEMPLATE_LIST</h2>
+
+	<!-- ###TEMPLATE_LIST### begin
+		This is the template to display a list of terms
+	-->
+	###INDEX###
+	<dl class="tx-contagged-list">
+		<!-- ###LIST###-->
+			<!-- ###ITEM###-->		
+				<dt>###TERM###</dt>
+				<dd>###TERM_ALT_LABEL######TERM_ALT###</dd>
+				<dd>###DESC_SHORT###</dd>
+				<dd class="tx-contagged-navlink"><!--###LINK_DETAILS###-->###DETAILS###<!--###LINK_DETAILS###--></dd>
+			<!-- ###ITEM###-->
+		<!-- ###LIST###-->
+	</dl>
+	###INDEX###
+	<!-- ###TEMPLATE_LIST### end -->
+
+	<h2>TEMPLATE_SINGLE</h2>
+
+	<!-- ###TEMPLATE_SINGLE### begin
+		This is the template to display a single term
+	-->
+	<div class="tx-contagged-navlink"><!--###LINK_TO_LIST###-->###TO_LIST###<!--###LINK_TO_LIST###--></div>
+	<div class="tx-contagged-navlink"><!--###LINK_BACK_TO###-->###BACK_TO###<!--###LINK_BACK_TO###--></div>
+	<dl class="tx-contagged-single">
+		<!-- ###ITEM### begin-->		
+		<dt>###TERM###</dt>
+		<dd>###TERM_TYPE_LABEL######TERM_TYPE###</dd>
+		<dd>###TERM_MAIN_LABEL######TERM_MAIN###</dd>
+		<dd>###TERM_ALT_LABEL######TERM_ALT###</dd>
+		<dd>###TERM_REPLACE_LABEL######TERM_REPLACE###</dd>
+		<dd>###DESC_SHORT_LABEL######DESC_SHORT###</dd>
+		<dd>###DESC_LONG_LABEL######DESC_LONG###</dd>
+		<dd>###TERM_LANG_LABEL######TERM_LANG###</dd>
+		<!-- ###ITEM### end-->
+	</dl>
+	<div class="tx-contagged-navlink"><!--###LINK_TO_LIST###-->###TO_LIST###<!--###LINK_TO_LIST###--></div>
+	<div class="tx-contagged-navlink"><!--###LINK_BACK_TO###-->###BACK_TO###<!--###LINK_BACK_TO###--></div>
+	<!-- ###TEMPLATE_SINGLE### end -->
+
+</body>
+</html>

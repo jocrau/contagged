@@ -36,12 +36,12 @@
 			<label index="tx_contagged_terms.term_lang.I.4">Italienisch</label>
 			<label index="tx_contagged_terms.term_lang.I.5">Spanisch</label>
 			<label index="tx_contagged_terms.term_lang">Sprache des Ausdrucks</label>
-			<label index="tx_contagged_terms.term_replace">Ausdruck, der anstelle des Begriffs eingesetzt wird</label>
+			<label index="tx_contagged_terms.term_replace">Ersatz</label>
 			<label index="tx_contagged_terms.desc_short">Kurzbeschreibung (z. B. Tool-Tip-Text)</label>
 			<label index="tx_contagged_terms.desc_long">Ausführliche Beschreibung</label>
 			<label index="tx_contagged_terms.link">Verweis</label>
 			<label index="tx_contagged_terms.exclude">Von Frontend-Listen ausschließen</label>
-			<label index="pages.tx_contagged_dont_parse">Text der Seite nicht parsen</label>
+			<label index="pages.tx_contagged_dont_parse">Text nicht parsen</label>
 		</languageKey>
 	</data>
 </T3locallang>

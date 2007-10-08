@@ -4,10 +4,9 @@ if (!defined ('TYPO3_MODE')) die ('Access denied.');
 t3lib_extMgm::allowTableOnStandardPages('tx_contagged_terms');
 t3lib_extMgm::addToInsertRecords('tx_contagged_terms');
 
-// t3lib_extMgm::addPItoST43($_EXTKEY,'class.tx_contagged.php','','includeLib',1);
-
 // add contagged to the "insert plugin" content element
-t3lib_extMgm::addPlugin(Array('LLL:EXT:contagged/locallang_db.php:tx_contagged_terms.plugin','contagged'));
+t3lib_extMgm::addPlugin(array('LLL:EXT:contagged/locallang_db.php:tx_contagged_terms.plugin', $_EXTKEY.'_pi1'),'list_type');
+t3lib_extMgm::addPItoST43($_EXTKEY,'pi1/class.tx_contagged_pi1.php','_pi1','list_type',1);
 
 // initialize static extension templates
 t3lib_extMgm::addStaticFile($_EXTKEY,'static/', 'Content parser');
@@ -44,7 +43,7 @@ $TCA["tx_contagged_terms"] = array (
 	)
 );
 
-// Add a field  "exclude this page from parsing" to the table "pages"
+// Add a field  "exclude this page from parsing" to the table "pages" and "tt_content"
 $tempColumns = Array (
     "tx_contagged_dont_parse" => Array (
         "exclude" => 1,
@@ -58,5 +57,9 @@ $tempColumns = Array (
 t3lib_div::loadTCA("pages");
 t3lib_extMgm::addTCAcolumns("pages",$tempColumns,1);
 t3lib_extMgm::addToAllTCAtypes("pages","tx_contagged_dont_parse;;;;1-1-1");
+
+t3lib_div::loadTCA("tt_content");
+t3lib_extMgm::addTCAcolumns("tt_content",$tempColumns,1);
+t3lib_extMgm::addToAllTCAtypes("tt_content","tx_contagged_dont_parse;;;;1-1-1");
 
 ?>

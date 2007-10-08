@@ -1,16 +1,98 @@
-2007-05-20 Jochen Rau <j.rau@web.de>
+v0.0.14 2007-10-07 Jochen Rau <j.rau@web.de>
 
-	* Tags can be selected to be excluded from parsing.
-	* New special tag <exparse></exparse> to exclude content from parsing.
+	* IMP Better support for multibyte character sets (used t3lib_cs instead of native strlen() and substr())
+	* FIX Link "back to page ..." in FE-Plugin
+	* CHG Sorting of terms
 
-2007-05-16 Jochen Rau <j.rau@web.de>
+v0.0.13 2007-10-06 Jochen Rau <j.rau@web.de>
 
-	* Changed from tt_content.text.20.parseFunc.userFunc to .postUserFunc
-	* Changed the separator of alternative terms from '|' (Pipe) to chr(10) (CR); the backend field is now multiline
-	* Added a prefix 'contagged_' to the registered values in $GLOBALS['TSFE'] to prevend name conflicts
-	* Some bugfixes in the type configuration and the css-class of dfn_inline
-	* Added option 'updateKeywords': It is now possible to auto-update page keywords based on the terms found on a page
+	* IMP Better support for joined words (with a dash)
+	* IMP Quoting of the term in the RegEx
+	* FIX Selection of a custom template file is now working
+	* FIX Handling of ambiguities (like the two meanings of the word "bus")
+	* CHG Added <dt> as a default excludeTag
+	* CHG Names of some template markers (esp. Links)
+	* IMP Enhanced performance of the FE-plugin (refactored code)
 
-2007-05-14 Jochen Rau <j.rau@web.de>
+v0.0.12 2007-09-28 Jochen Rau <j.rau@web.de>
+
+	* IMP Check if the table configured as a data source exists in the database (avoids an error message)
+
+v0.0.11 2007-09-26 Jochen Rau <j.rau@web.de>
+
+	* CHG You have to define one or more storagePids! This can be done globally (plugin.tx_contagged.storagePids), for each type (plugin.tx_contagged.types.foo.storagePids) or for each data source (plugin.tx_contagged.dataSources.bar.storagePids).
+	* IMP "fieldsToMap" and "secureFields" now made available via constants editor
+	* CHG Moved "fieldsToMap" and "secureFields" to the root of the TS Setup (plugin.tx_contagged.)
+	* ADD Every type of term can be excluded from beeing listed (new parameter "dontListTerms")
+	* ADD Every type of term can be hidden in the BE (new Parameter "hideSelection")
+	* IMP Next step towards MVC-Pattern (splitted tx_contagged_model into tx_contagged_model_terms and tx_contagged_model_mapper)
+
+v0.0.10 2007-09-22 Jochen Rau <j.rau@web.de>
+
+	* ADD type "Regular Expression" (every term is treated as RegEx and matches can be replaced)
+
+v0.0.9 2007-09-21 Jochen Rau <j.rau@web.de>
+
+	* IMP Any database table can now be configured as a data source for every single type of term (very powerful!)
+	* IMP Example configuration for tt_address
+	* ADD Keywords are now registered {register:contagged_keywords} to be inserted as "<meta>-keywords" of the page header (plugin "metatags" required)
+	* FIX Exclude individual cObjects (BE-field in tt_content)
+	* CHG Restructured code (half way to MVC-Pattern)
+
+v0.0.8 2007-09-18 Jochen Rau <j.rau@web.de>
+
+	* ADD Added experimental support for foreign tables like tt_address (configurable through TS Setup: table name, field mapping); comment out line 378 in class.tx_contagged.php to activate
+
+v0.0.7 2007-09-17 Jochen Rau <j.rau@web.de>
+
+	* ADD More than one char can be used as an index "char" (eg. names, ZIP-codes, cities)
+	* FIX Closing bracket in TS Setup
+	* FIX UTF-8-characters are now linked properly (auto generated index in FE-Plugin)
+	* IMP Cleaned up main RegEx
+	* IMP ALL database fields ar now registered in $GLOBALS['TSFE']->register['contagged_XXX'] to be used in TS Setup (for future hooks)
+
+v0.0.6 2007-09-13 Jochen Rau <j.rau@web.de>
+
+	* FIX Term is now displayed as <dt>TERM</dt> again (FE-Plugin)
+	* ADD stdWrap for the term to be searched ("termStdWrap"; usefull to search for already tagged text like <person>Steve Jobs</person>)
+	* FIX Title-attribute will not be displayed, if the short description (desc_short) is empty
+	* IMP UTF-8 handling of function to prevent attributes from beeing parsed (eg. <def title="don't parse this text">)
+	* CHG Definition of types "dfn_block" and "dfn_inline" (work in progress!)
+
+v0.0.5 2007-09-06 Jochen Rau <j.rau@web.de>
+
+	* CHG The types "dfn_block" and "dfn_inline" for pure css tool-tips are valid but still not running in IE6
+	  (new parameter "stripBlockTags" for replacing <p>...</p> with <br/> in long description;
+	  thanks to Markus Timtner)
+	* CHG Changed stdWrap in TS configuration to preStdWrap and added postStdWrap to make a outerWrap possible
+	* ADD Maximum amount of occurancies to be tagged can be configured for each type of term (e.g. "plugin.tx_contagged.types.dfn_block.maxOccur = 1")
+	* ADD Support for joined words (with a dash); new parameter "checkPreAndPostMatches"
+	* FIX bug in SQL-Statement (thanks to Tristan Knapp)
+
+v0.0.4 2007-08-29 Jochen Rau <j.rau@web.de>
+
+	* IMP Better support for multibyte characters (UTF8).
+
+v0.0.3 2007-08-28 Jochen Rau <j.rau@web.de>
+
+	* ADD New template based FE-list-plugin with index configurable through locallang.xml.
+	* FIX Fixed call of "userFunc".
+	* RMV The types "dfn_block" and "dfn_inline" are commented out bit still there as an example (it seems that a pure css tool-tip is not bullet proof)
+	* ADD Exclude individual cObjects (BE-field in tt_content)
+
+v0.0.2 2007-05-20 Jochen Rau <j.rau@web.de>
+
+	* ADD Tags can be selected to be excluded from parsing.
+	* ADD New special tag <exparse></exparse> to exclude content from parsing.
+
+v0.0.1 2007-05-16 Jochen Rau <j.rau@web.de>
+
+	* CHG Changed from tt_content.text.20.parseFunc.userFunc to .postUserFunc
+	* CHG Changed the separator of alternative terms from '|' (Pipe) to chr(10) (CR); the backend field is now multiline
+	* ADD Added a prefix 'contagged_' to the registered values in $GLOBALS['TSFE'] to prevent name conflicts
+	* FIX Some bugfixes in the type configuration and the css-class of dfn_inline
+	* ADD Added option 'updateKeywords': It is now possible to auto-update page keywords based on the terms found on a page
+
+v0.0.0 2007-05-14 Jochen Rau <j.rau@web.de>
 
 	* Initial release
