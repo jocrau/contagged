@@ -1,44 +1,80 @@
-contagged {
-	allWrap = <dl>|</dl>
-	termWrap = <dt>|</dt>
-	descriptionWrap = <dd>|</dd>
-	#<div style="clear:both;"></div>
-	back = zurück
-	backWrap = <p>|</p>
-	allTerms = Alle Begriffe
-	allTermsWrap = <p>|</p>
-	orderBy = term_main
+contagged {	
+	# cat=plugin.contagged//7; type=string; label=[Template File]:Path and name of your custom template file.
+	templateFile = EXT:contagged/pi1/contagged.tmpl
 
-	# cat=plugin.contagged//10; type=int; label=[Link to list page]:Set this to 1 if all types of terms shold be linked to the list page specified by "listPage". This could be overwritten by the type configuration. you have to configure a list page globally (see below) or in the configuration of a type of term.
-	linkToListPage = 1
+	# cat=plugin.contagged//10; type=string; label=[Root Pages (List of PID) to be included]: A comma separated list of root pages of branches to be parsed. This could be overwritten by the type configuration.
+	includeRootPages = 
 
-	# cat=plugin.contagged//20; type=int; label=[Default List Page (PID)]:PID of the default list page if no special list page in the configuration of a type of term is selected. This could be overwritten by the type configuration.
-	listPage =
-
-	# cat=plugin.contagged//30; type=string; label=[Root Pages (List of PID) to be included]: A comma separated list of root pages of branches to be parsed. This could be overwritten by the type configuration.
-	includeRootPages = 0
-
-	# cat=plugin.contagged//40; type=string; label=[Root Pages (List of PID) to be excluded]: A comma separated list of root pages of branches to be excluded from parsing. Overwrites the settings of "includeRootPages".
+	# cat=plugin.contagged//15; type=string; label=[Root Pages (List of PID) to be excluded]: A comma separated list of root pages of branches to be excluded from parsing. Overwrites the settings of "includeRootPages".
 	excludeRootPages =
 
-	# cat=plugin.contagged//50; type=string; label=[Pages (List of PID) to be included]: A comma separated list of pages to be included. Overwrites the settings of "excludeRootPages".
+	# cat=plugin.contagged//20; type=string; label=[Pages (List of PID) to be included]: A comma separated list of pages to be included. Overwrites the settings of "excludeRootPages".
 	includePages =
 
-	# cat=plugin.contagged//55; type=string; label=[Pages (List of PID) to be excluded]: A comma separated list of pages to be excluded from parsing. Overwrites the settings of "includePages" and "includeRootPages".
+	# cat=plugin.contagged//25; type=string; label=[Pages (List of PID) to be excluded]: A comma separated list of pages to be excluded from parsing. Overwrites the settings of "includePages" and "includeRootPages".
 	excludePages =
 
-	# cat=plugin.contagged//60; type=string; label=[Tags to be excluded]: A comma separated list of tags to be excluded from parsing.
-	excludeTags = h1,h2,h3,h4,h5,h6
+	# cat=plugin.contagged//30; type=string; label=[Tags to be excluded]: A comma separated list of tags to be excluded from parsing.
+	excludeTags = h1,h2,h3,h4,h5,h6,a,dfn,abbr,acronym,exclude
 
-	# cat=plugin.contagged//70; type=boolean; label=[Add title attribute]: Should the "title" attribute containing a short description of the term be added to the tag?
+	# cat=plugin.contagged//35; type=boolean; label=[Exclude used tags]: Auto-exclude tags used by the contagged type definitions (like <dfn> or <abbr>).
+	autoExcludeTags = 0
+
+	# cat=plugin.contagged//40; type=int; label=[Link to list page]:Set this to 1 if all types of terms shold be linked to the list page specified by "listPage". This could be overwritten by the type configuration. you have to configure a list page globally (see below) or in the configuration of a type of term.
+	linkToListPage = 1
+
+	# cat=plugin.contagged//45; type=int; label=[Default List Page (PID)]:PID of the default list page if no special list page in the configuration of a type of term is selected. This could be overwritten by the type configuration.
+	listPages = 
+
+	# cat=plugin.contagged//46; type=int; label=[Storage PIDs)]:A comma separated list of pages or sysFolders (PIDs) the data is stored. This could be overwritten by the type configuration or the data source configuration.
+	storagePids = 
+
+	# cat=plugin.contagged//50; type=boolean; label=[Check for joined words]: Take pre- and/or post-matches of joined words (with dash) into account (see documentation for examples).
+	checkPreAndPostMatches = 1
+
+	# cat=plugin.contagged//55; type=boolean; label=[Add title attribute]: Should the "title" attribute containing a short description of the term be added to the tag?
 	addTitleAttribute = 1
 
-	# cat=plugin.contagged//80; type=boolean; label=[Add language attribute]: Should a "lang" attribute be added to the tag?
+	# cat=plugin.contagged//60; type=boolean; label=[Add language attribute]: Should a "lang" attribute be added to the tag?
 	addLangAttribute = 1
 
-	# cat=plugin.contagged//90; type=boolean; label=[Add css class]: Should a css class name be added to the tag? By default the class name is the name of the type of term (e.g. "dfn_inline") headed by the extension prefix.
+	# cat=plugin.contagged//65; type=boolean; label=[Add css class]: Should a css class name be added to the tag? By default the class name is the name of the type of term (e.g. "dfn_inline") headed by the extension prefix.
 	addCssClassAttribute = 0
 
-	# cat=plugin.contagged//95; type=boolean; label=[Update page keywords]: Should the matched terms be used as keywords for the page they are on. If there is a replaced term it will be used as keyword. If no the main term will be the keyword. The list of matched terms will be stored in a separate database field (not in the field 'keywords'), so your own keywords are preserved.
-	updateKeywords = 0
+	# cat=plugin.contagged//70; type=boolean; label=[Replace term]: Should the term be replaced by the specified replacement? This could be overwritten by the type configuration.
+	replaceTerm = 1
+
+	# cat=plugin.contagged//75; type=boolean; label=[Update page keywords]: Should the matched terms be used as keywords for the page they are on. If there is a replaced term it will be used as keyword. If no the main term will be the keyword. The list of matched terms will be stored in a separate database field (not in the field 'keywords'), so your own keywords are preserved.
+	updateKeywords = 1
+	
+	# cat=plugin.contagged//80; type=wrap; label=[Label Wrap 1]
+	labelWrap1 = |<strong>|:</strong> |
+	
+	# cat=plugin.contagged//85; type=wrap; label=[Label Wrap 2]
+	labelWrap2 = &nbsp;(|)
+
+	# cat=plugin.contagged//90; type=string; label=[RegEx modifier]: RegEx modifier of the main RegEx. Don't touch it, if you don't know what you do ;-) .
+	modifier = Uuis
+
+	# cat=plugin.contagged//91; type=string; label=[Fields to be searched]: Fields to be searched.
+	fieldsToSearch = term,term_main,term_alt,term_replace,desc_short,desc_long
+
+	# cat=plugin.contagged//92; type=string; label=[Sort Field]: The front-end lists will be sorted by this field.
+	sortField = term
+
+	# cat=plugin.contagged//93; type=string; label=[Fields to Map]: Fields to be mapped.
+	fieldsToMap = uid,pid,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude
+
+	# cat=plugin.contagged//94; type=string; label=[Secured Fields]: .
+	secureFields = 
+
+	# cat=plugin.contagged//95; type=boolean; label=[Only matched Index]: Show only those index chars, for which a term matches.
+	showOnlyMatchedIndexChars = 0
+
+	# cat=plugin.contagged//97; type=boolean; label=[Add index chars]: Supplement missing index chars automatically.
+	autoAddIndexChars = 1
+
+	# cat=plugin.contagged//99; type=boolean; label=[Add Back Link]: Add the page title to the back link.
+	addBackLinkDescription = 1
+
 }

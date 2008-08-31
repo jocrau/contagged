@@ -6,11 +6,11 @@ t3lib_extMgm::addToInsertRecords('tx_contagged_terms');
 
 // add contagged to the "insert plugin" content element
 t3lib_extMgm::addPlugin(array('LLL:EXT:contagged/locallang_db.php:tx_contagged_terms.plugin', $_EXTKEY.'_pi1'),'list_type');
-t3lib_extMgm::addPItoST43($_EXTKEY,'pi1/class.tx_contagged_pi1.php','_pi1','list_type',1);
 
 // initialize static extension templates
 t3lib_extMgm::addStaticFile($_EXTKEY,'static/', 'Content parser');
-t3lib_extMgm::addStaticFile($_EXTKEY,'static/css/','default CSS-styles');
+t3lib_extMgm::addStaticFile($_EXTKEY,'static/examples/', 'Experimental types');
+t3lib_extMgm::addStaticFile($_EXTKEY,'static/css/','Default CSS-styles');
 
 $TCA["tx_contagged_terms"] = array (
 	"ctrl" => array (

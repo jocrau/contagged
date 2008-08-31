@@ -1,144 +1,80 @@
-# incude class tx_contagged as library 
+# encoding: iso-8859-1
+
+# include class tx_contagged as library 
 includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
-# setup the content element by calling the user function 'main' of the class tx_contagged
-#tt_content.text.20.parseFunc.userFunc = tx_contagged->main
-#tt_content.text.20.postUserFunc = tx_contagged->main
-
-
-#temp_content < styles.content.get
-#temp_content.stdWrap.postUserFunc = tx_contagged->main
-#styles.content.get >
-#styles.content.get < temp_content
+tt_content.text.20.postUserFunc = tx_contagged->main
 
 plugin.tx_contagged {
+	templateFile = {$contagged.templateFile}
 	linkToListPage = {$contagged.linkToListPage}
-	listPage = {$contagged.listPage}
+	listPages = {$contagged.listPages}
+	storagePids = {$contagged.storagePids}
 	includeRootPages = {$contagged.includeRootPages}
 	excludeRootPages = {$contagged.excludeRootPages}
 	includePages = {$contagged.includePages}
 	excludePages = {$contagged.excludePages}
 	excludeTags = {$contagged.excludeTags}
+	autoExcludeTags = {$contagged.autoExcludeTags}
+	checkPreAndPostMatches = {$contagged.checkPreAndPostMatches}
 	addTitleAttribute = {$contagged.addTitleAttribute}
 	addLangAttribute = {$contagged.addLangAttribute}
 	addCssClassAttribute = {$contagged.addCssClassAttribute}
+	replaceTerm = {$contagged.replaceTerm}
 	updateKeywords = {$contagged.updateKeywords}
+	labelWrap1 = {$contagged.labelWrap1}
+	labelWrap2 = {$contagged.labelWrap2}
+	modifier = {$contagged.modifier}
+	fieldsToSearch = {$contagged.fieldsToSearch}
+	sortField = {$contagged.sortField}
+	fieldsToMap = {$contagged.fieldsToMap}
+	secureFields = {$contagged.secureFields}
+	showOnlyMatchedIndexChars = {$contagged.showOnlyMatchedIndexChars}
+	autoAddIndexChars = {$contagged.autoAddIndexChars}
+	addBackLinkDescription = {$contagged.addBackLinkDescription}
+
 	types {
 
 		definition {
 			label = Definition
+			label.de = Definition
 			tag = dfn
-		}
-
-		dfn_block {
-			label = Definition (block)
-			tag = dfn
-			addCssClassAttribute = 1
-			stdWrap.innerWrap.cObject = COA
-			stdWrap.innerWrap.cObject {
-				10 = TEXT
-				10.value = | <span><p>
-				20 = TEXT
-				20.data = register:contagged_matchedTerm
-				30 = TEXT
-				30.value = </p>
-				40 = TEXT
-				40.required = 1
-				40.data = register:contagged_desc_long
-				50 = TEXT
-				50.value = </span>
-			}
-		}
-
-		dfn_inline {
-			label = Definition (inline)
-			tag = dfn
-			linkToListPage = 0
-			addCssClassAttribute = 1
-			stdWrap.innerWrap.cObject = COA
-			stdWrap.innerWrap.cObject {
-				10 = TEXT
-				10.value = | <span>&nbsp;[
-				20 = TEXT
-				20.required = 1
-				20.stripHtml = 1
-				20.data = register:contagged_desc_long
-				30 = TEXT
-				30.value = ]&nbsp;</span>
-			}
 		}
 
 		acronym {
-			label = Kurzwort aus Anfangsbuchstaben (Beispiel: NATO)
+			label = Acronym
+			label.de = Kurzwort aus Anfangsbuchstaben (Beispiel: NATO)
 			tag = acronym
 		}
 
 		abbrevation {
-			label = Abk&uuml;rzung (Beispiel: u.s.w.)
+			label = Abbrevation
+			label.de = Abkürzung (Beispiel: u.s.w.)
 			tag = abbr
 		}
-
-		location {
-			label = Ortsbezeichnung
-			tag = strong
-			listPage = 111
-			replaceTerm = 1
-		}
+				
 	}
-}
 
-
-# configuration of the list display
-tx_contagged_terms = COA
-tx_contagged_terms {
-	10 = TEXT
-	10.if.isTrue.field = term_main
-	10.field = term_main
-	10.wrap = {$contagged.termWrap}
-	20 = TEXT
-	20.if.isTrue.field = desc_long
-	20.field = desc_long
-	20.parseFunc < lib.parseFunc_RTE
-	20.wrap = {$contagged.descriptionWrap}
-}
-
-# configuration of the list plugin
-tt_content.list.20.contagged = CONTENT
-tt_content.list.20.contagged {
-	table = tx_contagged_terms
-	stdWrap.wrap = {$contagged.allWrap}
-	stdWrap {
-		append = COA
-		append.stdWrap.if.isTrue.data = GPvar:tx_contagged|back
-		append.10 = TEXT
-		append.10.value = {$contagged.back}
-		append.10.wrap = {$contagged.backWrap}
-		append.10.typolink.parameter.data = GPvar:tx_contagged|back
-		append.10.typolink.useCacheHash = 1
-		append.20 = TEXT
-		append.20.value = {$contagged.allTerms}
-		append.20.wrap = {$contagged.allTermsWrap}
-		append.20.typolink.parameter.data = TSFE:id
-#		append.20.typolink.additionalParams.stdWrap.cObject = COA
-#		append.20.typolink.additionalParams.stdWrap.cObject {
-#			10 = TEXT
-#			10.data = GPvar:tx_contagged|uid
-#		}
-	}
-	select {
-		pidInList.field = pages
-		orderBy = {$contagged.orderBy}
-		where = exclude=0
-		andWhere.cObject = COA
-		andWhere.cObject {
-			10 = TEXT
-			10.required = 1
-			10.data = GPvar:tx_contagged|uid
-			10.wrap = uid=|
-#			20 = TEXT
-#			20.value = "location"
-#			20.noTrimWrap = | AND term_type=| |
+	dataSources {
+		
+		default {
+			sourceName = tx_contagged_terms
+			hasSysLanguageUid = 1
+			storagePids = 
+			fieldsToEdit = term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude
+			mapping {
+				uid.field = uid
+				pid.field = pid
+				term_main.field = term_main
+				term_alt.field = term_alt
+				term_type.field = term_type
+				term_replace.field = term_replace
+				term_lang.field = term_lang
+				desc_short.field = desc_short
+				desc_long.field = desc_long
+				link.field = link
+				exclude.field = exclude
+			}
 		}
-		#term_lang = sys_language_uid
 	}
 }

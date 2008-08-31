@@ -23,17 +23,17 @@
 	***************************************************************/
 
 /**
-	* The model of contagged.
-	* 
-	* @author	Jochen Rau <j.rau@web.de>
-	* @package	TYPO3
-	* @subpackage	tx_contagged_model_mapper
-	*/
+ * The model of contagged.
+ *
+ * @author	Jochen Rau <j.rau@web.de>
+ * @package	TYPO3
+ * @subpackage	tx_contagged_model_mapper
+ */
 class tx_contagged_model_mapper {
 	var $conf; // the TypoScript configuration array
 	var $cObj;
 	var $controller;
-	
+
 	function tx_contagged_model_mapper($controller) {
 		$this->controller = $controller;
 		$this->conf = $controller->conf;
@@ -41,10 +41,12 @@ class tx_contagged_model_mapper {
 	}
 
 	/**
-		* Build an array of the entries in the table "tx_contagged_terms"
-		*
-		* @return	An array with the data of the table "tx_contagged_terms"
-		*/
+	 * Build an array of the entries in the table "tx_contagged_terms"
+	 *
+	 * @param	[type]		$result: ...
+	 * @param	[type]		$dataSource: ...
+	 * @return	An		array with the data of the table "tx_contagged_terms"
+	 */
 	function getDataArray($result,$dataSource) {
 		$dataArray = array();
 		$terms = array();
@@ -62,45 +64,95 @@ class tx_contagged_model_mapper {
 				$fieldsToMapArray[] = $fieldToMap;
 			}
 		}
-		
+
 		// iterate through all data from the datasource
 		foreach ($result as $row) {
-			$secureFields = $this->conf['types.'][$row['term_type'].'.']['termIsRegEx']>0 ? $this->conf['types.'][$row['term_type'].'.']['secureFields'] : $this->conf['secureFields'];
 			if ($dataSourceConfigArray['mapping.']['uid.']['field']) {
-				$termUid = $row[$dataSourceConfigArray['mapping.']['uid.']['field']];				
+				$termKey = $row[$dataSourceConfigArray['mapping.']['uid.']['field']];
 			}
 			$termMain = $dataSourceConfigArray['mapping.']['term_main.']['field'] ? $dataSourceConfigArray['mapping.']['term_main.']['field'] : '';
 			$termReplace = $dataSourceConfigArray['mapping.']['term_replace.']['field'] ? $dataSourceConfigArray['mapping.']['term_replace.']['field'] : '';
 			$term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
-			$dataArray[$termUid] = array();
-			$dataArray[$termUid]['term'] = $term;
+			$mappedDataArray = array();
+			$mappedDataArray['term'] = $term;
 			foreach ( $fieldsToMapArray as $field) {
 				$value = $dataSourceConfigArray['mapping.'][$field.'.'];
 				if ( $value['value'] ) {
-					$dataArray[$termUid][$field] = $value['value'];
+					$mappedDataArray[$field] = $value['value'];
 				} elseif ( $value['field'] ) {
-					$dataArray[$termUid][$field] = t3lib_div::inList($secureFields,$field) ? htmlspecialchars($row[$value['field']]) : $row[$value['field']];
+					$mappedDataArray[$field] = $row[$value['field']];
 				} else {
-					$dataArray[$termUid][$field] = NULL;
+					$mappedDataArray[$field] = NULL;
 				}
 				if ( $value['stdWrap.'] ) {
-					$dataArray[$termUid][$field] = $this->cObj->stdWrap($dataArray[$termUid][$field],$value['stdWrap.']);
+					$mappedDataArray[$field] = $this->cObj->stdWrap($mappedDataArray[$field],$value['stdWrap.']);
 				}
-				$GLOBALS['TSFE']->register['contagged_'.$field] = $dataArray[$termUid][$field];					
-				if ( !t3lib_div::inArray($fieldsToMapArray,$field) ) {
-					unset( $dataArray[$termUid][$field]);
+				$GLOBALS['TSFE']->register['contagged_'.$field] = $mappedDataArray[$field];
+			}
+			// TODO $desc_long = preg_replace('/(\015\012)|(\015)|(\012)/ui','<br />',$row['desc_long']);
+			$typeConfigArray = $this->conf['types.'][$mappedDataArray['term_type'].'.'];
+
+			// post processing
+			$mappedDataArray['term_alt'] = t3lib_div::trimExplode(chr(10),$row['term_alt'],1);
+			$mappedDataArray['desc_long'] = $this->cObj->parseFunc($mappedDataArray['desc_long'],$conf='',$ref='< lib.parseFunc_RTE');
+			$mappedDataArray['storagePids'] = $this->getStoragePidsArray($typeConfigArray);
+						
+			if ($typeConfigArray['listPages']) {
+				$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$typeConfigArray['listPages'],1);
+			} else {
+				$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$this->conf['listPages'],1);
+			}
+
+			// TODO Remove; only for backwards compatibility
+			// if ($typeConfigArray['listPage']) {
+			// 	$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$typeConfigArray['listPage'],1);
+			// } else {
+			// 	$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$this->conf['listPage'],1);
+			// }
+
+			$secureFields = $typeConfigArray['termIsRegEx']>0 ? $this->conf['types.'][$row['term_type'].'.']['secureFields'] : $this->conf['secureFields'];
+			foreach ($mappedDataArray as $field => $fieldContent) {
+				if ($fieldContent) {
+					if ( is_array($fieldContent) ) {
+						foreach ($fieldContent as $termAltKey => $innerContent) {
+							if ( t3lib_div::inList($secureFields,$field) ) {
+								$mappedDataArray[$field][$termAltKey] = htmlspecialchars($innerContent);
+							}
+						}
+					} else {
+						if ( t3lib_div::inList($secureFields,$field) ) {
+							$mappedDataArray[$field] = htmlspecialchars($fieldContent);
+						}
+					}
 				}
 			}
-			// TODO sort the array by descending length of value string; in combination with the htmlparser this will prevend nesting
-			// TODO $desc_long = preg_replace('/(\015\012)|(\015)|(\012)/ui','<br />',$row['desc_long']);
 			
-			// post processing
-			$dataArray[$termUid]['term_alt'] = t3lib_div::trimExplode(chr(10),$row['term_alt'],$onlyNonEmptyValues=1);
-			$dataArray[$termUid]['desc_long'] = $this->cObj->parseFunc($dataArray[$termUid]['desc_long'],$conf='',$ref='< lib.parseFunc_RTE');
 			// TODO: hook "mappingPostProcessing"
+			$dataArray[] = $mappedDataArray;
 		}
 
 		return $dataArray;
+	}
+
+	/**
+	 * get the storage pids; cascade: type > dataSource > globalConfig
+	 *
+	 * @param string	$typeConfigArray 
+	 * @return array	An array containing the storage PIDs of the type given by
+	 * @author Jochen Rau
+	 */
+	function getStoragePidsArray($typeConfigArray) {
+		$storagePidsArray = array();		
+		$dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
+		if ( $typeConfigArray['storagePids'] ) {
+			$storagePidsArray = t3lib_div::trimExplode(',',$typeConfigArray['storagePids']);
+		} elseif ( $this->conf['dataSources.'][$dataSource.'.']['storagePids'] ) {
+			$storagePidsArray = t3lib_div::trimExplode(',',$this->conf['dataSources.'][$dataSource.'.']['storagePids']);
+		} elseif ( $this->conf['storagePids']) {
+			$storagePidsArray = t3lib_div::trimExplode(',',$this->conf['storagePids']);
+		}
+		
+		return $storagePidsArray;
 	}
 
 }

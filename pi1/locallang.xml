@@ -8,7 +8,7 @@
 	<data type="array">
 		<languageKey index="default" type="array">
 			<label index="header">Glossary</label>
-			<label index="indexChars">A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</label>
+			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</label>
 			<label index="na">-</label>
 			<label index="details">more details</label>
 			<label index="all">all items</label>
@@ -28,10 +28,12 @@
 			<label index="lang.de">ger.</label>
 			<label index="lang.it">it.</label>
 			<label index="lang.es">span.</label>
+			<label index="pi_list_searchBox_search">Search</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="header">Glossar</label>
-			<label index="indexChars">A|Ä|AE,B,C,D,E,F,G,H,I,J,K,L,M,N,O|Ö|OE,P,Q,R,S,T,U|Ü|UE,V,W,X,Y,Z</label>
+			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A|Ä|AE,B,C,D,E,F,G,H,I,J,K,L,M,N,O|Ö|OE,P,Q,R,S,T,U|Ü|UE,V,W,X,Y,Z</label>
+			<!-- <label index="indexChars">0,1,2,3,4,5,6,70,71,72,73,74,75,76,77,78,79,8,9,0</label> -->
 			<label index="na">-</label>
 			<label index="details">mehr Details</label>
 			<label index="all">alle Einträge</label>
@@ -51,6 +53,7 @@
 			<label index="lang.de">dt.</label>
 			<label index="lang.it">ital.</label>
 			<label index="lang.es">span.</label>
+			<label index="pi_list_searchBox_search">Suche</label>
 		</languageKey>
 	</data>
 </T3locallang>

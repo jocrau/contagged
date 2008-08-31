@@ -140,6 +140,7 @@ $TCA["tx_contagged_terms"] = array (
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.3", "de"),
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.4", "it"),
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.5", "es"),
+						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.6", "un"),
 					),
 					"size" => 1,	
 					"maxitems" => 1,
@@ -220,9 +221,11 @@ $TCA["tx_contagged_terms"] = array (
 require_once (PATH_t3lib.'class.t3lib_page.php');
 require_once (PATH_t3lib.'class.t3lib_tstemplate.php');
 require_once (PATH_t3lib.'class.t3lib_tsparser_ext.php');
-require_once (PATH_typo3.'sysext/lang/lang.php');
 	
 function user_addTermTypes(&$params,&$pObj) {
+	global $BE_USER;
+	$BE_USER->uc['lang'] = $BE_USER->uc['lang'] ? $BE_USER->uc['lang'] : 'default';
+
 	// get extension configuration
 	$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
 	if ( (int)$extConfArray['mainConfigStoragePid']>0 ) {
@@ -239,22 +242,17 @@ function user_addTermTypes(&$params,&$pObj) {
 	$TSObj->generateConfig();
 	$conf = $TSObj->setup['plugin.']['tx_contagged.'];
 
-	// make localized labels	
-	$LANG = t3lib_div::makeInstance('language');
-//	$LANG->init($BE_USER->uc['lang']); // FIXIT This doesn't work because no BE-User is configured at this time of execution. Any suggestions?
-	$LANG->init($conf['backendLanguage']); // a quick solution
+	// make localized labels
 	$LOCAL_LANG_ARRAY = array();
 	if (!empty($conf['types.'])) {
 		foreach ($conf['types.'] as $typeName => $typeConfigArray ) {
-			unset($label);
-			if ( !$typeConfigArray['hideSelection']>0 ) {
-				$label['default'] = $typeConfigArray['label.']['default'];
-				$label['default'] = $typeConfigArray['label'];
-				foreach ($label as $langKey => $labelText) {
-					$LOCAL_LANG_ARRAY[$langKey] = array('label'=>$labelText);
+			unset($LOCAL_LANG_ARRAY);
+			if ( !$typeConfigArray['hideSelection']>0 && !$typeConfigArray['dataSource'] ) {
+				foreach ($typeConfigArray['label.'] as $langKey => $labelText) {
+					$LOCAL_LANG_ARRAY[$langKey]['label'] = $labelText;
 				}
-				$label = array_merge($label,$typeConfigArray['label.']);
-				$params['items'][]= Array( $LANG->getLLL('label',$LOCAL_LANG_ARRAY,1), substr($typeName,0,-1) );
+				$LOCAL_LANG_ARRAY['default']['label'] = $typeConfigArray['label'] ? $typeConfigArray['label'] : $typeConfigArray['label.']['default'];
+				$params['items'][]= array( $GLOBALS['LANG']->getLLL('label',$LOCAL_LANG_ARRAY), substr($typeName,0,-1) );
 			}
 		}
 	}

@@ -1,3 +1,3 @@
 
-	# cat=basic//10; type=int; label= Page-ID where the main template is stored.
-	mainConfigStoragePid = 0
+	# cat=basic//10; type=int; label= Page-ID where the type definitions are stored (typically by adding a static template to the main template => root page pid).
+	mainConfigStoragePid = 

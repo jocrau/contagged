@@ -1,8 +1,55 @@
-v0.0.14 2007-10-07 Jochen Rau <j.rau@web.de>
+v0.1.0 2008-08-31 Jochen Rau <j.rau@web.de>
 
-	* IMP Better support for multibyte character sets (used t3lib_cs instead of native strlen() and substr())
+	* CHG Changed status to "beta"
+
+v0.0.18 2008-08-31 Jochen Rau <j.rau@web.de>
+
+	* ADD fieldsToEdit
+	* ADD New data source "references" added to experimental types
+	* CHG Cleaned up template file
+	* ADD Phrases can now be added by selecting them (experimental)
+	* ADD Terms can now be edited in the FE-list and in the content elements (you have to enable Admin Panel Editing)
+	* CHG Activated keywords option
+	* CHG Changed the way to generate links
+
+v0.0.17 2008-02-14 Jochen Rau <j.rau@web.de>
+
+	* CHG Major revision of the parser; refactured code
+	* ADD Support for tt_news (be sure to add the static template of contagged after the static template of tt_news)
+	* FIX Link "More Details" showed list instead of extended single view if $termKey was "0"
+	* CHG Set autoExcludeTags = 1 to avoid nested parsing
+	* ADD Documentation (http://wiki.typo3.org/Contagged)
+	* ADD Added index for numbers "0-9"
+	* FIX Keywords stored in "contagged_keywords" (table "pages") are now taken from the whole page and not only from the last cObj that has been parsed
+	* FIX Uppercase handling of replaced term
+	* FIX Fixed inifinite loop caused by incorrect mapping (only PHP >5.2.2)
+	* CHG Secured fields are now term_main,term_alt,desc_short in the standard configuration
+	* RMV special exclude tag "exparse" was removed
+	* CHG listPage changed to listPages; more than one list page per type can be defined (comma separated); the first list page will be linked (if you want)
+	* FIX List pages show only those types of terms that are pointing to them (listPages)
+	* CHG If there are alternative terms: the longest takes precedence while parsing
+	* CHG Fields are not htmlspecialchared by default anymore
+	* CHG Experimental type definitions are now stored in a separate static template (to be included as usual)
+
+v0.0.16 2007-12-05 Jochen Rau <j.rau@web.de>
+
+	* FIX Small bugfix to avoid inaccurate parsing inside a tag
+
+v0.0.15 2007-10-19 Jochen Rau <j.rau@web.de>
+
+	* FIX Localization of the labels (BE) now depends on the BE-user settings
+	* RMV Removed obsolete parameter "backendLanguage" from TS Setup
+	* CHG Encoding of the file EXT:static/setup.txt is now iso-8859-1
+	* CHG The term is linked even if there is no long description (desc_long)
+	* FIX Part of a joined word is no longer disappearing, if the term is replaced
+	* ADD Support for tx_categories; you have to define the proper storage pid of the hidden sysFolder (tx_categories is an experimental extension maintained by Mads Brunn; not in TER; see TYP3_ect on news.netfielder.de)
+	* FIX Keys of $termsArray are no longer overwritten, if more than one data source is configured
+
+v0.0.14 2007-10-09 Jochen Rau <j.rau@web.de>
+
+	* IMP Better support for multibyte character sets (using t3lib_cs instead of native strlen() and substr())
 	* FIX Link "back to page ..." in FE-Plugin
-	* CHG Sorting of terms
+	* CHG Sorting of terms (not improved yet)
 
 v0.0.13 2007-10-06 Jochen Rau <j.rau@web.de>
 

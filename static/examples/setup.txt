@@ -1,0 +1,230 @@
+# encoding: iso-8859-1
+
+# there are several places (eg. tt_content.text) and several ways (postUserFunc, parseFunc.userFunc,contentPostProc-all)
+# to initiate parsing
+
+# 1st possibility:
+# tt_content.text.20.parseFunc.userFunc = tx_contagged->main
+
+# 2nd possibility:
+# tt_content.text.20.postUserFunc = tx_contagged->main
+
+# 3rd possibility:
+# temp_content < styles.content.get
+# temp_content.stdWrap.postUserFunc = tx_contagged->main
+# styles.content.get >
+# styles.content.get < temp_content
+
+plugin.tx_contagged {
+	
+	types {
+
+		dfn_block {
+			label = Definition (tool-tip)
+			label.de = Definition (Tool-Tip)
+			tag = span
+			addCssClassAttribute = 1
+			cssClass = dfn_block
+			stripBlockTags = 1
+			stdWrap.innerWrap.cObject = COA
+			stdWrap.innerWrap.cObject {
+				10 = TEXT
+				10.value = | <span class="tx-contagged-dfn_block-content">
+				20 = TEXT
+				20.data = register:contagged_matchedTerm
+				20.typolink {
+					parameter.data = register:contagged_list_page
+					parameter.override.field = link
+					useCacheHash = 1
+					additionalParams.data = register:contagged_key
+					additionalParams.wrap = &tx_contagged_pi1[key]=|
+					additionalParams.dataWrap = |&tx_contagged_pi1[backPid]={TSFE:id}
+				}
+				30 = TEXT
+				30.value = <br />
+				40 = TEXT
+				40.required = 1
+				40.data = register:contagged_desc_long
+				50 = TEXT
+				50.value = </span>
+			}
+		}
+
+		dfn_inline {
+			label = Definition (inline)
+			label.de = Definition (im Flieﬂtext)
+			tag = span
+			linkToListPage = 0
+			addCssClassAttribute = 1
+			stdWrap.innerWrap.cObject = COA
+			stdWrap.innerWrap.cObject {
+				10 = TEXT
+				10.value = | <span class="tx-contagged-dfn_block-content">&nbsp;[
+				20 = TEXT
+				20.required = 1
+				20.stripHtml = 1
+				20.data = register:contagged_desc_long
+				30 = TEXT
+				30.value = ] </span>
+			}
+		}
+		
+		location {
+			label = Location
+			label.de = Ortsbezeichnung
+			tag = strong
+		}
+
+		price {
+			label = Price
+			label.de = Preis
+			termStdWrap.wrap = ***|***
+			linkToListPage = 0
+			stdWrap.wrap = |&nbsp;Euro
+			dontListTerms = 1
+		}
+
+		regex {
+			label = Regular Expression
+			label.de = Regul‰rer Ausdruck
+			linkToListPage = 1
+			termIsRegEx = 1
+			secureFields =
+			dontListTerms = 0
+		}
+		
+		person < plugin.tx_contagged.types.dfn_block
+		person {
+			label = Person
+			label.de = Person
+			dataSource = addresses
+			sortField = zip
+		}
+		
+		reference {
+			label = Reference
+			label.de = Quelle
+			dataSource = references
+			sortField = term_main
+		}
+		
+		category < plugin.tx_contagged.types.dfn_block
+		category {
+			label = Category
+			label.de = Kategorie
+			dataSource = categories
+		}
+		
+	}
+
+	dataSources {
+
+		references {
+			sourceName = tx_sibibtex_entries
+			hasSysLanguageUid = 0
+			storagePids = 237
+			fieldsToEdit = 
+			mapping {
+				uid.field = uid
+				pid.field = pid
+				year.field = year
+				author.field = author
+				author.stdWrap.crop = -4||1
+				term_replace.value = 
+				term_replace.stdWrap.dataWrap = {register:contagged_author}, {register:contagged_year}
+				term_replace.stdWrap.outerWrap = [|]
+				term_main.field = author
+				term_type.value = reference
+				desc_long.field = title
+				# desc_long.field = address
+				# desc_long.stdWrap.dataWrap = |<br />{register:contagged_zip} {register:contagged_city}
+				exclude.value = 0
+			}
+		}
+
+		
+		addresses {
+			sourceName = tt_address
+			hasSysLanguageUid = 0
+			storagePids = 
+			fieldsToEdit = name,person,address
+			mapping {
+				uid.field = uid
+				pid.field = pid
+				# first_name.field = first_name
+				# middle_name.field = middle_name
+				# term_main.field = last_name
+				# term_main.stdWrap.dataWrap = |, {register:contagged_first_name} {register:contagged_middle_name}
+				# term_alt.field = name
+				term_main.field = name
+				term_type.value = person
+				zip.field = zip
+				city.field = city
+				desc_long.field = address
+				desc_long.stdWrap.dataWrap = |<br />{register:contagged_zip} {register:contagged_city}
+				exclude.value = 0
+			}
+		}
+		
+		categories {
+			sourceName = tx_categories
+			hasSysLanguageUid = 1
+			storagePids = 
+			fieldsToEdit = title,synonyms,description
+			mapping {
+				uid.field = uid
+				pid.field = pid
+				term_main.field = title
+				term_alt.field = synonyms
+				term_type.value = category
+				desc_long.field = description
+				exclude.value = 0
+			}
+		}
+		
+	}
+}
+
+plugin.tx_contagged {
+	_CSS_DEFAULT_STYLE (
+
+		acronym, abbr, dfn, span.tx-contagged-dfn_block, span.tx-contagged-dfn_inline {
+			font-style: normal;
+			border-bottom: 1px dotted #333333;
+			cursor: help;
+			position: relative;
+		}
+		
+		
+		/* position:relative is necessary for correct positioning of inline descriptions */
+		span.tx-contagged-dfn_block {
+			position: relative;
+		}
+		/* z-index makes sure the block is the top most element */
+		span.tx-contagged-dfn_block span.tx-contagged-dfn_block-content {
+			background: #EEEEEE;
+			display: none;
+		 	position: absolute;
+			z-index: 9999;
+		}
+		span.tx-contagged-dfn_block:hover span.tx-contagged-dfn_block-content {
+			display: inline;
+		 	position: absolute;
+			top: -2px;
+			left: -11px;
+			width: 300px;
+			margin-top: -1px;
+			border: 1px #CCCCCC solid;
+			padding: 0px 10px 10px 10px;
+		}
+
+
+		span.tx-contagged-dfn_inline span.tx-contagged-dfn_block-content {
+			color: #009900;
+			display: none;
+		}
+		span.tx-contagged-dfn_inline:active span.tx-contagged-dfn_block-content {
+			display:inline;
+		}
+	)
+}
