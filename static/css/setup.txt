@@ -15,5 +15,8 @@ plugin.tx_contagged {
 		div.tx-contagged-pi1 dt {
 			font-size: 1.2em;
 		}
+		div.tx-contagged-index span {
+			margin: 0 3px;
+		}
 	)
 }

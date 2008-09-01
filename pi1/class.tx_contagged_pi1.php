@@ -91,8 +91,9 @@ class tx_contagged_pi1 extends tslib_pibase {
 
 		if(method_exists($this, $renderFunction)) {
 			$content .= $this->$renderFunction();
+			$content = $this->removeUnfilledMarker($content);
 		}
-
+		
 		return $this->pi_wrapInBaseClass($content);
 	}
 
@@ -131,7 +132,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 			if ( $termArray['exclude']!=1 && $this->conf['types.'][$termArray['term_type'].'.']['dontListTerms']!=1 ) {
 				if ( $this->indexChar==NULL || $termArray['indexChar']==$this->indexChar ) {
 					$fieldsToSearch = t3lib_div::trimExplode(',',$this->conf['fieldsToSearch'] );
-					foreach ($fieldsToSearch as $field) {
+					foreach ($fieldsToSearch as $field) {						
+						// TODO make arrays searchable
 						$swordMatched = preg_match('/'.preg_quote($this->sword,'/').'/Uui',$termArray[$field]) ? TRUE : FALSE;
 					}
 					if ( $swordMatched ) {
@@ -343,6 +345,11 @@ class tx_contagged_pi1 extends tslib_pibase {
 
 		return $indexArray;
 	}
+	
+	protected function removeUnfilledMarker($content) {
+		return preg_replace('/###.*?###/', '', $content);
+	}
+
 }
 
 

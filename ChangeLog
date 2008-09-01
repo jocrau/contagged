@@ -1,8 +1,13 @@
+v0.1.1 2008-09-01 Jochen Rau <j.rau@web.de>
+
+	* ADD Added a RealUrl example configuration to "doc" folder
+	* IMP Non filled markers (###TITLE###) are now removed
+
 v0.1.0 2008-08-31 Jochen Rau <j.rau@web.de>
 
-	* CHG Changed status to "beta"
+	* CHG Set status to beta
 
-v0.0.18 2008-08-31 Jochen Rau <j.rau@web.de>
+v0.0.18 and v0.0.19 2008-08-31 Jochen Rau <j.rau@web.de>
 
 	* ADD fieldsToEdit
 	* ADD New data source "references" added to experimental types
