@@ -320,7 +320,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				foreach ($reverseIndexArray as $subChar => $indexChar) {
 					// debug(preg_quote($subChar),$termArray['term']);
 					// debug(preg_match('/^'.preg_quote($subChar).'/ui',$termArray['term']));
-					if ( preg_match('/^'.preg_quote($subChar).'/ui',$termArray[$sortField])>0 ) {
+					if ( preg_match('/^'.preg_quote($subChar).'/' . $this->conf['modifier'],$termArray[$sortField])>0 ) {
 						$typolinkConf['additionalParams'] = '&' . $this->prefixId . '[index]=' . $indexChar;
 						$indexArray[$indexChar] = $this->local_cObj->typolink($indexChar, $typolinkConf);
 						$this->termsArray[$termKey]['indexChar'] = $indexChar;
@@ -330,7 +330,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				if ( $this->termsArray[$termKey]['indexChar']=='' && $this->conf['autoAddIndexChars']==1 ) {					
 					// get the first char of the term (UTF8)
 					// TODO: Make the RegEx configurable to make ZIP-Codes possible
-					preg_match('/^./u',$termArray[$sortField],$match);
+					preg_match('/^./' . $this->conf['modifier'],$termArray[$sortField],$match);
 					$newIndexChar = $match[0];
 					$indexArray[$newIndexChar] = NULL;
 					$typolinkConf['additionalParams'] = '&' . $this->prefixId . '[index]=' . urlencode($newIndexChar);

@@ -51,21 +51,21 @@ class tx_contagged extends tslib_pibase {
 		
 		// exit if the content should be skipped
 		if ($this->isContentToSkip()) return $content;
-		
-		$GLOBALS['TSFE']->additionalHeaderData['tx_contagged'] = '<script type="text/javascript" src="'.t3lib_extMgm::siteRelPath('contagged').'js/selecttext.js"></script>';
-		$GLOBALS['TSFE']->JSeventFuncCalls['onload']['tx_contagged'] = 'init_getSelectedText();';
+
+		// $GLOBALS['TSFE']->additionalHeaderData['tx_contagged'] = '<script type="text/javascript" src="'.t3lib_extMgm::siteRelPath('contagged').'js/selecttext.js"></script>';
+		// $GLOBALS['TSFE']->JSeventFuncCalls['onload']['tx_contagged'] = 'init_getSelectedText();';
 		// $GLOBALS['TSFE']->JSeventFuncCalls['onmouseup']['tx_contagged'] = 'getSelectedText();';
 		// $GLOBALS['TSFE']->divSection = '<span id="tx_contagged_new" style="visibility:hidden;position:relative;top:280px;left:10px;z-index:1000;"></span>';
 
 		// TODO "New" icon
-		$storagePids = t3lib_div::trimExplode(',',$this->conf['storagePids'],1);
-		$mainStoragePid = $storagePids[0];
-		$panelConf = array(
-				'newRecordFromTable' => 'tx_contagged_terms',
-				'newRecordInPid' => $mainStoragePid,
-				);
-		$innerHTML = $this->cObj->editPanel('',$panelConf,'');
-		$GLOBALS['TSFE']->divSection = '<div id="tx_contagged_panel" class="" style="visibility:hidden;position:absolute;width:0px;top:0;left:0;z-index:1000;">'.$innerHTML.'</div>';
+		// $storagePids = t3lib_div::trimExplode(',',$this->conf['storagePids'],1);
+		// $mainStoragePid = $storagePids[0];
+		// $panelConf = array(
+		// 		'newRecordFromTable' => 'tx_contagged_terms',
+		// 		'newRecordInPid' => $mainStoragePid,
+		// 		);
+		// $innerHTML = $this->cObj->editPanel('',$panelConf,'');
+		// $GLOBALS['TSFE']->divSection = '<div id="tx_contagged_panel" class="" style="visibility:hidden;position:absolute;width:0px;top:0;left:0;z-index:1000;">'.$innerHTML.'</div>';
 		
 
 		// get an array of all type configurations
@@ -81,13 +81,11 @@ class tx_contagged extends tslib_pibase {
 
 		// TODO split recursively
 		$parseObj = t3lib_div::makeInstance('t3lib_parsehtml');
-		$content = $parseObj->splitIntoBlock($tagsToOmitt,$content);
-		// debug($content);
-		foreach($content as $intKey => $HTMLvalue) {
+		$splittedContent = $parseObj->splitIntoBlock($tagsToOmitt,$content);
+		foreach((array)$splittedContent as $intKey => $HTMLvalue) {
 			if (!($intKey%2)) {
 				$positionsArray = array();
 				// iterate through all terms
-				// debug($this->termsArray);
 				foreach ($this->termsArray as $termKey=>$termArray) {
 					// get the maximum amount of replaced terms
 					$maxOccur = $this->typesArray[$termArray['term_type'] . '.']['maxOccur'] ? (int)$typeConfigArray['maxOccur'] : 9999;
@@ -102,16 +100,14 @@ class tx_contagged extends tslib_pibase {
 					// sort the array descending by length of the value, so the longest term will match
 					usort($terms,array($this,'sortArrayByLengthDescending'));
 					foreach ( $terms as $term ) {
-						$this->getPositions($content[$intKey],&$positionsArray,$typeConfigArray,$term,$termArray,$termKey,$regEx,$tagsToOmitt,$maxOccur);
+						$this->getPositions($splittedContent[$intKey],&$positionsArray,$typeConfigArray,$term,$termArray,$termKey,$regEx,$tagsToOmitt,$maxOccur);
 					}
 				}
-				// debug($content[$intKey]);
 				ksort($positionsArray);
-				// debug($positionsArray);
-				$content[$intKey] = $this->doReplace($content[$intKey],$positionsArray);			
+				$splittedContent[$intKey] = $this->doReplace($splittedContent[$intKey],$positionsArray);			
 			}
 		}
-		$content = implode('',$content);
+		$parsedContent = implode('',$splittedContent);
 		
 
 		// update the keywords (field "tx_contagged_keywords" in table "page")
@@ -119,7 +115,7 @@ class tx_contagged extends tslib_pibase {
 			$this->insertKeywords();
 		}
 
-		return $content;
+		return $parsedContent;
 
 	}
 	
@@ -139,7 +135,8 @@ class tx_contagged extends tslib_pibase {
 		if ( $this->checkLocalGlobal($typeConfigArray,'termIsRegEx')>0 ) {
 			$regEx = $termArray['term_main'].$this->conf['modifier'];
 		} else {
-			$regEx = '/(?<=\P{L}|^)' . preg_quote($regExTerm,'/') . '(?=\P{L}|$)/'.$this->conf['modifier'];
+			$regEx = '/(?<=\W|^)' . preg_quote($regExTerm,'/') . '(?=\W|$)/' . $this->conf['modifier'];
+			// $regEx = '/(?<=\W|^)' . preg_quote($regExTerm,'/') . '(?=\W|$)/Uis';
 		}
 		
 		return $regEx;
@@ -147,9 +144,9 @@ class tx_contagged extends tslib_pibase {
 
 	function getPositions($content,&$positionsArray,$typeConfigArray,$term,$termArray,$termKey,$regEx,$tagsToOmitt,$maxOccur) {
 		$regEx = $this->getRegEx($term,$termKey,$typeConfigArray);
-		// debug($regEx,2);
 		preg_match_all($regEx,$content,$matchesArray,PREG_OFFSET_CAPTURE);
 		$matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx
+		// var_dump($matchesArray);
 		for ($i=0; $i < count($matchesArray); $i++) {
 			
 			$preContent = substr($content,0,$matchesArray[$i][1]);
@@ -157,7 +154,7 @@ class tx_contagged extends tslib_pibase {
 
 			// Flag: $inTag=true if we are inside a tag < here we are >
 			$inTag = FALSE;
-			if ( preg_match('/<[^<>]*$/u',$preContent)>0 && preg_match('/^[^<>]*>/u',$postContent)>0 ) {
+			if ( preg_match('/<[^<>]*$/' . $this->conf['modifier'],$preContent)>0 && preg_match('/^[^<>]*>/' . $this->conf['modifier'],$postContent)>0 ) {
 				$inTag = TRUE;
 			}
 			if (!$inTag) {
@@ -165,8 +162,8 @@ class tx_contagged extends tslib_pibase {
 				$preMatch = '';
 				$postMatch = '';
 				if ($this->checkLocalGlobal($typeConfigArray,'checkPreAndPostMatches')>0) {
-					preg_match('/(?<=\P{L})[\p{L}\p{Pd}]*\p{Pd}$/Uuis', $preContent, $preMatch);
-					preg_match('/^\p{Pd}[\p{L}\p{Pd}]*(?=\P{L})/Uuis', $postContent, $postMatch);
+					preg_match('/(?<=\W)\w*-$/' . $this->conf['modifier'], $preContent, $preMatch);
+					preg_match('/^-\w*(?=\W)/' . $this->conf['modifier'], $postContent, $postMatch);
 				}
 				$matchedTerm = $preMatch[0].$matchesArray[$i][0].$postMatch[0];
 				$matchStart = $matchesArray[$i][1] - strlen($preMatch[0]);
@@ -359,7 +356,7 @@ class tx_contagged extends tslib_pibase {
 		// Replace <p></p> with <br/>; Idea from Markus Timtner. Thank you!
 		// TODO: strip or replace all block-tags
 		if ($typeConfigArray['stripBlockTags']>0) {
-			$this->termsArray[$termKey]['desc_long'] = preg_replace('/<p[^<>]*>(.*?)<\/p\s*>/ui','$1<br />',$this->termsArray[$termKey]['desc_long']);
+			$this->termsArray[$termKey]['desc_long'] = preg_replace('/<p[^<>]*>(.*?)<\/p\s*>/' . $this->conf['modifier'],'$1<br />',$this->termsArray[$termKey]['desc_long']);
 		}
 
 		$GLOBALS['TSFE']->register['contagged_key'] = $termKey;

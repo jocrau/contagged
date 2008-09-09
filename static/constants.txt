@@ -53,8 +53,8 @@ contagged {
 	# cat=plugin.contagged//85; type=wrap; label=[Label Wrap 2]
 	labelWrap2 = &nbsp;(|)
 
-	# cat=plugin.contagged//90; type=string; label=[RegEx modifier]: RegEx modifier of the main RegEx. Don't touch it, if you don't know what you do ;-) .
-	modifier = Uuis
+	# cat=plugin.contagged//90; type=string; label=[RegEx modifier]: RegEx modifier of the main RegEx. You have to add "u" if you have a site with UTF-8 encoding.
+	modifier = Uis
 
 	# cat=plugin.contagged//91; type=string; label=[Fields to be searched]: Fields to be searched.
 	fieldsToSearch = term,term_main,term_replace,desc_short,desc_long

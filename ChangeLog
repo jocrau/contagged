@@ -1,3 +1,7 @@
+v0.1.2 2008-09-09 Jochen Rau <j.rau@web.de>
+
+	* FIX In some cases no term was found; the use of the modifier "u" didn't work if the content is not UTF-8; now support for UTF-8 must be activated manually by changing the RegEx-modifier "Uis" to "Uuis"; fixes bug #1483
+
 v0.1.1 2008-09-01 Jochen Rau <j.rau@web.de>
 
 	* ADD Added a RealUrl example configuration to "doc" folder
