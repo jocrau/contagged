@@ -136,7 +136,6 @@ class tx_contagged extends tslib_pibase {
 			$regEx = $termArray['term_main'].$this->conf['modifier'];
 		} else {
 			$regEx = '/(?<=\W|^)' . preg_quote($regExTerm,'/') . '(?=\W|$)/' . $this->conf['modifier'];
-			// $regEx = '/(?<=\W|^)' . preg_quote($regExTerm,'/') . '(?=\W|$)/Uis';
 		}
 		
 		return $regEx;
@@ -146,9 +145,10 @@ class tx_contagged extends tslib_pibase {
 		$regEx = $this->getRegEx($term,$termKey,$typeConfigArray);
 		preg_match_all($regEx,$content,$matchesArray,PREG_OFFSET_CAPTURE);
 		$matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx
-		// var_dump($matchesArray);
-		for ($i=0; $i < count($matchesArray); $i++) {
-			
+		
+		// determine the maximum of recurrencies of the same term to be tagged
+		$maxRecurrencies = $this->conf['maxRecurrencies'] ? min($this->conf['maxRecurrencies'], count($matchesArray)) : count($matchesArray);
+		for ($i=0; $i < $maxRecurrencies; $i++) {
 			$preContent = substr($content,0,$matchesArray[$i][1]);
 			$postContent = substr($content,strlen($matchesArray[$i][0])+$matchesArray[$i][1]);
 
@@ -169,6 +169,7 @@ class tx_contagged extends tslib_pibase {
 				$matchStart = $matchesArray[$i][1] - strlen($preMatch[0]);
 				$matchEnd = $matchStart + strlen($matchedTerm);
 				
+				// check for nested matches
 				$isNested = FALSE;
 				$checkArray = $positionsArray;
 				foreach ($checkArray as $start => $value) {
@@ -197,7 +198,6 @@ class tx_contagged extends tslib_pibase {
 		if($positionsArray){
 			foreach ($positionsArray as $matchStart => $matchArray) {
 				if ($matchStart>=0) { // ignore nested matches
-					// debug($matchArray,'match');
 					$matchLength = strlen($matchArray['matchedTerm']);
 					$termKey = $matchArray['termKey'];
 					$replacement = $this->getReplacement($termKey,$matchArray['matchedTerm'],$matchArray['preMatch'],$matchArray['postMatch']);
@@ -225,7 +225,6 @@ class tx_contagged extends tslib_pibase {
 	function getReplacement($termKey,$matchedTerm,$preMatch,$postMatch) {
 		$termArray = $this->termsArray[$termKey];
 		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
-		// debug($termArray);
 		// register the term array
 		$this->registerFields($typeConfigArray,$termKey);
 		
@@ -315,10 +314,8 @@ class tx_contagged extends tslib_pibase {
 
 	function insertKeywords() {
 		$GLOBALS['TSFE']->register['contagged_termsFound'] = array_unique((array)$GLOBALS['TSFE']->register['contagged_termsFound']);
-		// debug($GLOBALS['TSFE']->register['contagged_termsFound']);
 		// make a list of unique terms found in the content
 		$termsFoundList = implode(',',$GLOBALS['TSFE']->register['contagged_termsFound']);
-		// debug($termsFoundList);
 		// build an array to be passed to the UPDATE query
 		$updateArray = array($this->prefixId . '_keywords' => $termsFoundList);
 		// $updateArray = array('keywords' => $termsFoundList);
