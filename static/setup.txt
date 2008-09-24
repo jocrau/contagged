@@ -3,7 +3,10 @@
 # include class tx_contagged as library 
 includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
+# invoke the parser
+lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
 tt_content.text.20.postUserFunc = tx_contagged->main
+tt_content.bullets.20.postUserFunc = tx_contagged->main
 
 plugin.tx_contagged {
 	templateFile = {$contagged.templateFile}
@@ -50,7 +53,7 @@ plugin.tx_contagged {
 
 		abbrevation {
 			label = Abbrevation
-			label.de = Abkürzung (Beispiel: u.s.w.)
+			label.de = Abkürzung (Beispiel: u.s.w.)			
 			tag = abbr
 		}
 				

@@ -145,10 +145,11 @@ class tx_contagged extends tslib_pibase {
 		$regEx = $this->getRegEx($term,$termKey,$typeConfigArray);
 		preg_match_all($regEx,$content,$matchesArray,PREG_OFFSET_CAPTURE);
 		$matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx
-		
+
 		// determine the maximum of recurrences of the same term to be tagged
-		$maxRecurrences = $this->conf['maxRecurrences'] ? min($this->conf['maxRecurrences'], count($matchesArray)) : count($matchesArray);
-		for ($i=0; $i < $maxRecurrences; $i++) {
+		$maxRecurrences = (!empty($this->conf['maxRecurrences'])) ? min($this->conf['maxRecurrences'], count($matchesArray)) : count($matchesArray);
+		$step = $maxRecurrences != 0 ? ceil(count($matchesArray) / $maxRecurrences) : 1;
+		for ($i=0; $i < count($matchesArray); $i = $i + $step) {
 			$preContent = substr($content,0,$matchesArray[$i][1]);
 			$postContent = substr($content,strlen($matchesArray[$i][0])+$matchesArray[$i][1]);
 

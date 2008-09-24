@@ -1,3 +1,9 @@
+v0.1.5 2008-09-24 Jochen Rau <j.rau@web.de>
+
+	* IMP The parser is now invoked also for bullet lists and headers (if <h[1-6]> is not an excluded tag)
+	* IMP If maxRecurrences is set, the matches are now spread over the cObj constantly
+	* FIX It's not necessary anymore to set maxRecurrences to invoke the parser
+	
 v0.1.4 2008-09-23 Jochen Rau <j.rau@web.de>
 
 	* FIX Fixed typo in TS Setup

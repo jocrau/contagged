@@ -29,8 +29,8 @@ contagged {
 	# cat=plugin.contagged//46; type=int; label=[Storage PIDs)]:A comma separated list of pages or sysFolders (PIDs) the data is stored. This could be overwritten by the type configuration or the data source configuration.
 	storagePids = 
 
-	# cat=plugin.contagged//48; type=boolean; label=[Max. Recurrencies]: The maximum number of terms to be tagged in a cObject.
-	maxRecurrencies = 
+	# cat=plugin.contagged//48; type=boolean; label=[Max. Recurrences]: The maximum number of terms to be tagged in a cObject.
+	maxRecurrences = 
 
 	# cat=plugin.contagged//50; type=boolean; label=[Check for joined words]: Take pre- and/or post-matches of joined words (with dash) into account (see documentation for examples).
 	checkPreAndPostMatches = 1
