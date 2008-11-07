@@ -50,6 +50,12 @@ contagged {
 	# cat=plugin.contagged//75; type=boolean; label=[Update page keywords]: Should the matched terms be used as keywords for the page they are on. If there is a replaced term it will be used as keyword. If no the main term will be the keyword. The list of matched terms will be stored in a separate database field (not in the field 'keywords'), so your own keywords are preserved.
 	updateKeywords = 1
 	
+	# cat=plugin.contagged//76; type=int; label=[Image max width]: Maximum width of an image in single view.
+	singleMaxW = 200
+	
+	# cat=plugin.contagged//77; type=int; label=[Image max height]: Maximum height of an image in single view.
+	singleMaxH = 200
+	
 	# cat=plugin.contagged//80; type=wrap; label=[Label Wrap 1]
 	labelWrap1 = |<strong>|:</strong> |
 	
@@ -66,7 +72,7 @@ contagged {
 	sortField = term
 
 	# cat=plugin.contagged//93; type=string; label=[Fields to Map]: Fields to be mapped.
-	fieldsToMap = uid,pid,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude
+	fieldsToMap = uid,pid,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,imagecaption,imagealt,imagetitle,related,link,exclude
 
 	# cat=plugin.contagged//94; type=string; label=[Secured Fields]: .
 	secureFields = 

@@ -48,7 +48,7 @@ class tx_contagged extends tslib_pibase {
 	 */
 	function main($content,$conf) {
 		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
-		
+
 		// exit if the content should be skipped
 		if ($this->isContentToSkip()) return $content;
 
@@ -74,7 +74,7 @@ class tx_contagged extends tslib_pibase {
 		// get the model (an associated array of terms)
 		$modelClassName = t3lib_div::makeInstanceClassName('tx_contagged_model_terms');
 		$model = new $modelClassName($this);
-		$this->termsArray = $model->getTermsArray();
+		$this->termsArray = $model->findAllTerms();
 
 		// get a comma separated list of all tags which should be omitted
 		$tagsToOmitt = $this->getTagsToOmitt();
@@ -86,10 +86,7 @@ class tx_contagged extends tslib_pibase {
 			if (!($intKey%2)) {
 				$positionsArray = array();
 				// iterate through all terms
-				foreach ($this->termsArray as $termKey=>$termArray) {
-					// get the maximum amount of replaced terms
-					$maxOccur = $this->typesArray[$termArray['term_type'] . '.']['maxOccur'] ? (int)$typeConfigArray['maxOccur'] : 9999;
-					
+				foreach ($this->termsArray as $termKey=>$termArray) {					
 					$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
 					
 					$terms = array();
@@ -100,7 +97,7 @@ class tx_contagged extends tslib_pibase {
 					// sort the array descending by length of the value, so the longest term will match
 					usort($terms,array($this,'sortArrayByLengthDescending'));
 					foreach ( $terms as $term ) {
-						$this->getPositions($splittedContent[$intKey],&$positionsArray,$typeConfigArray,$term,$termArray,$termKey,$regEx,$tagsToOmitt,$maxOccur);
+						$this->getPositions($splittedContent[$intKey],$positionsArray,$typeConfigArray,$term,$termKey);
 					}
 				}
 				ksort($positionsArray);
@@ -141,7 +138,7 @@ class tx_contagged extends tslib_pibase {
 		return $regEx;
 	}
 
-	function getPositions($content,&$positionsArray,$typeConfigArray,$term,$termArray,$termKey,$regEx,$tagsToOmitt,$maxOccur) {
+	function getPositions($content,&$positionsArray,$typeConfigArray,$term,$termKey) {
 		$regEx = $this->getRegEx($term,$termKey,$typeConfigArray);
 		preg_match_all($regEx,$content,$matchesArray,PREG_OFFSET_CAPTURE);
 		$matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx

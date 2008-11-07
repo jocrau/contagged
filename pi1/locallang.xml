@@ -23,6 +23,8 @@
 			<label index="term_lang">Term Language</label>
 			<label index="desc_short">Short Description</label>
 			<label index="desc_long">Long Description</label>
+			<label index="images">Images</label>
+			<label index="related">See also</label>
 			<label index="lang.en">en.</label>
 			<label index="lang.fr">fr.</label>
 			<label index="lang.de">ger.</label>
@@ -48,6 +50,8 @@
 			<label index="term_lang">Sprache</label>
 			<label index="desc_short">Kurzbeschreibung</label>
 			<label index="desc_long">Ausführliche Beschreibung</label>
+			<label index="images">Bilder</label>
+			<label index="related">Siehe auch</label>
 			<label index="lang.en">engl.</label>
 			<label index="lang.fr">franz.</label>
 			<label index="lang.de">dt.</label>

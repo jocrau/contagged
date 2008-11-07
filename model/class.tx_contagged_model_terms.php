@@ -35,6 +35,7 @@ class tx_contagged_model_terms {
 	var $cObj;
 	var $controller;
 	var $tablesArray; // array of all tables in the database
+	var $terms;
 
 	function tx_contagged_model_terms($controller) {
 		$this->controller = $controller;
@@ -52,16 +53,9 @@ class tx_contagged_model_terms {
 				$this->tablesArray[] = current($table);
 			}
 		}
-	}
-
-	/**
-	 * [Describe function...]
-	 *
-	 * @return	[type]		...
-	 */
-	function getTermsArray() {
+		
 		$typesArray = $this->conf['types.'];
-		$termsArray = array();
+		$this->terms = array();
 		$dataSourceArray = array();
 		foreach ($typesArray as $type=>$typeConfigArray) {
 			$storagePidsArray = $this->mapper->getStoragePidsArray($typeConfigArray);
@@ -80,12 +74,30 @@ class tx_contagged_model_terms {
 		}
 		// get an array of all data rows in the configured tables
 		foreach ($dataSourceArray as $dataSource=>$storagePidsArray ) {
-			$termsArray = array_merge($termsArray,$this->getTerms($dataSource,$storagePidsArray));
+			$this->terms = array_merge($this->terms,$this->fetchAllTermsFromSource($dataSource,$storagePidsArray));
 		}
 
-		uasort($termsArray,array($this,'sortByTermAscending'));
+		uasort($this->terms,array($this,'sortByTermAscending'));
+	}
 
-		return $termsArray;
+	/**
+	 * [Describe function...]
+	 *
+	 * @return	[type]		...
+	 */
+	function findAllTerms() {
+		return $this->terms;
+	}
+	
+	function findTermByUid($sourceName, $uid) {
+		$fetchedTerms = array();
+		foreach ($this->terms as $key => $term) {
+			if ($term['sourceName'] == $sourceName && $term['uid'] == $uid) {
+				return array($key => $term);
+			}
+		}
+		
+		return NULL;
 	}
 
 	/**
@@ -126,7 +138,7 @@ class tx_contagged_model_terms {
 	 * @param	[type]		$storagePids: ...
 	 * @return	An		array with the terms an their configuration
 	 */
-	function getTerms($dataSource,$storagePidsArray=NULL) {
+	function fetchAllTermsFromSource($dataSource,$storagePidsArray=NULL) {
 		$dataArray = array();
 		$terms = array();
 		$storagePidsList = implode(',',$storagePidsArray);
@@ -151,11 +163,35 @@ class tx_contagged_model_terms {
 			// map the fields
 			$dataArray = $this->mapper->getDataArray($result,$dataSource);
 		}
+		$this->fetchRelatedTerms($dataArray);
 		
 		// TODO piVars as a data source
 
 		return $dataArray;
 	}
+	
+	function fetchRelatedTerms(&$dataArray) {
+		foreach ($dataArray as $key => $termArray) {
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+				'uid_foreign, tablenames', // SELECT ...
+				'tx_contagged_related_mm', // FROM ...
+				'uid_local=' . $termArray['uid'] // WHERE ..
+				);
+
+			if (!empty($result)) {
+				$termArray['related'] = array();
+				foreach ($result as $row) {
+					$termArray['related'][] = array('sourceName' => $row['tablenames'], 'uid' => $row['uid_foreign']);
+				}
+			} else {
+				$termArray['related'] = NULL;
+			}
+			$newDataArray[] = $termArray;
+		}
+		$dataArray = $newDataArray;
+	}
+	
+	
 	
 	function getSortField($termArray) {
 		if ($this->conf['types.'][$termArray['term_type'].'.']['sortField']) {

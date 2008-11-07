@@ -1,3 +1,8 @@
+v0.1.6 2008-11-06 Jochen Rau <j.rau@web.de>
+
+	* IMP some code clean-up
+	* ADD You can add images to your term definitions
+	
 v0.1.5 2008-09-24 Jochen Rau <j.rau@web.de>
 
 	* IMP The parser is now invoked also for bullet lists and headers (if <h[1-6]> is not an excluded tag)

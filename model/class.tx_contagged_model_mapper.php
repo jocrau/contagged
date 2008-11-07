@@ -41,11 +41,11 @@ class tx_contagged_model_mapper {
 	}
 
 	/**
-	 * Build an array of the entries in the table "tx_contagged_terms"
+	 * Build an array of the entries in the specified table
 	 *
 	 * @param	[type]		$result: ...
 	 * @param	[type]		$dataSource: ...
-	 * @return	An		array with the data of the table "tx_contagged_terms"
+	 * @return	An		array with the data of the table
 	 */
 	function getDataArray($result,$dataSource) {
 		$dataArray = array();
@@ -75,6 +75,7 @@ class tx_contagged_model_mapper {
 			$term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
 			$mappedDataArray = array();
 			$mappedDataArray['term'] = $term;
+			$mappedDataArray['sourceName'] = $sourceName;
 			foreach ( $fieldsToMapArray as $field) {
 				$value = $dataSourceConfigArray['mapping.'][$field.'.'];
 				if ( $value['value'] ) {
@@ -103,13 +104,6 @@ class tx_contagged_model_mapper {
 				$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$this->conf['listPages'],1);
 			}
 
-			// TODO Remove; only for backwards compatibility
-			// if ($typeConfigArray['listPage']) {
-			// 	$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$typeConfigArray['listPage'],1);
-			// } else {
-			// 	$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$this->conf['listPage'],1);
-			// }
-
 			$secureFields = $typeConfigArray['termIsRegEx']>0 ? $this->conf['types.'][$row['term_type'].'.']['secureFields'] : $this->conf['secureFields'];
 			foreach ($mappedDataArray as $field => $fieldContent) {
 				if ($fieldContent) {
@@ -133,7 +127,7 @@ class tx_contagged_model_mapper {
 
 		return $dataArray;
 	}
-
+	
 	/**
 	 * get the storage pids; cascade: type > dataSource > globalConfig
 	 *

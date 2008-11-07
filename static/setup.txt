@@ -36,7 +36,29 @@ plugin.tx_contagged {
 	showOnlyMatchedIndexChars = {$contagged.showOnlyMatchedIndexChars}
 	autoAddIndexChars = {$contagged.autoAddIndexChars}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
-
+	
+	images {
+		wrapIfAny = <div class="tx-contagged-pi1-images">|</div>
+		caption.stdWrap.wrap = <div class="tx-contagged-pi1-imagecaption"> | </div>
+	    caption.stdWrap.trim=1
+		single.image {
+			file.maxW = {$contagged.singleMaxW}
+			file.maxH = {$contagged.singleMaxH}
+			wrap = 
+			imageLinkWrap = 1
+			imageLinkWrap {
+				enable = 1
+				bodyTag = <body bgColor="#ffffff">
+				wrap = <a href="javascript:close();"> | </a>
+				width = 500m
+				height = 500
+				JSwindow = 1
+				JSwindow.newWindow = 1
+				JSwindow.expand = 17,20
+			}
+		}
+	}
+	
 	types {
 
 		definition {
@@ -76,6 +98,11 @@ plugin.tx_contagged {
 				term_lang.field = term_lang
 				desc_short.field = desc_short
 				desc_long.field = desc_long
+				image.field = image
+				imagecaption.field = imagecaption
+				imagealt.field = imagealt
+				imagetitle.field = imagetitle
+				related.field = related
 				link.field = link
 				exclude.field = exclude
 			}

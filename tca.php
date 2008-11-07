@@ -5,7 +5,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 $TCA["tx_contagged_terms"] = array (
 	"ctrl" => $TCA["tx_contagged_terms"]["ctrl"],
 	"interface" => array (
-		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, link, exclude"
+		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, image, imagecaption, imagealt, imagetitle, related, link, exclude"
 	),
 	"feInterface" => $TCA["tx_contagged_terms"]["feInterface"],
 	"columns" => array (
@@ -182,6 +182,68 @@ $TCA["tx_contagged_terms"] = array (
 					),
 				)
 			),
+			'image' => Array (
+				'exclude' => 1,
+				'l10n_mode' => $l10n_mode_image,
+				'label' => 'LLL:EXT:lang/locallang_general.php:LGL.images',
+				'config' => Array (
+					'type' => 'group',
+					'internal_type' => 'file',
+					'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
+					'max_size' => '10000',
+					'uploadfolder' => 'uploads/pics',
+					'show_thumbs' => '1',
+					'size' => 3,
+					'autoSizeMax' => 15,
+					'maxitems' => '99',
+					'minitems' => '0'
+				)
+			),
+			'imagecaption' => Array (
+				'exclude' => 1,
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
+				'l10n_mode' => $l10n_mode,
+				'config' => Array (
+					'type' => 'text',
+					'cols' => '30',
+					'rows' => '3'
+				)
+			),
+			'imagealt' => Array (
+				'exclude' => 1,
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
+				'l10n_mode' => $l10n_mode,
+				'config' => Array (
+					'type' => 'text',
+					'cols' => '30',
+					'rows' => '3'
+				)
+			),
+			'imagetitle' => Array (
+				'exclude' => 1,
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
+				'l10n_mode' => $l10n_mode,
+				'config' => Array (
+					'type' => 'text',
+					'cols' => '30',
+					'rows' => '3'
+				)
+			),
+			'related' => Array (
+				'exclude' => 1,
+				'l10n_mode' => 'exclude',
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.related',
+				'config' => Array (
+					'type' => 'group',
+					'internal_type' => 'db',
+					'allowed' => '*',
+					'MM' => 'tx_contagged_related_mm',
+					'size' => 3,
+					'autoSizeMax' => 20,
+					'maxitems' => 9999,
+					'minitems' => 0,
+				)
+			),
 			"link" => Array (
 				"exclude" => 1,
 				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.link",
@@ -212,7 +274,7 @@ $TCA["tx_contagged_terms"] = array (
 			),
 		),
 		"types" => array (
-			"0" => array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long;;;richtext[*]:rte_transform[mode=ts_css|imgpath=uploads/tx_contagged/rte/], link, exclude")
+			"0" => array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long;;;richtext[*]:rte_transform[mode=ts_css|imgpath=uploads/tx_contagged/rte/], image, imagecaption, imagealt, imagetitle, related, link, exclude")
 		),
 		"palettes" => array (
 			"1" => array("showitem" => "starttime, endtime, fe_group")

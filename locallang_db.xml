@@ -21,6 +21,10 @@
 			<label index="tx_contagged_terms.term_replace">Replacement</label>
 			<label index="tx_contagged_terms.desc_short">Short Description (e.g. Tool Tip Text)</label>
 			<label index="tx_contagged_terms.desc_long">Long Description</label>
+			<label index="tx_contagged_terms.caption">Caption</label>
+			<label index="tx_contagged_terms.imagealt">ALT-Text</label>
+			<label index="tx_contagged_terms.imagetitle">TITLE-Text</label>
+			<label index="tx_contagged_terms.related">See also</label>
 			<label index="tx_contagged_terms.link">Link</label>
 			<label index="tx_contagged_terms.exclude">Exclude from front-end lists</label>
 			<label index="pages.tx_contagged_dont_parse">Don't parse text</label>
@@ -41,6 +45,10 @@
 			<label index="tx_contagged_terms.term_replace">Ersatz</label>
 			<label index="tx_contagged_terms.desc_short">Kurzbeschreibung (z.B. Tool-Tip-Text)</label>
 			<label index="tx_contagged_terms.desc_long">Ausführliche Beschreibung</label>
+			<label index="tx_contagged_terms.caption">Bildunterschrift</label>
+			<label index="tx_contagged_terms.imagealt">ALT-Text</label>
+			<label index="tx_contagged_terms.imagetitle">TITLE-Text</label>
+			<label index="tx_contagged_terms.related">Siehe auch</label>
 			<label index="tx_contagged_terms.link">Verweis</label>
 			<label index="tx_contagged_terms.exclude">Von Frontend-Listen ausschließen</label>
 			<label index="pages.tx_contagged_dont_parse">Text nicht parsen</label>
