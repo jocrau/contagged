@@ -1,7 +1,10 @@
-v0.1.6 2008-11-06 Jochen Rau <j.rau@web.de>
 
-	* IMP some code clean-up
+	* ADD Page browser (pi_base)
+	* ADD Crosslinking between terms
 	* ADD You can add images to your term definitions
+	* IMP Some code clean-up and refactorings
+	* CHG Labes in list module are now term_replace, term_main, term_alt
+	* CHG CSS-margins for index chars set to 0px
 	
 v0.1.5 2008-09-24 Jochen Rau <j.rau@web.de>
 

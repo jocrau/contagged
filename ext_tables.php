@@ -15,8 +15,8 @@ t3lib_extMgm::addStaticFile($_EXTKEY,'static/css/','Default CSS-styles');
 $TCA["tx_contagged_terms"] = array (
 	"ctrl" => array (
 		'title'     => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms',		
-		'label'     => 'term_main',
-		'label_alt' => 'term_type',
+		'label'     => 'term_replace',
+		'label_alt' => 'term_main, term_alt',
 		'label_alt_force' => TRUE,
 		'tstamp'    => 'tstamp',
 		'crdate'    => 'crdate',

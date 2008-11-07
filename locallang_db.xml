@@ -21,7 +21,7 @@
 			<label index="tx_contagged_terms.term_replace">Replacement</label>
 			<label index="tx_contagged_terms.desc_short">Short Description (e.g. Tool Tip Text)</label>
 			<label index="tx_contagged_terms.desc_long">Long Description</label>
-			<label index="tx_contagged_terms.caption">Caption</label>
+			<label index="tx_contagged_terms.imagecaption">Caption</label>
 			<label index="tx_contagged_terms.imagealt">ALT-Text</label>
 			<label index="tx_contagged_terms.imagetitle">TITLE-Text</label>
 			<label index="tx_contagged_terms.related">See also</label>
@@ -45,7 +45,7 @@
 			<label index="tx_contagged_terms.term_replace">Ersatz</label>
 			<label index="tx_contagged_terms.desc_short">Kurzbeschreibung (z.B. Tool-Tip-Text)</label>
 			<label index="tx_contagged_terms.desc_long">Ausführliche Beschreibung</label>
-			<label index="tx_contagged_terms.caption">Bildunterschrift</label>
+			<label index="tx_contagged_terms.imagecaption">Bildunterschrift</label>
 			<label index="tx_contagged_terms.imagealt">ALT-Text</label>
 			<label index="tx_contagged_terms.imagetitle">TITLE-Text</label>
 			<label index="tx_contagged_terms.related">Siehe auch</label>

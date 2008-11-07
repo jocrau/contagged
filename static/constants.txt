@@ -86,4 +86,18 @@ contagged {
 	# cat=plugin.contagged//99; type=boolean; label=[Add Back Link]: Add the page title to the back link.
 	addBackLinkDescription = 1
 
+	# cat=plugin.contagged/pagebrowser/10; type=int; label=[Results at a time]: Number of results to be displayed on a single page.
+	results_at_a_time = 20
+
+	# cat=plugin.contagged/pagebrowser/20; type=int; label=[Number of pages]: Number of pages to be displayed in the page browser at once.
+	maxPages = 3
+
+	# cat=plugin.contagged/pagebrowser/30; type=boolean; label=[Don't link active page]
+	dontLinkActivePage = 1
+
+	# cat=plugin.contagged/pagebrowser/40; type=boolean; label=[Show "First"/"Last"]: Show link to first and last page.
+	showFirstLast = 0
+
+	# cat=plugin.contagged/pagebrowser/50; type=boolean; label=[Show result counter]
+	showResultCount = 0
 }

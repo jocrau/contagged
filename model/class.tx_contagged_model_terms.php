@@ -36,6 +36,7 @@ class tx_contagged_model_terms {
 	var $controller;
 	var $tablesArray; // array of all tables in the database
 	var $terms;
+	var $configuredSources;
 
 	function tx_contagged_model_terms($controller) {
 		$this->controller = $controller;
@@ -52,6 +53,10 @@ class tx_contagged_model_terms {
 			while($table = mysql_fetch_assoc($tablesResult)) {
 				$this->tablesArray[] = current($table);
 			}
+		}
+		
+		foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
+			$this->configuredSources[] = $sourceConfiguration['sourceName'];
 		}
 		
 		$typesArray = $this->conf['types.'];
@@ -80,13 +85,18 @@ class tx_contagged_model_terms {
 		uasort($this->terms,array($this,'sortByTermAscending'));
 	}
 
-	/**
-	 * [Describe function...]
-	 *
-	 * @return	[type]		...
-	 */
 	function findAllTerms() {
 		return $this->terms;
+	}
+	
+	function findAllTermsToBeListed($pid = NULL) {
+		$terms = array();
+		foreach ($this->terms as $key => $term) {
+			if ( $term['exclude']!=1 && $this->conf['types.'][$term['term_type'].'.']['dontListTerms']!=1 && (in_array($pid,$term['listPages']) || $pid === NULL) ) {
+				$terms[$key] = $term;
+			}
+		}
+		return $terms;
 	}
 	
 	function findTermByUid($sourceName, $uid) {
@@ -99,14 +109,11 @@ class tx_contagged_model_terms {
 		
 		return NULL;
 	}
+	
+	function sourceIsConfigured($sourceName) {
+		return in_array($sourceName, $this->configuredSources);
+	}
 
-	/**
-	 * [Describe function...]
-	 *
-	 * @param	[type]		$termArrayA: ...
-	 * @param	[type]		$termArrayB: ...
-	 * @return	[type]		...
-	 */
 	function sortByTermAscending($termArrayA,$termArrayB) {
 		// TODO: improve sorting (UTF8, configurable, localized->hook)
 		// strcasecmp() internally converts the two strings it is comparing to lowercase, based on the server locale settings. As such, it
@@ -175,13 +182,16 @@ class tx_contagged_model_terms {
 			$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 				'uid_foreign, tablenames', // SELECT ...
 				'tx_contagged_related_mm', // FROM ...
-				'uid_local=' . $termArray['uid'] // WHERE ..
+				'uid_local=' . $termArray['uid'], // WHERE ..
+				'sorting'
 				);
 
 			if (!empty($result)) {
 				$termArray['related'] = array();
 				foreach ($result as $row) {
-					$termArray['related'][] = array('sourceName' => $row['tablenames'], 'uid' => $row['uid_foreign']);
+					if ($this->sourceIsConfigured($row['tablenames'])) {
+						$termArray['related'][] = array('sourceName' => $row['tablenames'], 'uid' => $row['uid_foreign']);
+					}
 				}
 			} else {
 				$termArray['related'] = NULL;

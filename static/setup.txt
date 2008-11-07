@@ -59,6 +59,14 @@ plugin.tx_contagged {
 		}
 	}
 	
+	pagebrowser {
+		results_at_a_time = {$contagged.results_at_a_time}
+		maxPages = {$contagged.maxPages}
+		dontLinkActivePage = {$contagged.dontLinkActivePage}
+		showFirstLast = {$contagged.showFirstLast}
+		showResultCount = {$contagged.showResultCount}
+	}
+	
 	types {
 
 		definition {
