@@ -251,10 +251,10 @@ class tx_contagged_pi1 extends tslib_pibase {
 					$typolinkConf = $this->typolinkConf;
 					$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[key]=' . $key;
 					$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
-					$relatedCode .= '<div>' . $this->local_cObj->typoLink($relatedTerm['term'], $typolinkConf) . '</div>';					
+					$relatedCode .= $this->local_cObj->stdWrap($this->local_cObj->typoLink($relatedTerm['term'], $typolinkConf), $this->conf['related.']['single.']['stdWrap.']);					
 				}
 			}
-			return $this->local_cObj->wrap(trim($relatedCode), $this->conf['related.']['wrapIfAny']);
+			return $this->local_cObj->stdWrap(trim($relatedCode), $this->conf['related.']['stdWrap.']);
 		} else {
 			return NULL;
 		}
@@ -274,7 +274,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$imagesConf['image.']['file'] = 'uploads/pics/' . $image;
 				$imagesCode .= $this->local_cObj->IMAGE($imagesConf['image.']) . $this->local_cObj->stdWrap($imagesCaption[$key], $this->conf['images.']['caption.']['stdWrap.']);
 			}
-			return $this->local_cObj->wrap(trim($imagesCode), $this->conf['images.']['wrapIfAny']);
+			return $this->local_cObj->stdWrap(trim($imagesCode), $this->conf['images.']['stdWrap.']);
 		} else {
 			return NULL;
 		}

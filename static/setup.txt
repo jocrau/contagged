@@ -38,9 +38,9 @@ plugin.tx_contagged {
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
 	
 	images {
-		wrapIfAny = <div class="tx-contagged-pi1-images">|</div>
-		caption.stdWrap.wrap = <div class="tx-contagged-pi1-imagecaption"> | </div>
-	    caption.stdWrap.trim=1
+		stdWrap.wrap = <div class="tx-contagged-images">|</div>
+		caption.stdWrap.wrap = <div class="tx-contagged-imagecaption"> | </div>
+	    caption.stdWrap.trim = 1
 		single.image {
 			file.maxW = {$contagged.singleMaxW}
 			file.maxH = {$contagged.singleMaxH}
@@ -57,6 +57,11 @@ plugin.tx_contagged {
 				JSwindow.expand = 17,20
 			}
 		}
+	}
+	
+	related {
+		stdWrap.wrap = <div class="tx-contagged-related">|</div>
+		single.stdWrap.wrap = <div>|</div>
 	}
 	
 	pagebrowser {
