@@ -5,7 +5,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 $TCA["tx_contagged_terms"] = array (
 	"ctrl" => $TCA["tx_contagged_terms"]["ctrl"],
 	"interface" => array (
-		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, image, imagecaption, imagealt, imagetitle, related, link, exclude"
+		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, image, dam_images,imagecaption, imagealt, imagetitle, related, link, exclude"
 	),
 	"feInterface" => $TCA["tx_contagged_terms"]["feInterface"],
 	"columns" => array (
@@ -182,53 +182,53 @@ $TCA["tx_contagged_terms"] = array (
 					),
 				)
 			),
-			'image' => Array (
-				'exclude' => 1,
-				'l10n_mode' => $l10n_mode_image,
-				'label' => 'LLL:EXT:lang/locallang_general.php:LGL.images',
-				'config' => Array (
-					'type' => 'group',
-					'internal_type' => 'file',
-					'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
-					'max_size' => '10000',
-					'uploadfolder' => 'uploads/pics',
-					'show_thumbs' => '1',
-					'size' => 3,
-					'autoSizeMax' => 15,
-					'maxitems' => '99',
-					'minitems' => '0'
-				)
-			),
-			'imagecaption' => Array (
-				'exclude' => 1,
-				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
-				'l10n_mode' => $l10n_mode,
-				'config' => Array (
-					'type' => 'text',
-					'cols' => '30',
-					'rows' => '3'
-				)
-			),
-			'imagealt' => Array (
-				'exclude' => 1,
-				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
-				'l10n_mode' => $l10n_mode,
-				'config' => Array (
-					'type' => 'text',
-					'cols' => '30',
-					'rows' => '3'
-				)
-			),
-			'imagetitle' => Array (
-				'exclude' => 1,
-				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
-				'l10n_mode' => $l10n_mode,
-				'config' => Array (
-					'type' => 'text',
-					'cols' => '30',
-					'rows' => '3'
-				)
-			),
+			// 'image' => Array (
+			// 	'exclude' => 1,
+			// 	'l10n_mode' => $l10n_mode_image,
+			// 	'label' => 'LLL:EXT:lang/locallang_general.php:LGL.images',
+			// 	'config' => Array (
+			// 		'type' => 'group',
+			// 		'internal_type' => 'file',
+			// 		'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
+			// 		'max_size' => '10000',
+			// 		'uploadfolder' => 'uploads/pics',
+			// 		'show_thumbs' => '1',
+			// 		'size' => 3,
+			// 		'autoSizeMax' => 15,
+			// 		'maxitems' => '99',
+			// 		'minitems' => '0'
+			// 	)
+			// ),
+			// 'imagecaption' => Array (
+			// 	'exclude' => 1,
+			// 	'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
+			// 	'l10n_mode' => $l10n_mode,
+			// 	'config' => Array (
+			// 		'type' => 'text',
+			// 		'cols' => '30',
+			// 		'rows' => '3'
+			// 	)
+			// ),
+			// 'imagealt' => Array (
+			// 	'exclude' => 1,
+			// 	'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
+			// 	'l10n_mode' => $l10n_mode,
+			// 	'config' => Array (
+			// 		'type' => 'text',
+			// 		'cols' => '20',
+			// 		'rows' => '3'
+			// 	)
+			// ),
+			// 'imagetitle' => Array (
+			// 	'exclude' => 1,
+			// 	'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
+			// 	'l10n_mode' => $l10n_mode,
+			// 	'config' => Array (
+			// 		'type' => 'text',
+			// 		'cols' => '20',
+			// 		'rows' => '3'
+			// 	)
+			// ),
 			'related' => Array (
 				'exclude' => 1,
 				'l10n_mode' => 'exclude',
@@ -275,12 +275,73 @@ $TCA["tx_contagged_terms"] = array (
 			),
 		),
 		"types" => array (
-			"0" => array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long;;;richtext[*]:rte_transform[mode=ts_css|imgpath=uploads/tx_contagged/rte/], image, imagecaption, imagealt, imagetitle, related, link, exclude")
+			"0" => array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long;;;richtext[*]:rte_transform[mode=ts_css|imgpath=uploads/tx_contagged/rte/], image, dam_images, imagecaption, imagealt, imagetitle, related, link, exclude")
 		),
 		"palettes" => array (
-			"1" => array("showitem" => "starttime, endtime, fe_group")
+			"1" => array("showitem" => "starttime, endtime, fe_group"),
+			"2" => array("showitem" => "")
 		)
 	);
+	
+$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
+if ( $extConfArray['getImagesFromDAM'] == 0 ) {
+	$TCA["tx_contagged_terms"]['columns'] = array_merge_recursive($TCA["tx_contagged_terms"]['columns'], array(
+			'image' => Array (
+				'exclude' => 1,
+				'l10n_mode' => $l10n_mode_image,
+				'label' => 'LLL:EXT:lang/locallang_general.php:LGL.images',
+				'config' => Array (
+					'type' => 'group',
+					'internal_type' => 'file',
+					'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
+					'max_size' => $GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize'],
+					'uploadfolder' => 'uploads/pics',
+					'show_thumbs' => '1',
+					'size' => 3,
+					'autoSizeMax' => 15,
+					'maxitems' => '99',
+					'minitems' => '0'
+				)
+			),
+			'imagecaption' => Array (
+				'exclude' => 1,
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
+				'l10n_mode' => $l10n_mode,
+				'config' => Array (
+					'type' => 'text',
+					'cols' => '30',
+					'rows' => '3'
+				)
+			),
+			'imagealt' => Array (
+				'exclude' => 1,
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
+				'l10n_mode' => $l10n_mode,
+				'config' => Array (
+					'type' => 'text',
+					'cols' => '20',
+					'rows' => '3'
+				)
+			),
+			'imagetitle' => Array (
+				'exclude' => 1,
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
+				'l10n_mode' => $l10n_mode,
+				'config' => Array (
+					'type' => 'text',
+					'cols' => '20',
+					'rows' => '3'
+				)
+			),
+		)
+	);
+} else {
+	$TCA["tx_contagged_terms"]['columns'] = array_merge_recursive($TCA["tx_contagged_terms"]['columns'],array(
+		'dam_images' => txdam_getMediaTCA('image_field', 'dam_images')
+		)
+	);
+}
+
 require_once (PATH_t3lib.'class.t3lib_page.php');
 require_once (PATH_t3lib.'class.t3lib_tstemplate.php');
 require_once (PATH_t3lib.'class.t3lib_tsparser_ext.php');

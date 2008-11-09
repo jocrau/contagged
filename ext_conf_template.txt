@@ -1,3 +1,6 @@
 
-	# cat=basic//10; type=int; label= Page-ID where the type definitions are stored (typically by adding a static template to the main template => root page pid).
+	# cat=basic//10; type=int; label=Setup storage PID: Page-ID where the type definitions are stored (typically by adding a static template to the main template => root page pid).
 	mainConfigStoragePid = 
+
+	# cat=basic//20; type=boolean; label= DAM as image source: Take DAM (digital asset management) as image source.
+	getImagesFromDAM = 0

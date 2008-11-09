@@ -261,23 +261,55 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 	
 	function getImages($termArray) {
-		if (!empty($termArray['image'])) {
-			$imagesConf = $this->conf['images.']['single.'];
+		$images = array();
+		$imagesCaption = array();
+		$imagesAltText = array();
+		$imagesTitleText = array();
+		$imagesCode = '';
+		$imagesConf = $this->conf['images.']['single.'];
+		$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
+		if ($extConfArray['getImagesFromDAM'] == 0) {
 			$images = t3lib_div::trimExplode(',', $termArray['image'], 1);
+			foreach ($images as $image) {
+				$imagesWithPath[] = 'uploads/pics/' . $image;
+			}
+			$images = $imagesWithPath;
 			$imagesCaption = t3lib_div::trimExplode(chr(10), $termArray['imagecaption']);
 			$imagesAltText = t3lib_div::trimExplode(chr(10), $termArray['imagealt']);
 			$imagesTitleText = t3lib_div::trimExplode(chr(10), $termArray['imagetitle']);
-			$imagesCode = '';
+		} else {
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
+				'tx_dam.file_path, tx_dam.file_name, tx_dam.alt_text, tx_dam.caption, tx_dam.title',
+				'tx_dam', 'tx_dam_mm_ref', 'tx_contagged_terms',
+				'AND tx_dam_mm_ref.tablenames = "tx_contagged_terms" AND tx_dam_mm_ref.ident="dam_images" ' .
+				'AND tx_dam_mm_ref.uid_foreign = "' . $termArray['uid'] . '"', '', 'tx_dam_mm_ref.sorting_foreign ASC'
+				);
+			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+				$images[] = $row['file_path'] . $row['file_name'];
+				$imagesCaption[] = str_replace(array(chr(10),chr(13)), ' ', $row['caption'] . ' ');
+				$imagesAltText[] = str_replace(array(chr(10),chr(13)), ' ', $row['alt_text'] . ' ');
+				$imagesTitleText[] = str_replace(array(chr(10),chr(13)), ' ', $row['title'] . ' ');
+			}
+		}
+		// debug($images, 'images');
+		// debug($imagesCaption, 'imagesCaption');
+		// debug($imagesAltText, 'imagesAltText');
+		// debug($imagesTitleText, 'imagesTitleText');
+		
+		if (!empty($images)) {
 			foreach ($images as $key => $image) {
+				$imagesConf['image.']['file'] = $image;
 				$imagesConf['image.']['altText'] = $imagesAltText[$key];
 				$imagesConf['image.']['titleText'] = $imagesTitleText[$key];
-				$imagesConf['image.']['file'] = 'uploads/pics/' . $image;
-				$imagesCode .= $this->local_cObj->IMAGE($imagesConf['image.']) . $this->local_cObj->stdWrap($imagesCaption[$key], $this->conf['images.']['caption.']['stdWrap.']);
+				$caption = $imagesCaption[$key] != '' ? $this->local_cObj->stdWrap($imagesCaption[$key], $this->conf['images.']['caption.']['stdWrap.']) : '';
+				$imagesCode .= $this->local_cObj->IMAGE($imagesConf['image.']);
+				$imagesCode .= $caption;
 			}
-			return $this->local_cObj->stdWrap(trim($imagesCode), $this->conf['images.']['stdWrap.']);
+			return $this->local_cObj->stdWrap(trim($imagesCode), $this->conf['images.']['stdWrap.']);			
 		} else {
 			return NULL;
 		}
+		
 	}
 
 	function renderIndex(&$markerArray) {

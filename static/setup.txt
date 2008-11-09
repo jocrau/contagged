@@ -44,7 +44,7 @@ plugin.tx_contagged {
 		single.image {
 			file.maxW = {$contagged.singleMaxW}
 			file.maxH = {$contagged.singleMaxH}
-			wrap = 
+			stdWrap.wrap = <div class="tx-contagged-singleimage">|</div>
 			imageLinkWrap = 1
 			imageLinkWrap {
 				enable = 1

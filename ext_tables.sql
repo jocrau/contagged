@@ -33,6 +33,7 @@ CREATE TABLE tx_contagged_terms (
 	desc_short tinytext NOT NULL,
 	desc_long text NOT NULL,
 	image text NOT NULL,
+	dam_images int(11) DEFAULT '0' NOT NULL,
 	imagecaption text NOT NULL,
 	imagealt text NOT NULL,
 	imagetitle text NOT NULL,
