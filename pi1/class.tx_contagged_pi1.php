@@ -34,7 +34,7 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
  * @subpackage	tx_contagged_pi1
  */
 class tx_contagged_pi1 extends tslib_pibase {
-	var $prefixId = 'tx_contagged_pi1'; // same as class name
+	var $prefixId = 'tx_contagged'; // same as class name
 	var $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
 	var $extKey = 'contagged'; // the extension key
 	var $templateFile = 'EXT:contagged/pi1/contagged.tmpl';
@@ -69,7 +69,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		if ( !is_null($this->piVars['key']) ) {
 			$termKey = intval($this->piVars['key']);
 		}
-		$sword = $this->piVars['sword'] ? urldecode($this->piVars['sword']) : NULL;
+		$sword = $this->piVars['sword'] ? htmlspecialchars(urldecode($this->piVars['sword'])) : NULL;
 
 		// get an array of all type configurations
 		$this->typesArray = $this->conf['types.'];
@@ -112,7 +112,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$subparts = $this->getSubparts('LIST');
 		$this->renderLinks($markerArray,$wrappedSubpartArray);
 		$this->renderIndex($markerArray);
-		if (empty($this->indexChar)) {
+		$this->renderSearchBox($markerArray);
+		if (empty($this->indexChar) && ($this->conf['pagebrowser.']['enable'] > 0)) {
 			$this->renderPageBrowser($markerArray);
 			$terms = array_slice($this->termsArray, ($this->pointer * $this->internal['results_at_a_time']), $this->internal['results_at_a_time'], TRUE);
 		} else {
@@ -130,24 +131,38 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 
 	function renderListBySword($sword) {
+		$swordMatched = FALSE;
 		$subparts = $this->getSubparts('LIST');
 		$this->renderLinks($markerArray,$wrappedSubpartArray);
 		$this->renderIndex($markerArray);
+		$this->renderSearchBox($markerArray);
 		foreach ( $this->termsArray as $termKey => $termArray ) {
-			$fieldsToSearch = t3lib_div::trimExplode(',',$this->conf['fieldsToSearch'] );
+			$fieldsToSearch = t3lib_div::trimExplode(',', $this->conf['searchbox.']['fieldsToSearch'] );
 			foreach ($fieldsToSearch as $field) {						
-				// TODO make arrays searchable
-				$swordMatched = preg_match('/'.preg_quote($sword,'/').'/Uui',$termArray[$field]) ? TRUE : FALSE;
+				if (is_array($termArray[$field])) {
+					foreach ($termArray[$field] as $subField) {
+						if (preg_match('/' . preg_quote($sword,'/') . '/Uis', strip_tags($termArray[$field][$subField])) > 0) {
+							$swordMatched = TRUE;
+							break;
+						}
+					}
+				} else {
+					if (preg_match('/' . preg_quote($sword,'/') . '/Uis', strip_tags($termArray[$field])) > 0) {
+						$swordMatched = TRUE;
+						break;
+					}
+				}
 			}
 			if ( $swordMatched ) {
 				$this->renderSingleItem($termKey,$markerArray,$wrappedSubpartArray);
 				$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
+				$swordMatched = FALSE;
 			}
 		}
-		// TODO Display warning if result is empty
-		// if (!$content) {
-		// 	$subpartArray['###LIST###'] = "No items.";
-		// }
+		if ($subpartArray['###LIST###'] == '') {
+			$subpartArray['###LIST###'] = $this->pi_getLL('no_matches');			
+		}
+
 		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);			
 
 		return $content;
@@ -204,10 +219,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$termArray = $this->termsArray[$termKey];
 		$typeConfigArray = $this->conf['types.'][$termArray['term_type'] . '.'];
 
-		// TODO Add a search box
-		// $markerArray['###SEARCHBOX###'] = $this->pi_list_searchBox();
-		$markerArray['###SEARCHBOX###'] = '';
-
 		$markerArray['###TERM_TYPE###'] = $typeConfigArray['label'];
 		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'],'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid']);
 		$markerArray['###TERM_MAIN###'] = $termArray['term_main'];
@@ -219,7 +230,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###RELATED###'] = $this->getRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');
 
-		$labelWrap['noTrimWrap'] = $typeConfigArray['labelWrap1']?$typeConfigArray['labelWrap1']:$this->conf['labelWrap1'];
+		$labelWrap['wrap'] = $typeConfigArray['labelWrap1']?$typeConfigArray['labelWrap1']:$this->conf['labelWrap1'];
 		$markerArray['###TERM_TYPE_LABEL###'] = $markerArray['###TERM_TYPE###']?$this->local_cObj->stdWrap($this->pi_getLL('term_type'),$labelWrap):'';
 		$markerArray['###TERM_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term'),$labelWrap);
 		$markerArray['###TERM_MAIN_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term_main'),$labelWrap);
@@ -268,16 +279,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$imagesCode = '';
 		$imagesConf = $this->conf['images.']['single.'];
 		$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
-		if ($extConfArray['getImagesFromDAM'] == 0) {
-			$images = t3lib_div::trimExplode(',', $termArray['image'], 1);
-			foreach ($images as $image) {
-				$imagesWithPath[] = 'uploads/pics/' . $image;
-			}
-			$images = $imagesWithPath;
-			$imagesCaption = t3lib_div::trimExplode(chr(10), $termArray['imagecaption']);
-			$imagesAltText = t3lib_div::trimExplode(chr(10), $termArray['imagealt']);
-			$imagesTitleText = t3lib_div::trimExplode(chr(10), $termArray['imagetitle']);
-		} else {
+		if ( $extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam') ) {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
 				'tx_dam.file_path, tx_dam.file_name, tx_dam.alt_text, tx_dam.caption, tx_dam.title',
 				'tx_dam', 'tx_dam_mm_ref', 'tx_contagged_terms',
@@ -290,6 +292,15 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$imagesAltText[] = str_replace(array(chr(10),chr(13)), ' ', $row['alt_text'] . ' ');
 				$imagesTitleText[] = str_replace(array(chr(10),chr(13)), ' ', $row['title'] . ' ');
 			}
+		} else {
+			$images = t3lib_div::trimExplode(',', $termArray['image'], 1);
+			foreach ($images as $image) {
+				$imagesWithPath[] = 'uploads/pics/' . $image;
+			}
+			$images = $imagesWithPath;
+			$imagesCaption = t3lib_div::trimExplode(chr(10), $termArray['imagecaption']);
+			$imagesAltText = t3lib_div::trimExplode(chr(10), $termArray['imagealt']);
+			$imagesTitleText = t3lib_div::trimExplode(chr(10), $termArray['imagetitle']);
 		}
 		// debug($images, 'images');
 		// debug($imagesCaption, 'imagesCaption');
@@ -313,28 +324,32 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 
 	function renderIndex(&$markerArray) {
-		$subparts = array();
-		$subparts['template_index'] = $this->cObj->getSubpart($this->templateCode,'###TEMPLATE_INDEX###');
-		$subparts['item'] = $this->cObj->getSubpart($subparts['template_index'],'###ITEM###');
+		if ($this->conf['index.']['enable'] > 0) {
+			$subparts = array();
+			$subparts['template_index'] = $this->cObj->getSubpart($this->templateCode,'###TEMPLATE_INDEX###');
+			$subparts['item'] = $this->cObj->getSubpart($subparts['template_index'],'###ITEM###');
 
-		$indexArray = $this->getIndexArray();
+			$indexArray = $this->getIndexArray();
 
-		// wrap index chars and add a class attribute if there is a selected index char.
-		foreach ($indexArray as $indexChar => $link) {
-			$cssClass = '';
-			if ($this->piVars['index']==$indexChar) {
-				$cssClass = " class='tx-contagged-act'";
+			// wrap index chars and add a class attribute if there is a selected index char.
+			foreach ($indexArray as $indexChar => $link) {
+				$cssClass = '';
+				if ($this->piVars['index']==$indexChar) {
+					$cssClass = " class='tx-contagged-act'";
+				}
+				if ($link) {
+					$markerArray['###SINGLE_CHAR###'] = '<span' . $cssClass . '>' . $link . '</span>';
+				} elseif ($this->conf['showOnlyMatchedIndexChars']==0) {
+					$markerArray['###SINGLE_CHAR###'] = '<span' . $cssClass . '>' . $indexChar . '</span>';
+				} else {
+					$markerArray['###SINGLE_CHAR###'] = '';
+				}
+				$subpartArray['###INDEX_CONTENT###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray);
 			}
-			if ($link) {
-				$markerArray['###SINGLE_CHAR###'] = '<span' . $cssClass . '>' . $link . '</span>';
-			} elseif ($this->conf['showOnlyMatchedIndexChars']==0) {
-				$markerArray['###SINGLE_CHAR###'] = '<span' . $cssClass . '>' . $indexChar . '</span>';
-			} else {
-				$markerArray['###SINGLE_CHAR###'] = '';
-			}
-			$subpartArray['###INDEX_CONTENT###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray);
+			$markerArray['###INDEX###'] = $this->cObj->substituteMarkerArrayCached($subparts['template_index'], $markerArray, $subpartArray);
+		} else {
+			$markerArray['###INDEX###'] = '';
 		}
-		$markerArray['###INDEX###'] = $this->cObj->substituteMarkerArrayCached($subparts['template_index'], $markerArray, $subpartArray);
 	}
 
 	function getIndexArray() {
@@ -364,7 +379,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 					}
 				}
 				// If the term matches no given index char, crate one if desired and add it to the index
-				if ( $this->termsArray[$termKey]['indexChar']=='' && $this->conf['autoAddIndexChars']==1 ) {					
+				if ( $this->termsArray[$termKey]['indexChar']=='' && $this->conf['index.']['autoAddIndexChars']==1 ) {					
 					// get the first char of the term (UTF8)
 					// TODO: Make the RegEx configurable to make ZIP-Codes possible
 					preg_match('/^./' . $this->conf['modifier'],$termArray[$sortField],$match);
@@ -384,11 +399,19 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 	
 	function renderPageBrowser(&$markerArray) {
-		if ($this->internal['res_count'] > $this->internal['results_at_a_time']) {
+		if ( ($this->internal['res_count'] > $this->internal['results_at_a_time']) && ($this->conf['pagebrowser.']['enable'] > 0)) {
 			$showResultCount = $this->conf['pagebrowser.']['showResultCount'] ? (boolean)$this->conf['pagebrowser.']['showResultCount'] : FALSE;
 			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($showResultCount);
 		} else {
 			$markerArray['###PAGEBROWSER###'] = '';			
+		}
+	}
+	
+	function renderSearchBox(&$markerArray) {
+		if ($this->conf['searchbox.']['enable'] > 0) {
+			$markerArray['###SEARCHBOX###'] = $this->pi_list_searchBox();
+		} else {
+			$markerArray['###SEARCHBOX###'] = '';
 		}
 	}
 	

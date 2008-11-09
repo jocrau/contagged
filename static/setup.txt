@@ -29,12 +29,9 @@ plugin.tx_contagged {
 	labelWrap1 = {$contagged.labelWrap1}
 	labelWrap2 = {$contagged.labelWrap2}
 	modifier = {$contagged.modifier}
-	fieldsToSearch = {$contagged.fieldsToSearch}
 	sortField = {$contagged.sortField}
 	fieldsToMap = {$contagged.fieldsToMap}
 	secureFields = {$contagged.secureFields}
-	showOnlyMatchedIndexChars = {$contagged.showOnlyMatchedIndexChars}
-	autoAddIndexChars = {$contagged.autoAddIndexChars}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
 	
 	images {
@@ -64,12 +61,24 @@ plugin.tx_contagged {
 		single.stdWrap.wrap = <div>|</div>
 	}
 	
+	index {
+		enable = {$contagged.enableIndex}
+		showOnlyMatchedIndexChars = {$contagged.showOnlyMatchedIndexChars}
+		autoAddIndexChars = {$contagged.autoAddIndexChars}
+	}
+	
 	pagebrowser {
+		enable = {$contagged.enablePageBrowser}
 		results_at_a_time = {$contagged.results_at_a_time}
 		maxPages = {$contagged.maxPages}
 		dontLinkActivePage = {$contagged.dontLinkActivePage}
 		showFirstLast = {$contagged.showFirstLast}
 		showResultCount = {$contagged.showResultCount}
+	}
+	
+	searchbox {
+		enable = {$contagged.enableSearchBox}
+		fieldsToSearch = {$contagged.fieldsToSearch}
 	}
 	
 	types {

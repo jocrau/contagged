@@ -284,7 +284,12 @@ $TCA["tx_contagged_terms"] = array (
 	);
 	
 $extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
-if ( $extConfArray['getImagesFromDAM'] == 0 ) {
+if ( $extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam') ) {
+	$TCA["tx_contagged_terms"]['columns'] = array_merge_recursive($TCA["tx_contagged_terms"]['columns'],array(
+		'dam_images' => txdam_getMediaTCA('image_field', 'dam_images')
+		)
+	);
+} else {
 	$TCA["tx_contagged_terms"]['columns'] = array_merge_recursive($TCA["tx_contagged_terms"]['columns'], array(
 			'image' => Array (
 				'exclude' => 1,
@@ -333,11 +338,6 @@ if ( $extConfArray['getImagesFromDAM'] == 0 ) {
 					'rows' => '3'
 				)
 			),
-		)
-	);
-} else {
-	$TCA["tx_contagged_terms"]['columns'] = array_merge_recursive($TCA["tx_contagged_terms"]['columns'],array(
-		'dam_images' => txdam_getMediaTCA('image_field', 'dam_images')
 		)
 	);
 }

@@ -82,7 +82,7 @@ class tx_contagged_model_terms {
 			$this->terms = array_merge($this->terms,$this->fetchAllTermsFromSource($dataSource,$storagePidsArray));
 		}
 
-		uasort($this->terms,array($this,'sortByTermAscending'));
+		uasort($this->terms, array($this, 'sortByTermAscending'));
 	}
 
 	function findAllTerms() {
@@ -114,22 +114,15 @@ class tx_contagged_model_terms {
 		return in_array($sourceName, $this->configuredSources);
 	}
 
-	function sortByTermAscending($termArrayA,$termArrayB) {
-		// TODO: improve sorting (UTF8, configurable, localized->hook)
-		// strcasecmp() internally converts the two strings it is comparing to lowercase, based on the server locale settings. As such, it
-		// cannot be relied upon to be able to convert appropriate multibyte characters in UTF-8 to lowercase and, depending on the actual
-		// locale, may have internally corrupted the UTF-8 strings it is comparing, having falsely matched byte sequences. It won’t actually
-		// damage the UTF-8 string but the result of the comparison cannot be trusted. (Ref. http://www.phpwact.org/php/i18n/utf-8)
-		// TODO remove; just a hack
+	function sortByTermAscending($termArrayA, $termArrayB) {
 		$sortFieldA = $this->getSortField($termArrayA);
 		$sortFieldB = $this->getSortField($termArrayB);
-		$termsArray = array($termArrayA[$sortFieldA],$termArrayB[$sortFieldB]);
+		$termsArray = array($termArrayA[$sortFieldA], $termArrayB[$sortFieldB]);
 		// $GLOBALS['TSFE']->csConvObj->convArray($termsArray,'utf-8','iso-8859-1');
 		$termsArrayBefore = $termsArray;
-		sort($termsArray,SORT_LOCALE_STRING);
+		natcasesort($termsArray);
 		$termsArrayAfterwards = $termsArray;
-		// debug($termsArrayBefore,'before');debug($termsArrayAfterwards,'after');
-		if ($termsArrayBefore[0]==$termsArrayAfterwards[0]) {
+		if (array_pop($termsArrayBefore) == array_pop($termsArrayAfterwards)) {
 			$result = -1;
 		} else {
 			$result = 1;
@@ -211,6 +204,7 @@ class tx_contagged_model_terms {
 		} else {
 			$sortField = 'term';
 		}
+
 		return $sortField;
 	}
 
