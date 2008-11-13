@@ -182,53 +182,6 @@ $TCA["tx_contagged_terms"] = array (
 					),
 				)
 			),
-			// 'image' => Array (
-			// 	'exclude' => 1,
-			// 	'l10n_mode' => $l10n_mode_image,
-			// 	'label' => 'LLL:EXT:lang/locallang_general.php:LGL.images',
-			// 	'config' => Array (
-			// 		'type' => 'group',
-			// 		'internal_type' => 'file',
-			// 		'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
-			// 		'max_size' => '10000',
-			// 		'uploadfolder' => 'uploads/pics',
-			// 		'show_thumbs' => '1',
-			// 		'size' => 3,
-			// 		'autoSizeMax' => 15,
-			// 		'maxitems' => '99',
-			// 		'minitems' => '0'
-			// 	)
-			// ),
-			// 'imagecaption' => Array (
-			// 	'exclude' => 1,
-			// 	'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagecaption',
-			// 	'l10n_mode' => $l10n_mode,
-			// 	'config' => Array (
-			// 		'type' => 'text',
-			// 		'cols' => '30',
-			// 		'rows' => '3'
-			// 	)
-			// ),
-			// 'imagealt' => Array (
-			// 	'exclude' => 1,
-			// 	'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagealt',
-			// 	'l10n_mode' => $l10n_mode,
-			// 	'config' => Array (
-			// 		'type' => 'text',
-			// 		'cols' => '20',
-			// 		'rows' => '3'
-			// 	)
-			// ),
-			// 'imagetitle' => Array (
-			// 	'exclude' => 1,
-			// 	'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.imagetitle',
-			// 	'l10n_mode' => $l10n_mode,
-			// 	'config' => Array (
-			// 		'type' => 'text',
-			// 		'cols' => '20',
-			// 		'rows' => '3'
-			// 	)
-			// ),
 			'related' => Array (
 				'exclude' => 1,
 				'l10n_mode' => 'exclude',

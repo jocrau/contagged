@@ -106,14 +106,12 @@ class tx_contagged extends tslib_pibase {
 		}
 		$parsedContent = implode('',$splittedContent);
 		
-
 		// update the keywords (field "tx_contagged_keywords" in table "page")
-		if ($this->conf['updateKeywords']>0) {
-			$this->insertKeywords();
+		if ($this->conf['updateKeywords'] > 0) {
+			$this->updatePageKeywords();
 		}
 
 		return $parsedContent;
-
 	}
 	
 	function sortArrayByLengthDescending($a,$b) {
@@ -173,19 +171,18 @@ class tx_contagged extends tslib_pibase {
 				foreach ($checkArray as $start => $value) {
 					$length = strlen($value['matchedTerm']);
 					$end = $start+$length;
-					if ( ($matchStart>=$start&&$matchStart<$end) || ($matchEnd>$start&&$matchEnd<=$end) ) {
+					if ( (($matchStart >= $start) && ($matchStart < $end)) || (($matchEnd > $start) && ($matchEnd <= $end)) ) {
 						$isNested = TRUE;
 					}
-				}
-				
-				// change the sign of the matchStart if the matchedTerm is nested
-				$matchStart = $isNested ? -$matchStart : $matchStart;
-				$positionsArray[$matchStart] = array(
-					'termKey' => $termKey,
-					'matchedTerm' => $matchedTerm,
-					'preMatch' => $preMatch[0],
-					'postMatch' => $postMatch[0]
-					);
+				}				
+				if (!$isNested) {
+					$positionsArray[$matchStart] = array(
+						'termKey' => $termKey,
+						'matchedTerm' => $matchedTerm,
+						'preMatch' => $preMatch[0],
+						'postMatch' => $postMatch[0]
+						);
+				}	
 			}
 		}
 	}
@@ -195,14 +192,12 @@ class tx_contagged extends tslib_pibase {
 		$newContent = '';
 		if($positionsArray){
 			foreach ($positionsArray as $matchStart => $matchArray) {
-				if ($matchStart>=0) { // ignore nested matches
-					$matchLength = strlen($matchArray['matchedTerm']);
-					$termKey = $matchArray['termKey'];
-					$replacement = $this->getReplacement($termKey,$matchArray['matchedTerm'],$matchArray['preMatch'],$matchArray['postMatch']);
-					$replacementLength = strlen($replacement);
-					$newContent = $newContent.substr($content,$posStart,$matchStart-$posStart).$replacement;
-					$posStart = $matchStart+$matchLength;
-				}
+				$matchLength = strlen($matchArray['matchedTerm']);
+				$termKey = $matchArray['termKey'];
+				$replacement = $this->getReplacement($termKey, $matchArray['matchedTerm'], $matchArray['preMatch'], $matchArray['postMatch']);
+				$replacementLength = strlen($replacement);
+				$newContent = $newContent.substr($content,$posStart,$matchStart-$posStart).$replacement;
+				$posStart = $matchStart + $matchLength;
 			}
 			$newContent = $newContent.substr($content,$posStart);
 		} else {
@@ -242,17 +237,17 @@ class tx_contagged extends tslib_pibase {
 			// if the first letter of the matched term is upper case
 			// make the first letter of the replacing term also upper case
 			// (\p{Lu} stands for "unicode letter uppercase")
+			$GLOBALS['TSFE']->register['contagged_matchedTerm'] = $termArray['term_replace'];
+			$this->updateIndex($termKey, $termArray['term_replace']);
 			if ( preg_match('/^\p{Lu}/u',$matchedTerm)>0 ) {
 				$matchedTerm = $preMatch . ucfirst($termArray['term_replace']) . $postMatch;
 				// TODO ucfirst is not UTF8 safe; it depends on the locale settings (they could be ASCII)
 			} else {
 				$matchedTerm = $preMatch . $termArray['term_replace'] . $postMatch;
 			}
-		}
-
-		$GLOBALS['TSFE']->register['contagged_matchedTerm'] = $matchedTerm;
-		if ( !$termArray['exclude'] && !$typeConfigArray['dontListTerms'] ) {
-			$GLOBALS['TSFE']->register['contagged_termsFound'][] = strip_tags($matchedTerm);
+		} else {
+			$GLOBALS['TSFE']->register['contagged_matchedTerm'] = $matchedTerm;
+			$this->updateIndex($termKey, $termArray['term']);
 		}
 
 		// call stdWrap to handle the matched term via TS BEFORE it is wraped with a-tags
@@ -271,15 +266,27 @@ class tx_contagged extends tslib_pibase {
 		if ( !empty($typeConfigArray['tag']) ) {
 			$matchedTerm = $before . $matchedTerm . $after;
 		}
-		
+				
 		// TODO Edit Icons
 		// $editIconsConf = array(
 		// 	'styleAttribute' => '',
 		// 	);
-		$matchedTerm = $this->cObj->editIcons($matchedTerm,'tx_contagged_terms:sys_language_uid,hidden,starttime,endtime,fe_group,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid'],NULL,'&defVals[tx_contagged_terms][desc_short]=TEST');
+		$matchedTerm = $this->cObj->editIcons($matchedTerm,'tx_contagged_terms:sys_language_uid,hidden,starttime,endtime,fe_group,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid'],NULL,'&defVals[tx_contagged_terms][desc_short]=TEST');
 		
 		return $matchedTerm;
+	}
 
+
+	function updateIndex($termKey, $matchedTerm) {
+		$currentRecord = split(':',$this->cObj->currentRecord);
+		$GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id][$termKey] = array(
+			'matchedTerm' => $matchedTerm,
+			'termSourceName' => $this->termsArray[$termKey]['sourceName'],
+			'termUid' => $this->termsArray[$termKey]['uid'],
+			'currentRecordSourceName' => $currentRecord[0],
+			'currentRecordUid' => $currentRecord[1],
+			'currentPid' => $GLOBALS['TSFE']->id
+			);
 	}
 
 	/**
@@ -310,34 +317,19 @@ class tx_contagged extends tslib_pibase {
 		return $tagList;
 	}
 
-	function insertKeywords() {
-		$GLOBALS['TSFE']->register['contagged_termsFound'] = array_unique((array)$GLOBALS['TSFE']->register['contagged_termsFound']);
-		// make a list of unique terms found in the content
-		$termsFoundList = implode(',',$GLOBALS['TSFE']->register['contagged_termsFound']);
-		// build an array to be passed to the UPDATE query
-		$updateArray = array($this->prefixId . '_keywords' => $termsFoundList);
-		// $updateArray = array('keywords' => $termsFoundList);
-		// execute sql-query
+	function updatePageKeywords() {
+		$terms = array();
+		if (is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id])) {
+			foreach ($GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id] as $termKey => $indexArray) {
+				$terms[] = $indexArray['matchedTerm'];
+			}
+		}
+		$termsList = implode(',', $terms);
 		$res = $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
 			'pages', // TABLE ...
 			'uid=' . $GLOBALS['TSFE']->id, // WHERE ...
-			$updateArray
+			array($this->prefixId . '_keywords' => $termsList)
 			);
-	}
-	
-	/**
-	 * Cleans up a string of keywords. Keywords at splitted by "," (comma)  ";" (semi colon) and linebreak
-	 *
-	 * @param	string		String of keywords
-	 * @return	string		Cleaned up string, keywords will be separated by a comma only.
-	 */
-	function keywords($content)	{
-		$listArr = split(',|;|'.chr(10),$content);
-		reset($listArr);
-		while(list($k,$v)=each($listArr))	{
-			$listArr[$k]=trim($v);
-		}
-		return implode(',',$listArr);
 	}
 	
 	/**
@@ -388,7 +380,6 @@ class tx_contagged extends tslib_pibase {
 		if ($makeLink) {
 		    $cache = 0;
 		    $this->pi_USER_INT_obj = 1;
-		    $this->prefixId = 'tx_contagged_pi1';
 		    $label = $matchedTerm;  // the link text
 		    $overrulePIvars = array(
 				'backPid' => $GLOBALS['TSFE']->id,
@@ -402,14 +393,13 @@ class tx_contagged extends tslib_pibase {
 			}
 			$GLOBALS['TSFE']->register['contagged_list_page'] = $altPageId;
 		    $matchedTerm = $this->pi_linkTP_keepPIvars($matchedTerm, $overrulePIvars, $cache, $clearAnyway, $altPageId);
-			$this->prefixId = 'tx_contagged';
 		}
 		
 		return $matchedTerm;
 	}
 
 	/**
-	 * undocumented function
+	 * Overwrite global settings with settings of the type configuration.
 	 *
 	 * @param string $typeConfigArray 
 	 * @param string $attributeName 
@@ -454,7 +444,7 @@ class tx_contagged extends tslib_pibase {
 	}
 
 	/**
-	 * undocumented function
+	 * Renders the title attribute of the tag.
 	 *
 	 * @param string $typeConfigArray 
 	 * @param string $termArray 
@@ -470,7 +460,7 @@ class tx_contagged extends tslib_pibase {
 	}
 
 	/**
-	 * [Describe function...]
+	 * Renders the class attribute of the tag.
 	 *
 	 * @param	[type]		$typeConfigArray: ...
 	 * @param	[type]		$termArray: ...

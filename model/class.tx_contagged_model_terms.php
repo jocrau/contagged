@@ -89,16 +89,17 @@ class tx_contagged_model_terms {
 		return $this->terms;
 	}
 	
-	function findAllTermsToBeListed($pid = NULL) {
+	function findAllTermsToListOnPage($pid = NULL) {
 		$terms = array();
+		if ($pid === NULL) $pid = $GLOBALS['TSFE']->id;
 		foreach ($this->terms as $key => $term) {
-			if ( $term['exclude']!=1 && $this->conf['types.'][$term['term_type'].'.']['dontListTerms']!=1 && (in_array($pid,$term['listPages']) || $pid === NULL) ) {
+			if ( ($term['exclude'] == 0) && ($this->conf['types.'][$term['term_type'].'.']['dontListTerms'] == 0) && (in_array($pid, $term['listPages']) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key])) ) {
 				$terms[$key] = $term;
 			}
 		}
 		return $terms;
 	}
-	
+		
 	function findTermByUid($sourceName, $uid) {
 		$fetchedTerms = array();
 		foreach ($this->terms as $key => $term) {
@@ -149,8 +150,8 @@ class tx_contagged_model_terms {
 		if (t3lib_div::inArray($this->tablesArray,$sourceName) ) {
 			// Build WHERE-clause
 			$whereClause = '1=1';
-			$whereClause .= $storagePidsList ? ' AND pid IN ('.$storagePidsList.')' : '';
-			$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid='.intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
+			$whereClause .= $storagePidsList ? ' AND pid IN (' . $storagePidsList . ')' : '';
+			$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
 			$whereClause .= tslib_cObj::enableFields($sourceName);
 
 			// execute SQL-query
@@ -164,6 +165,7 @@ class tx_contagged_model_terms {
 			$dataArray = $this->mapper->getDataArray($result,$dataSource);
 		}
 		$this->fetchRelatedTerms($dataArray);
+		// $this->fetchIndex($dataArray);
 		
 		// TODO piVars as a data source
 
@@ -179,6 +181,25 @@ class tx_contagged_model_terms {
 				'sorting'
 				);
 
+			if (!empty($result)) {
+				$termArray['related'] = array();
+				foreach ($result as $row) {
+					if ($this->sourceIsConfigured($row['tablenames'])) {
+						$termArray['related'][] = array('sourceName' => $row['tablenames'], 'uid' => $row['uid_foreign']);
+					}
+				}
+			} else {
+				$termArray['related'] = NULL;
+			}
+			$newDataArray[] = $termArray;
+		}
+		$dataArray = $newDataArray;
+	}
+
+
+	function fetchIndex(&$dataArray) {
+		foreach ($dataArray as $key => $termArray) {
+			
 			if (!empty($result)) {
 				$termArray['related'] = array();
 				foreach ($result as $row) {

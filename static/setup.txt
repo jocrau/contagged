@@ -80,7 +80,7 @@ plugin.tx_contagged {
 		enable = {$contagged.enableSearchBox}
 		fieldsToSearch = {$contagged.fieldsToSearch}
 	}
-	
+		
 	types {
 
 		definition {

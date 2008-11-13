@@ -53,11 +53,11 @@ class tx_contagged_pi1 extends tslib_pibase {
 	 * @param	array		$conf: The configuration
 	 * @return	string			a single or list view of terms
 	 */
-	function main($content) {
+	function main($content, $conf) {
 		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
 		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
 		$this->pi_loadLL();
-		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'];
+		$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'], $conf);
 		$this->templateCode = $this->cObj->fileResource($this->conf['templateFile']?$this->conf['templateFile']:$this->templateFile);
 		$this->typolinkConf = $this->conf['typolink.'];
 		$this->typolinkConf['parameter.']['current'] = 1;
@@ -65,30 +65,23 @@ class tx_contagged_pi1 extends tslib_pibase {
 		unset($this->typolinkConf['additionalParams.']);
 		$this->backPid = $this->piVars['backPid'] ? intval($this->piVars['backPid']) : NULL;
 		$this->pointer = $this->piVars['pointer'] ? intval($this->piVars['pointer']) : NULL;
-		$this->indexChar = $this->piVars['index'] ? urldecode($this->piVars['index']) : NULL;
+		$this->indexChar = $this->piVars['index'] ? urldecode($this->piVars['index']) : NULL; // TODO The length should be configurable
 		if ( !is_null($this->piVars['key']) ) {
 			$termKey = intval($this->piVars['key']);
-		}
+		}		
 		$sword = $this->piVars['sword'] ? htmlspecialchars(urldecode($this->piVars['sword'])) : NULL;
 
 		// get an array of all type configurations
 		$this->typesArray = $this->conf['types.'];
 
-		$this->mapper = new tx_contagged_model_mapper($this);
-
 		// get the model (an associated array of terms)
+		$this->mapper = new tx_contagged_model_mapper($this);
 		$this->model = new tx_contagged_model_terms($this);
-		$this->termsArray = $this->model->findAllTermsToBeListed($GLOBALS['TSFE']->id);
+		$this->termsArray = $this->model->findAllTermsToListOnPage();
 
-		// setup the page browser
-		$this->internal['res_count'] = count($this->termsArray);
-		$this->internal['results_at_a_time'] = $this->conf['pagebrowser.']['results_at_a_time'] ? intval($this->conf['pagebrowser.']['results_at_a_time']) : 20;
-		$this->internal['maxPages'] = $this->conf['pagebrowser.']['maxPages'] ? intval($this->conf['pagebrowser.']['maxPages']) : 3;
-		$this->internal['dontLinkActivePage'] = $this->conf['pagebrowser.']['dontLinkActivePage'] ? (boolean)$this->conf['pagebrowser.']['dontLinkActivePage'] : TRUE;
-		$this->internal['showFirstLast'] = $this->conf['pagebrowser.']['showFirstLast'] ? (boolean)$this->conf['pagebrowser.']['showFirstLast'] : FALSE;
-		$this->internal['pagefloat'] = 'center';
-
-		if ( is_null($termKey) && is_null($sword) ) {
+		if (($this->conf['minilist'] > 0) || ($this->cObj->data['select_key'] == 'MINILIST')) {
+			$content .= $this->renderMiniList();
+		} elseif ( is_null($termKey) && is_null($sword) ) {
 			$content .= $this->renderList();
 		} elseif ( is_null($termKey) && !is_null($sword) ) {
 			$content .= $this->renderListBySword($sword);
@@ -113,17 +106,38 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->renderLinks($markerArray,$wrappedSubpartArray);
 		$this->renderIndex($markerArray);
 		$this->renderSearchBox($markerArray);
-		if (empty($this->indexChar) && ($this->conf['pagebrowser.']['enable'] > 0)) {
-			$this->renderPageBrowser($markerArray);
-			$terms = array_slice($this->termsArray, ($this->pointer * $this->internal['results_at_a_time']), $this->internal['results_at_a_time'], TRUE);
+		$indexedTerms = array();
+		foreach ( $this->termsArray as $termKey => $termArray ) {
+			if ( $this->indexChar==NULL || $termArray['indexChar']==$this->indexChar ) {
+				$indexedTerms[$termKey] = $termArray;
+			}
+		}
+		if ( $this->conf['pagebrowser.']['enable'] > 0 ) {
+			$this->renderPageBrowser($markerArray, count($indexedTerms));
+			$terms = array_slice($indexedTerms, ($this->pointer * $this->internal['results_at_a_time']), $this->internal['results_at_a_time'], TRUE);
 		} else {
-			$terms = $this->termsArray;
+			$terms = $indexedTerms;
 		}
 		foreach ( $terms as $termKey => $termArray ) {
-			if ( $this->indexChar==NULL || $termArray['indexChar']==$this->indexChar ) {
-				$this->renderSingleItem($termKey,$markerArray,$wrappedSubpartArray);
-				$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
-			}
+			$this->renderSingleItem($termKey,$markerArray,$wrappedSubpartArray);
+			$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
+		}
+		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);
+
+		return $content;
+	}
+
+	/**
+	 * Renders the mini list of terms
+	 *
+	 * @return	$string	The list as HTML
+	 */
+	function renderMiniList() {
+		$subparts = $this->getSubparts('MINILIST');
+		$terms = $this->termsArray;
+		foreach ( $terms as $termKey => $termArray ) {
+			$this->renderSingleItem($termKey,$markerArray,$wrappedSubpartArray);
+			$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
 		}
 		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);
 
@@ -181,14 +195,14 @@ class tx_contagged_pi1 extends tslib_pibase {
 
 	// TODO hook "newRenderFunction"
 
-	function getSubparts($templateName='LIST') {
+	function getSubparts($templateName = 'LIST') {
 		$subparts['template_list'] = $this->cObj->getSubpart($this->templateCode,'###TEMPLATE_' . $templateName . '###');
-		$subparts['item'] = $this->cObj->getSubpart($subparts['template_list'],'###ITEM###');
+		$subparts['item'] = $this->cObj->getSubpart($subparts['template_list'], '###ITEM###');
 
 		return $subparts;
 	}
 
-	function renderLinks(&$markerArray,&$wrappedSubpartArray) {
+	function renderLinks(&$markerArray, &$wrappedSubpartArray) {
 		// make "back to..." link
 		if ($this->backPid) {
 			if($this->conf['addBackLinkDescription']>0) {
@@ -220,14 +234,14 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$typeConfigArray = $this->conf['types.'][$termArray['term_type'] . '.'];
 
 		$markerArray['###TERM_TYPE###'] = $typeConfigArray['label'];
-		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'],'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid']);
+		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'],'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid']);
 		$markerArray['###TERM_MAIN###'] = $termArray['term_main'];
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt']?implode(', ',$termArray['term_alt']):$this->pi_getLL('na');
 		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace']?$termArray['term_replace']:$this->pi_getLL('na');
 		$markerArray['###DESC_SHORT###'] = $termArray['desc_short']?$termArray['desc_short']:$this->pi_getLL('na');
 		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$termArray['desc_long']:$this->pi_getLL('na');
-		$markerArray['###IMAGES###'] = $this->getImages($termArray);
-		$markerArray['###RELATED###'] = $this->getRelated($termArray);
+		$markerArray['###IMAGES###'] = $this->renderImages($termArray);
+		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');
 
 		$labelWrap['wrap'] = $typeConfigArray['labelWrap1']?$typeConfigArray['labelWrap1']:$this->conf['labelWrap1'];
@@ -247,11 +261,13 @@ class tx_contagged_pi1 extends tslib_pibase {
 		unset($typolinkConf);
 		$typolinkConf = $this->typolinkConf;
 		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[key]=' . $termKey;
+		$typolinkConf['parameter'] = $termArray['listPages'][0];
+		$this->typolinkConf['parameter.']['current'] = 0;
 		$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
 		$wrappedSubpartArray['###LINK_DETAILS###'] = $this->local_cObj->typolinkWrap($typolinkConf);
 	}
 	
-	function getRelated($term) {
+	function renderRelated($term) {
 		$relatedCode = '';
 		if (is_array($term['related'])) {
 			foreach ($term['related'] as $termReference) {
@@ -271,7 +287,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		}
 	}
 	
-	function getImages($termArray) {
+	function renderImages($termArray) {
 		$images = array();
 		$imagesCaption = array();
 		$imagesAltText = array();
@@ -379,7 +395,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 					}
 				}
 				// If the term matches no given index char, crate one if desired and add it to the index
-				if ( $this->termsArray[$termKey]['indexChar']=='' && $this->conf['index.']['autoAddIndexChars']==1 ) {					
+				if ( ($this->termsArray[$termKey]['indexChar'] == '') && ($this->conf['index.']['autoAddIndexChars'] == 1) ) {					
 					// get the first char of the term (UTF8)
 					// TODO: Make the RegEx configurable to make ZIP-Codes possible
 					preg_match('/^./' . $this->conf['modifier'],$termArray[$sortField],$match);
@@ -398,7 +414,14 @@ class tx_contagged_pi1 extends tslib_pibase {
 		return $indexArray;
 	}
 	
-	function renderPageBrowser(&$markerArray) {
+	function renderPageBrowser(&$markerArray, $resultCount) {
+		// setup the page browser
+		$this->internal['res_count'] = $resultCount;
+		$this->internal['results_at_a_time'] = $this->conf['pagebrowser.']['results_at_a_time'] ? intval($this->conf['pagebrowser.']['results_at_a_time']) : 20;
+		$this->internal['maxPages'] = $this->conf['pagebrowser.']['maxPages'] ? intval($this->conf['pagebrowser.']['maxPages']) : 3;
+		$this->internal['dontLinkActivePage'] = $this->conf['pagebrowser.']['dontLinkActivePage'] ? (boolean)$this->conf['pagebrowser.']['dontLinkActivePage'] : FALSE;
+		$this->internal['showFirstLast'] = $this->conf['pagebrowser.']['showFirstLast'] ? (boolean)$this->conf['pagebrowser.']['showFirstLast'] : FALSE;
+		$this->internal['pagefloat'] = 'center';
 		if ( ($this->internal['res_count'] > $this->internal['results_at_a_time']) && ($this->conf['pagebrowser.']['enable'] > 0)) {
 			$showResultCount = $this->conf['pagebrowser.']['showResultCount'] ? (boolean)$this->conf['pagebrowser.']['showResultCount'] : FALSE;
 			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($showResultCount);

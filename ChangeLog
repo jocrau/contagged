@@ -1,4 +1,5 @@
 
+	* ADD Mini list of terms found on a single page (CODE: "MINILIST")
 	* CHG Restructured TS Setup for FE-List (please adapt your local TS Setup!)
 	* ADD Search box (pi_base)
 	* IMP You can disable the index, the search box and the page browser by TS Setup
