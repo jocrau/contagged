@@ -9,7 +9,7 @@ t3lib_extMgm::addPlugin(array('LLL:EXT:contagged/locallang_db.php:tx_contagged_t
 
 // initialize static extension templates
 t3lib_extMgm::addStaticFile($_EXTKEY,'static/', 'Content parser');
-t3lib_extMgm::addStaticFile($_EXTKEY,'static/examples/', 'Experimental types');
+t3lib_extMgm::addStaticFile($_EXTKEY,'static/examples/', 'Experimental Setup');
 t3lib_extMgm::addStaticFile($_EXTKEY,'static/css/','Default CSS-styles');
 
 $TCA["tx_contagged_terms"] = array (

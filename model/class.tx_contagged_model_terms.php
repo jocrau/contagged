@@ -77,8 +77,9 @@ class tx_contagged_model_terms {
 				}
 			}
 		}
+		
 		// get an array of all data rows in the configured tables
-		foreach ($dataSourceArray as $dataSource=>$storagePidsArray ) {
+		foreach ($dataSourceArray as $dataSource => $storagePidsArray ) {
 			$this->terms = array_merge($this->terms,$this->fetchAllTermsFromSource($dataSource,$storagePidsArray));
 		}
 
@@ -139,11 +140,11 @@ class tx_contagged_model_terms {
 	 * @param	[type]		$storagePids: ...
 	 * @return	An		array with the terms an their configuration
 	 */
-	function fetchAllTermsFromSource($dataSource,$storagePidsArray=NULL) {
+	function fetchAllTermsFromSource($dataSource, $storagePidsArray=NULL) {
 		$dataArray = array();
 		$terms = array();
 		$storagePidsList = implode(',',$storagePidsArray);
-		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource.'.'];
+		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 		$sourceName = $dataSourceConfigArray['sourceName'];
 
 		// check if the table exists in the database
@@ -160,7 +161,6 @@ class tx_contagged_model_terms {
 				$sourceName, // FROM ...
 				$whereClause // WHERE ..
 				);
-
 			// map the fields
 			$dataArray = $this->mapper->getDataArray($result,$dataSource);
 		}

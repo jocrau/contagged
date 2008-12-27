@@ -79,7 +79,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->model = new tx_contagged_model_terms($this);
 		$this->termsArray = $this->model->findAllTermsToListOnPage();
 
-		if (($this->conf['minilist'] > 0) || ($this->cObj->data['select_key'] == 'MINILIST')) {
+		if ((strtolower($this->conf['layout']) == 'minilist') || (strtolower($this->cObj->data['select_key']) == 'minilist')) {
 			$content .= $this->renderMiniList();
 		} elseif ( is_null($termKey) && is_null($sword) ) {
 			$content .= $this->renderList();

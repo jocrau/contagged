@@ -1,148 +1,255 @@
 # encoding: iso-8859-1
 
-# there are several places (eg. tt_content.text) and several ways (postUserFunc, parseFunc.userFunc,contentPostProc-all)
-# to initiate parsing
+# include class tx_contagged as library 
+includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
-# 1st possibility:
-# tt_content.text.20.parseFunc.userFunc = tx_contagged->main
-
-# 2nd possibility:
-# tt_content.text.20.postUserFunc = tx_contagged->main
-
-# 3rd possibility:
-# temp_content < styles.content.get
-# temp_content.stdWrap.postUserFunc = tx_contagged->main
-# styles.content.get >
-# styles.content.get < temp_content
+# invoke the parser
+lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
+tt_content.text.20.postUserFunc = tx_contagged->main
+tt_content.bullets.20.postUserFunc = tx_contagged->main
 
 plugin.tx_contagged {
+	templateFile = {$contagged.templateFile}
+	linkToListPage = {$contagged.linkToListPage}
+	listPages = {$contagged.listPages}
+	storagePids = {$contagged.storagePids}
+	includeRootPages = {$contagged.includeRootPages}
+	excludeRootPages = {$contagged.excludeRootPages}
+	includePages = {$contagged.includePages}
+	excludePages = {$contagged.excludePages}
+	excludeTags = {$contagged.excludeTags}
+	autoExcludeTags = {$contagged.autoExcludeTags}
+	checkPreAndPostMatches = {$contagged.checkPreAndPostMatches}
+	addTitleAttribute = {$contagged.addTitleAttribute}
+	addLangAttribute = {$contagged.addLangAttribute}
+	addCssClassAttribute = {$contagged.addCssClassAttribute}
+	replaceTerm = {$contagged.replaceTerm}
+	maxRecurrences = {$contagged.maxRecurrences}
+	updateKeywords = {$contagged.updateKeywords}
+	labelWrap1 = {$contagged.labelWrap1}
+	labelWrap2 = {$contagged.labelWrap2}
+	modifier = {$contagged.modifier}
+	sortField = {$contagged.sortField}
+	fieldsToMap = {$contagged.fieldsToMap}
+	secureFields = {$contagged.secureFields}
+	addBackLinkDescription = {$contagged.addBackLinkDescription}
 	
-	types {
-
-		dfn_block {
-			label = Definition (tool-tip)
-			label.de = Definition (Tool-Tip)
-			tag = span
-			addCssClassAttribute = 1
-			cssClass = dfn_block
-			stripBlockTags = 1
-			stdWrap.innerWrap.cObject = COA
-			stdWrap.innerWrap.cObject {
-				10 = TEXT
-				10.value = | <span class="tx-contagged-dfn_block-content">
-				20 = TEXT
-				20.data = register:contagged_matchedTerm
-				20.typolink {
-					parameter.data = register:contagged_list_page
-					parameter.override.field = link
-					useCacheHash = 1
-					additionalParams.data = register:contagged_key
-					additionalParams.wrap = &tx_contagged_pi1[key]=|
-					additionalParams.dataWrap = |&tx_contagged_pi1[backPid]={TSFE:id}
-				}
-				30 = TEXT
-				30.value = <br />
-				40 = TEXT
-				40.required = 1
-				40.data = register:contagged_desc_long
-				50 = TEXT
-				50.value = </span>
+	images {
+		stdWrap.wrap = <div class="tx-contagged-images">|</div>
+		caption.stdWrap.wrap = <div class="tx-contagged-imagecaption"> | </div>
+	    caption.stdWrap.trim = 1
+		single.image {
+			file.maxW = {$contagged.singleMaxW}
+			file.maxH = {$contagged.singleMaxH}
+			stdWrap.wrap = <div class="tx-contagged-singleimage">|</div>
+			imageLinkWrap = 1
+			imageLinkWrap {
+				enable = 1
+				bodyTag = <body bgColor="#ffffff">
+				wrap = <a href="javascript:close();"> | </a>
+				width = 500m
+				height = 500
+				JSwindow = 1
+				JSwindow.newWindow = 1
+				JSwindow.expand = 17,20
 			}
 		}
+	}
+	
+	related {
+		stdWrap.wrap = <div class="tx-contagged-related">|</div>
+		single.stdWrap.wrap = <div>|</div>
+	}
+	
+	index {
+		enable = {$contagged.enableIndex}
+		showOnlyMatchedIndexChars = {$contagged.showOnlyMatchedIndexChars}
+		autoAddIndexChars = {$contagged.autoAddIndexChars}
+	}
+	
+	pagebrowser {
+		enable = {$contagged.enablePageBrowser}
+		results_at_a_time = {$contagged.results_at_a_time}
+		maxPages = {$contagged.maxPages}
+		dontLinkActivePage = {$contagged.dontLinkActivePage}
+		showFirstLast = {$contagged.showFirstLast}
+		showResultCount = {$contagged.showResultCount}
+	}
+	
+	searchbox {
+		enable = {$contagged.enableSearchBox}
+		fieldsToSearch = {$contagged.fieldsToSearch}
+	}
+		
+	types {
 
-		dfn_inline {
-			label = Definition (inline)
-			label.de = Definition (im Fließtext)
-			tag = span
-			linkToListPage = 0
-			addCssClassAttribute = 1
-			stdWrap.innerWrap.cObject = COA
-			stdWrap.innerWrap.cObject {
-				10 = TEXT
-				10.value = | <span class="tx-contagged-dfn_block-content">&nbsp;[
-				20 = TEXT
-				20.required = 1
-				20.stripHtml = 1
-				20.data = register:contagged_desc_long
-				30 = TEXT
-				30.value = ] </span>
+		definition {
+			label = Definition
+			label.de = Definition
+			tag = dfn
+		}
+
+		acronym {
+			label = Acronym
+			label.de = Kurzwort aus Anfangsbuchstaben (Beispiel: NATO)
+			tag = acronym
+		}
+
+		abbrevation {
+			label = Abbrevation
+			label.de = Abkürzung (Beispiel: u.s.w.)			
+			tag = abbr
+		}
+		
+				dfn_block {
+					label = Definition (tool-tip)
+					label.de = Definition (Tool-Tip)
+					tag = span
+					addCssClassAttribute = 1
+					cssClass = dfn_block
+					stripBlockTags = 1
+					stdWrap.innerWrap.cObject = COA
+					stdWrap.innerWrap.cObject {
+						10 = TEXT
+						10.value = | <span class="tx-contagged-dfn_block-content">
+						20 = TEXT
+						20.data = register:contagged_matchedTerm
+						20.typolink {
+							parameter.data = register:contagged_list_page
+							parameter.override.field = link
+							useCacheHash = 1
+							additionalParams.data = register:contagged_key
+							additionalParams.wrap = &tx_contagged[key]=|
+							additionalParams.dataWrap = |&tx_contagged[backPid]={TSFE:id}
+						}
+						30 = TEXT
+						30.value = <br />
+						40 = TEXT
+						40.required = 1
+						40.data = register:contagged_desc_long
+						50 = TEXT
+						50.value = </span>
+					}
+				}
+
+				dfn_inline {
+					label = Definition (inline)
+					label.de = Definition (im Fließtext)
+					tag = span
+					linkToListPage = 0
+					addCssClassAttribute = 1
+					stdWrap.innerWrap.cObject = COA
+					stdWrap.innerWrap.cObject {
+						10 = TEXT
+						10.value = | <span class="tx-contagged-dfn_block-content">&nbsp;[
+						20 = TEXT
+						20.required = 1
+						20.stripHtml = 1
+						20.data = register:contagged_desc_long
+						30 = TEXT
+						30.value = ] </span>
+					}
+				}
+
+		# 		location {
+		# 			label = Location
+		# 			label.de = Ortsbezeichnung
+		# 			tag = strong
+		# 		}
+		# 
+		# 		price {
+		# 			label = Price
+		# 			label.de = Preis
+		# 			termStdWrap.wrap = ***|***
+		# 			linkToListPage = 0
+		# 			stdWrap.wrap = |&nbsp;Euro
+		# 			dontListTerms = 1
+		# 		}
+		# 
+		# 		regex {
+		# 			label = Regular Expression
+		# 			label.de = Regulärer Ausdruck
+		# 			linkToListPage = 1
+		# 			termIsRegEx = 1
+		# 			secureFields =
+		# 			dontListTerms = 0
+		# 		}
+		# 		
+				person < plugin.tx_contagged.types.dfn_block
+				person {
+					label = Person
+					label.de = Person
+					dataSource = addresses
+					sortField = zip
+				}
+		# 		
+		# 		reference {
+		# 			label = Reference
+		# 			label.de = Quelle
+		# 			dataSource = references
+		# 			sortField = term_main
+		# 		}
+		# 		
+		# 		category < plugin.tx_contagged.types.dfn_block
+		# 		category {
+		# 			label = Category
+		# 			label.de = Kategorie
+		# 			dataSource = categories
+		# 		}
+				
+	}
+
+	dataSources {
+		
+		default {
+			sourceName = tx_contagged_terms
+			hasSysLanguageUid = 1
+			storagePids = 
+			fieldsToEdit = term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,link,exclude
+			mapping {
+				uid.field = uid
+				pid.field = pid
+				term_main.field = term_main
+				term_alt.field = term_alt
+				term_type.field = term_type
+				term_replace.field = term_replace
+				term_lang.field = term_lang
+				desc_short.field = desc_short
+				desc_long.field = desc_long
+				image.field = image
+				imagecaption.field = imagecaption
+				imagealt.field = imagealt
+				imagetitle.field = imagetitle
+				related.field = related
+				link.field = link
+				exclude.field = exclude
 			}
 		}
 		
-# 		location {
-# 			label = Location
-# 			label.de = Ortsbezeichnung
-# 			tag = strong
-# 		}
-# 
-# 		price {
-# 			label = Price
-# 			label.de = Preis
-# 			termStdWrap.wrap = ***|***
-# 			linkToListPage = 0
-# 			stdWrap.wrap = |&nbsp;Euro
-# 			dontListTerms = 1
-# 		}
-# 
-# 		regex {
-# 			label = Regular Expression
-# 			label.de = Regulärer Ausdruck
-# 			linkToListPage = 1
-# 			termIsRegEx = 1
-# 			secureFields =
-# 			dontListTerms = 0
-# 		}
-# 		
-		person < plugin.tx_contagged.types.dfn_block
-		person {
-			label = Person
-			label.de = Person
-			dataSource = addresses
-			sortField = zip
-		}
-# 		
-# 		reference {
-# 			label = Reference
-# 			label.de = Quelle
-# 			dataSource = references
-# 			sortField = term_main
-# 		}
-# 		
-# 		category < plugin.tx_contagged.types.dfn_block
-# 		category {
-# 			label = Category
-# 			label.de = Kategorie
-# 			dataSource = categories
-# 		}
-# 		
-# 	}
-# 
-# 	dataSources {
-# 
-# 		references {
-# 			sourceName = tx_sibibtex_entries
-# 			hasSysLanguageUid = 0
-# 			storagePids = 237
-# 			fieldsToEdit = 
-# 			mapping {
-# 				uid.field = uid
-# 				pid.field = pid
-# 				year.field = year
-# 				author.field = author
-# 				author.stdWrap.crop = -4||1
-# 				term_replace.value = 
-# 				term_replace.stdWrap.dataWrap = {register:contagged_author}, {register:contagged_year}
-# 				term_replace.stdWrap.outerWrap = [|]
-# 				term_main.field = author
-# 				term_type.value = reference
-# 				desc_long.field = title
-# 				# desc_long.field = address
-# 				# desc_long.stdWrap.dataWrap = |<br />{register:contagged_zip} {register:contagged_city}
-# 				exclude.value = 0
-# 			}
-# 		}
-# 
-# 		
+		# references {
+		# 	sourceName = tx_sibibtex_entries
+		# 	hasSysLanguageUid = 0
+		# 	storagePids = 237
+		# 	fieldsToEdit = 
+		# 	mapping {
+		# 		uid.field = uid
+		# 		pid.field = pid
+		# 		year.field = year
+		# 		author.field = author
+		# 		author.stdWrap.crop = -4||1
+		# 		term_replace.value = 
+		# 		term_replace.stdWrap.dataWrap = {register:contagged_author}, {register:contagged_year}
+		# 		term_replace.stdWrap.outerWrap = [|]
+		# 		term_main.field = author
+		# 		term_type.value = reference
+		# 		desc_long.field = title
+		# 		# desc_long.field = address
+		# 		# desc_long.stdWrap.dataWrap = |<br />{register:contagged_zip} {register:contagged_city}
+		# 		exclude.value = 0
+		# 	}
+		# }
+		# 
+		
 		addresses {
 			sourceName = tt_address
 			hasSysLanguageUid = 0
@@ -151,12 +258,10 @@ plugin.tx_contagged {
 			mapping {
 				uid.field = uid
 				pid.field = pid
-				# first_name.field = first_name
-				# middle_name.field = middle_name
-				# term_main.field = last_name
-				# term_main.stdWrap.dataWrap = |, {register:contagged_first_name} {register:contagged_middle_name}
-				# term_alt.field = name
-				term_main.field = name
+				first_name.field = first_name
+				middle_name.field = middle_name
+				term_main.field = last_name
+				term_main.stdWrap.dataWrap = |, {register:contagged_first_name} {register:contagged_middle_name}
 				term_type.value = person
 				zip.field = zip
 				city.field = city
@@ -165,66 +270,64 @@ plugin.tx_contagged {
 				exclude.value = 0
 			}
 		}
-# 		
-# 		categories {
-# 			sourceName = tx_categories
-# 			hasSysLanguageUid = 1
-# 			storagePids = 
-# 			fieldsToEdit = title,synonyms,description
-# 			mapping {
-# 				uid.field = uid
-# 				pid.field = pid
-# 				term_main.field = title
-# 				term_alt.field = synonyms
-# 				term_type.value = category
-# 				desc_long.field = description
-# 				exclude.value = 0
-# 			}
-# 		}
-# 		
-# 	}
-# }
-# 
-# plugin.tx_contagged {
-# 	_CSS_DEFAULT_STYLE (
-# 
-# 		acronym, abbr, dfn, span.tx-contagged-dfn_block, span.tx-contagged-dfn_inline {
-# 			font-style: normal;
-# 			border-bottom: 1px dotted #333333;
-# 			cursor: help;
-# 			position: relative;
-# 		}
-# 		
-# 		
-# 		/* position:relative is necessary for correct positioning of inline descriptions */
-# 		span.tx-contagged-dfn_block {
-# 			position: relative;
-# 		}
-# 		/* z-index makes sure the block is the top most element */
-# 		span.tx-contagged-dfn_block span.tx-contagged-dfn_block-content {
-# 			background: #EEEEEE;
-# 			display: none;
-# 		 	position: absolute;
-# 			z-index: 9999;
-# 		}
-# 		span.tx-contagged-dfn_block:hover span.tx-contagged-dfn_block-content {
-# 			display: inline;
-# 		 	position: absolute;
-# 			top: -2px;
-# 			left: -11px;
-# 			width: 300px;
-# 			margin-top: -1px;
-# 			border: 1px #CCCCCC solid;
-# 			padding: 0px 10px 10px 10px;
-# 		}
-# 
-# 
-# 		span.tx-contagged-dfn_inline span.tx-contagged-dfn_block-content {
-# 			color: #009900;
-# 			display: none;
-# 		}
-# 		span.tx-contagged-dfn_inline:active span.tx-contagged-dfn_block-content {
-# 			display:inline;
-# 		}
-# 	)
+		
+		# categories {
+		# 	sourceName = tx_categories
+		# 	hasSysLanguageUid = 1
+		# 	storagePids = 
+		# 	fieldsToEdit = title,synonyms,description
+		# 	mapping {
+		# 		uid.field = uid
+		# 		pid.field = pid
+		# 		term_main.field = title
+		# 		term_alt.field = synonyms
+		# 		term_type.value = category
+		# 		desc_long.field = description
+		# 		exclude.value = 0
+		# 	}
+		# }
+		
+	}
+
+	_CSS_DEFAULT_STYLE (
+
+		acronym, abbr, dfn, span.tx-contagged-dfn_block, span.tx-contagged-dfn_inline {
+			font-style: normal;
+			border-bottom: 1px dotted #333333;
+			cursor: help;
+			position: relative;
+		}
+		
+		
+		/* position:relative is necessary for correct positioning of inline descriptions */
+		span.tx-contagged-dfn_block {
+			position: relative;
+		}
+		/* z-index makes sure the block is the top most element */
+		span.tx-contagged-dfn_block span.tx-contagged-dfn_block-content {
+			background: #EEEEEE;
+			display: none;
+		 	position: absolute;
+			z-index: 9999;
+		}
+		span.tx-contagged-dfn_block:hover span.tx-contagged-dfn_block-content {
+			display: inline;
+		 	position: absolute;
+			top: -2px;
+			left: -11px;
+			width: 300px;
+			margin-top: -1px;
+			border: 1px #CCCCCC solid;
+			padding: 0px 10px 10px 10px;
+		}
+
+
+		span.tx-contagged-dfn_inline span.tx-contagged-dfn_block-content {
+			color: #009900;
+			display: none;
+		}
+		span.tx-contagged-dfn_inline:active span.tx-contagged-dfn_block-content {
+			display:inline;
+		}
+	)
 }

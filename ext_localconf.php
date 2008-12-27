@@ -5,6 +5,16 @@ t3lib_extMgm::addUserTSConfig('
 	options.saveDocNew.tx_contagged_terms=1
 ');
 
+t3lib_extMgm::addPageTSConfig('
+RTE.default {
+	proc.allowTags := addToList(exclude)
+	proc.entryHTMLparser_db = 1
+	proc.entryHTMLparser_db.allowTags := addToList(exclude)
+	FE.proc.allowTags := addToList(exclude)
+	FE.proc.entryHTMLparser_db = 1
+	FE.proc.entryHTMLparser_db.allowTags := addToList(exclude)
+}');
+
 t3lib_extMgm::addPItoST43($_EXTKEY,'pi1/class.tx_contagged_pi1.php','_pi1','list_type',1);
 
 // $TYPO3_CONF_VARS['EXTCONF']['rtehtmlarea']['plugins']['contagged'] = array();
