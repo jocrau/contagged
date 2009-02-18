@@ -34,11 +34,11 @@ class tx_contagged_model_terms {
 	var $conf; // the TypoScript configuration array
 	var $cObj;
 	var $controller;
-	var $tablesArray; // array of all tables in the database
+	var $tablesArray = array(); // array of all tables in the database
 	var $terms;
 	var $configuredSources;
 
-	function tx_contagged_model_terms($controller) {
+	function __construct($controller) {
 		$this->controller = $controller;
 		$this->conf = $controller->conf;
 		$this->cObj = $controller->cObj;
@@ -47,7 +47,6 @@ class tx_contagged_model_terms {
 		$this->mapper = new $mapperClassName($this->controller);
 
 		// build an array of tables in the database
-		$tablesArray = array();
 		$tablesResult = mysql_list_tables(TYPO3_db);
 		if (!mysql_error()) {
 			while($table = mysql_fetch_assoc($tablesResult)) {
@@ -148,24 +147,26 @@ class tx_contagged_model_terms {
 		$sourceName = $dataSourceConfigArray['sourceName'];
 
 		// check if the table exists in the database
-		if (t3lib_div::inArray($this->tablesArray,$sourceName) ) {
-			// Build WHERE-clause
-			$whereClause = '1=1';
-			$whereClause .= $storagePidsList ? ' AND pid IN (' . $storagePidsList . ')' : '';
-			$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
-			$whereClause .= tslib_cObj::enableFields($sourceName);
+		if (is_array($this->tablesArray)) {
+			if (t3lib_div::inArray($this->tablesArray,$sourceName) ) {
+				// Build WHERE-clause
+				$whereClause = '1=1';
+				$whereClause .= $storagePidsList ? ' AND pid IN (' . $storagePidsList . ')' : '';
+				$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
+				$whereClause .= tslib_cObj::enableFields($sourceName);
 
-			// execute SQL-query
-			$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-				'*', // SELECT ...
-				$sourceName, // FROM ...
-				$whereClause // WHERE ..
-				);
-			// map the fields
-			$dataArray = $this->mapper->getDataArray($result,$dataSource);
+				// execute SQL-query
+				$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+					'*', // SELECT ...
+					$sourceName, // FROM ...
+					$whereClause // WHERE ..
+					);
+				// map the fields
+				$dataArray = $this->mapper->getDataArray($result,$dataSource);
+			}
+			$this->fetchRelatedTerms($dataArray);
+			// $this->fetchIndex($dataArray);
 		}
-		$this->fetchRelatedTerms($dataArray);
-		// $this->fetchIndex($dataArray);
 		
 		// TODO piVars as a data source
 
