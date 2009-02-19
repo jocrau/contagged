@@ -49,7 +49,6 @@ class tx_contagged_model_mapper {
 	 */
 	function getDataArray($result,$dataSource) {
 		$dataArray = array();
-		$terms = array();
 
 		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 		$sourceName = $dataSourceConfigArray['sourceName'];

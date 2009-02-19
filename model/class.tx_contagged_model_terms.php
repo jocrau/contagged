@@ -35,7 +35,7 @@ class tx_contagged_model_terms {
 	var $cObj;
 	var $controller;
 	var $tablesArray = array(); // array of all tables in the database
-	var $terms;
+	var $terms = array();
 	var $configuredSources;
 
 	function __construct($controller) {
@@ -59,7 +59,6 @@ class tx_contagged_model_terms {
 		}
 		
 		$typesArray = $this->conf['types.'];
-		$this->terms = array();
 		$dataSourceArray = array();
 		foreach ($typesArray as $type=>$typeConfigArray) {
 			$storagePidsArray = $this->mapper->getStoragePidsArray($typeConfigArray);
@@ -79,7 +78,7 @@ class tx_contagged_model_terms {
 		
 		// get an array of all data rows in the configured tables
 		foreach ($dataSourceArray as $dataSource => $storagePidsArray ) {
-			$this->terms = array_merge($this->terms,$this->fetchAllTermsFromSource($dataSource,$storagePidsArray));
+			$this->terms = array_merge($this->terms, $this->fetchAllTermsFromSource($dataSource,$storagePidsArray));
 		}
 
 		uasort($this->terms, array($this, 'sortByTermAscending'));
@@ -107,7 +106,6 @@ class tx_contagged_model_terms {
 				return array($key => $term);
 			}
 		}
-		
 		return NULL;
 	}
 	
@@ -141,7 +139,6 @@ class tx_contagged_model_terms {
 	 */
 	function fetchAllTermsFromSource($dataSource, $storagePidsArray=NULL) {
 		$dataArray = array();
-		$terms = array();
 		$storagePidsList = implode(',',$storagePidsArray);
 		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 		$sourceName = $dataSourceConfigArray['sourceName'];
@@ -174,6 +171,7 @@ class tx_contagged_model_terms {
 	}
 	
 	function fetchRelatedTerms(&$dataArray) {
+		$newDataArray = array();
 		foreach ($dataArray as $key => $termArray) {
 			$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 				'uid_foreign, tablenames', // SELECT ...
@@ -199,8 +197,8 @@ class tx_contagged_model_terms {
 
 
 	function fetchIndex(&$dataArray) {
+		$newDataArray = array();		
 		foreach ($dataArray as $key => $termArray) {
-			
 			if (!empty($result)) {
 				$termArray['related'] = array();
 				foreach ($result as $row) {
