@@ -195,7 +195,6 @@ class tx_contagged_model_terms {
 		$dataArray = $newDataArray;
 	}
 
-
 	function fetchIndex(&$dataArray) {
 		$newDataArray = array();		
 		foreach ($dataArray as $key => $termArray) {

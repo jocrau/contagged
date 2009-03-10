@@ -50,23 +50,7 @@ class tx_contagged extends tslib_pibase {
 		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
 
 		// exit if the content should be skipped
-		if ($this->isContentToSkip()) return $content;
-
-		// $GLOBALS['TSFE']->additionalHeaderData['tx_contagged'] = '<script type="text/javascript" src="'.t3lib_extMgm::siteRelPath('contagged').'js/selecttext.js"></script>';
-		// $GLOBALS['TSFE']->JSeventFuncCalls['onload']['tx_contagged'] = 'init_getSelectedText();';
-		// $GLOBALS['TSFE']->JSeventFuncCalls['onmouseup']['tx_contagged'] = 'getSelectedText();';
-		// $GLOBALS['TSFE']->divSection = '<span id="tx_contagged_new" style="visibility:hidden;position:relative;top:280px;left:10px;z-index:1000;"></span>';
-
-		// TODO "New" icon
-		// $storagePids = t3lib_div::trimExplode(',',$this->conf['storagePids'],1);
-		// $mainStoragePid = $storagePids[0];
-		// $panelConf = array(
-		// 		'newRecordFromTable' => 'tx_contagged_terms',
-		// 		'newRecordInPid' => $mainStoragePid,
-		// 		);
-		// $innerHTML = $this->cObj->editPanel('',$panelConf,'');
-		// $GLOBALS['TSFE']->divSection = '<div id="tx_contagged_panel" class="" style="visibility:hidden;position:absolute;width:0px;top:0;left:0;z-index:1000;">'.$innerHTML.'</div>';
-		
+		if ($this->isContentToSkip()) return $content;		
 
 		// get an array of all type configurations
 		$this->typesArray = $this->conf['types.'];
@@ -130,7 +114,11 @@ class tx_contagged extends tslib_pibase {
 		if ( $this->checkLocalGlobal($typeConfigArray,'termIsRegEx')>0 ) {
 			$regEx = $termArray['term_main'].$this->conf['modifier'];
 		} else {
-			$regEx = '/(?<=\W|^)' . preg_quote($regExTerm,'/') . '(?=\W|$)/' . $this->conf['modifier'];
+			if (strstr($this->conf['modifier'], 'u') !== FALSE) {
+				$regEx = '/(?<=\P{L}|^)' . preg_quote($regExTerm,'/') . '(?=\P{L}|$)/' . $this->conf['modifier'];
+			} else {
+				$regEx = '/(?<=\W|^)' . preg_quote($regExTerm,'/') . '(?=\W|$)/' . $this->conf['modifier'];
+			}
 		}
 		
 		return $regEx;
@@ -158,8 +146,13 @@ class tx_contagged extends tslib_pibase {
 				$preMatch = '';
 				$postMatch = '';
 				if ($this->checkLocalGlobal($typeConfigArray,'checkPreAndPostMatches')>0) {
-					preg_match('/(?<=\W)\w*-$/' . $this->conf['modifier'], $preContent, $preMatch);
-					preg_match('/^-\w*(?=\W)/' . $this->conf['modifier'], $postContent, $postMatch);
+					if (strstr($this->conf['modifier'], 'u') !== FALSE) {
+						preg_match('/(?<=\P{L})\p{L}*-$/' . $this->conf['modifier'], $preContent, $preMatch);
+						preg_match('/^-\p{L}*(?=\P{L})/' . $this->conf['modifier'], $postContent, $postMatch);
+					} else {
+						preg_match('/(?<=\W)\w*-$/' . $this->conf['modifier'], $preContent, $preMatch);
+						preg_match('/^-\w*(?=\W)/' . $this->conf['modifier'], $postContent, $postMatch);
+					}
 				}
 				$matchedTerm = $preMatch[0].$matchesArray[$i][0].$postMatch[0];
 				$matchStart = $matchesArray[$i][1] - strlen($preMatch[0]);
