@@ -66,9 +66,6 @@ class tx_contagged_model_mapper {
 
 		// iterate through all data from the datasource
 		foreach ($result as $row) {
-			if ($dataSourceConfigArray['mapping.']['uid.']['field']) {
-				$termKey = $row[$dataSourceConfigArray['mapping.']['uid.']['field']];
-			}
 			$termMain = $dataSourceConfigArray['mapping.']['term_main.']['field'] ? $dataSourceConfigArray['mapping.']['term_main.']['field'] : '';
 			$termReplace = $dataSourceConfigArray['mapping.']['term_replace.']['field'] ? $dataSourceConfigArray['mapping.']['term_replace.']['field'] : '';
 			$term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
@@ -121,7 +118,12 @@ class tx_contagged_model_mapper {
 			}
 			
 			// TODO: hook "mappingPostProcessing"
-			$dataArray[] = $mappedDataArray;
+			
+			if (!empty($dataSourceConfigArray['mapping.']['uid.']['field'])) {
+				$dataArray[$row[$dataSourceConfigArray['mapping.']['uid.']['field']]] = $mappedDataArray;
+			} else {
+				$dataArray[] = $mappedDataArray;
+			}			
 		}
 
 		return $dataArray;

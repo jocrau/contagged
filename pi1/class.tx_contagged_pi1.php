@@ -44,7 +44,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 	var $typolinkConf;
 	var $backPid; // pid of the last visited page (from piVars)
 	var $indexChar; // char of the given index the user has clicked on (from piVars)
-	
 
 	/**
 	 * main method of the contagged list plugin
@@ -56,13 +55,15 @@ class tx_contagged_pi1 extends tslib_pibase {
 	function main($content, $conf) {
 		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
 		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
-		$this->pi_loadLL();
 		$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'], $conf);
+		$this->pi_loadLL();
 		$this->templateCode = $this->cObj->fileResource($this->conf['templateFile']?$this->conf['templateFile']:$this->templateFile);
-		$this->typolinkConf = $this->conf['typolink.'];
+		$this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : array();
 		$this->typolinkConf['parameter.']['current'] = 1;
-		$this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
-		unset($this->typolinkConf['additionalParams.']);
+		if (!empty($this->typolinkConf['additionalParams'])) {
+			$this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
+			unset($this->typolinkConf['additionalParams.']);
+		}
 		$this->backPid = $this->piVars['backPid'] ? intval($this->piVars['backPid']) : NULL;
 		$this->pointer = $this->piVars['pointer'] ? intval($this->piVars['pointer']) : NULL;
 		$this->indexChar = $this->piVars['index'] ? urldecode($this->piVars['index']) : NULL; // TODO The length should be configurable
@@ -79,15 +80,15 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->model = new tx_contagged_model_terms($this);
 		$this->termsArray = $this->model->findAllTermsToListOnPage();
 
-		if ((strtolower($this->conf['layout']) == 'minilist') || (strtolower($this->cObj->data['select_key']) == 'minilist')) {
+		if ( !is_null($termKey) ) {
+			$content .= $this->renderSingleItemByKey($termKey);
+		} elseif ((strtolower($this->conf['layout']) == 'minilist') || (strtolower($this->cObj->data['select_key']) == 'minilist')) {
 			$content .= $this->renderMiniList();
 		} elseif ( is_null($termKey) && is_null($sword) ) {
 			$content .= $this->renderList();
 		} elseif ( is_null($termKey) && !is_null($sword) ) {
 			$content .= $this->renderListBySword($sword);
-		} elseif ( !is_null($termKey) ) {
-			$content .= $this->renderSingleItemByKey($termKey);
-		}
+		} 
 
 		// TODO hook "newRenderFunctionName"
 
@@ -102,8 +103,10 @@ class tx_contagged_pi1 extends tslib_pibase {
 	 * @return	$string	The list as HTML
 	 */
 	function renderList() {
+		$markerArray = array();
+		$wrappedSubpartArray = array();
 		$subparts = $this->getSubparts('LIST');
-		$this->renderLinks($markerArray,$wrappedSubpartArray);
+		$this->renderLinks($markerArray, $wrappedSubpartArray);
 		$this->renderIndex($markerArray);
 		$this->renderSearchBox($markerArray);
 		$indexedTerms = array();
@@ -260,6 +263,9 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###DETAILS###'] = $this->pi_getLL('details');
 		unset($typolinkConf);
 		$typolinkConf = $this->typolinkConf;
+		if (!empty($typeConfigArray['typolink.'])) {
+			$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
+		}
 		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[key]=' . $termKey;
 		$typolinkConf['parameter'] = $termArray['listPages'][0];
 		$this->typolinkConf['parameter.']['current'] = 0;
@@ -275,7 +281,11 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$key = key($result);
 				if (array_key_exists($key, $this->termsArray)) {
 					$relatedTerm = current($result);
+					unset($typolinkConf);
 					$typolinkConf = $this->typolinkConf;
+					if (!empty($typeConfigArray['typolink.'])) {
+						$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
+					}
 					$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[key]=' . $key;
 					$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
 					$relatedCode .= $this->local_cObj->stdWrap($this->local_cObj->typoLink($relatedTerm['term'], $typolinkConf), $this->conf['related.']['single.']['stdWrap.']);					
@@ -318,10 +328,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$imagesAltText = t3lib_div::trimExplode(chr(10), $termArray['imagealt']);
 			$imagesTitleText = t3lib_div::trimExplode(chr(10), $termArray['imagetitle']);
 		}
-		// debug($images, 'images');
-		// debug($imagesCaption, 'imagesCaption');
-		// debug($imagesAltText, 'imagesAltText');
-		// debug($imagesTitleText, 'imagesTitleText');
 		
 		if (!empty($images)) {
 			foreach ($images as $key => $image) {
@@ -384,10 +390,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		foreach ($this->termsArray as $termKey => $termArray) {
 			if ( $termArray['exclude']!=1 && $this->conf['types.'][$termArray['term_type'].'.']['dontListTerms']!=1 && in_array($GLOBALS['TSFE']->id,$termArray['listPages']) ) {
 				$sortField = $this->model->getSortField($termArray);
-				// debug($sortField);
 				foreach ($reverseIndexArray as $subChar => $indexChar) {
-					// debug(preg_quote($subChar),$termArray['term']);
-					// debug(preg_match('/^'.preg_quote($subChar).'/ui',$termArray['term']));
 					if ( preg_match('/^'.preg_quote($subChar).'/' . $this->conf['modifier'],$termArray[$sortField])>0 ) {
 						$typolinkConf['additionalParams'] = '&' . $this->prefixId . '[index]=' . $indexChar;
 						$indexArray[$indexChar] = $this->local_cObj->typolink($indexChar, $typolinkConf);

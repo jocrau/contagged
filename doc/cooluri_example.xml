@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cooluri>
+  <urlsuffix>.html</urlsuffix>
+  <removetrailingslash>1</removetrailingslash>
+  <cooluris>1</cooluris>
+  
+  <cache>
+    <usecache>1</usecache>
+    <params2cool>
+      <checkforchangeevery>1</checkforchangeevery>
+    </params2cool>
+    <cool2params>
+      <translateifnotfound>0</translateifnotfound>
+      <oldlinksvalidfor>365</oldlinksvalidfor>
+    </cool2params>
+    <cacheparams>0</cacheparams>
+    
+    <pagenotfound>
+      <status>HTTP/1.0 404 Not Found</status>
+      <behavior type="redirect">/index.php?id=404</behavior>
+    </pagenotfound>
+  </cache>
+
+  <pagepath>
+    <title>tx_realurl_pathsegment,alias,nav_title,title,subtitle</title>
+    <saveto>id</saveto>
+    <default>0</default>    
+    <userfunc>tx_cooluri->getPageTitle</userfunc>
+    <t3conv>1</t3conv>
+  </pagepath>
+ 
+  <uriparts>
+    <part>
+      <parameter>tx_contagged[key]</parameter>
+      <lookindb>
+        <to>SELECT term_main FROM tx_contagged_terms WHERE uid=$1</to>
+        <translatetoif>
+          <match>^[0-9]+$</match>
+        </translatetoif>
+        <t3conv>1</t3conv>
+      </lookindb>
+    </part>
+    <part>
+      <parameter>tx_contagged[index]</parameter>
+      <lookindb>
+        <to>SELECT CONCAT('letter-','$1')</to>
+        <translatetoif>
+          <match>^[0-9]+$</match>
+        </translatetoif>
+        <t3conv>1</t3conv>
+      </lookindb>
+    </part>
+  </uriparts>
+    
+  <predefinedparts>
+    <part>
+      <parameter>cHash</parameter>
+    </part>
+  </predefinedparts>
+  
+  <valuemaps>
+    <valuemap>
+      <parameter>L</parameter>
+      <value key="">0</value>
+      <value key="en">1</value>
+    </valuemap>
+    <valuemap>
+      <parameter>type</parameter>
+      <value key="rss">5432</value>
+      <value key="sitemap">6006</value>
+    </valuemap>
+  </valuemaps>
+  
+  <paramorder>
+    <param>no_cache</param>
+    <param>L</param>
+    <param>type</param>
+  </paramorder>
+  
+</cooluri>

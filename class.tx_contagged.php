@@ -38,6 +38,8 @@ class tx_contagged extends tslib_pibase {
 	var $scriptRelPath = 'class.tx_contagged.php'; // path to this script relative to the extension dir
 	var $extKey = 'contagged'; // the extension key
 	var $conf; // the TypoScript configuration array
+	var $typolinkConf;
+	var $local_cObj;
 
 	/**
 	 * The main method to parse, tag and link terms
@@ -48,6 +50,15 @@ class tx_contagged extends tslib_pibase {
 	 */
 	function main($content,$conf) {
 		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
+
+		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
+		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
+
+		$this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : array();
+		if (!empty($this->typolinkConf['additionalParams'])) {
+			$this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
+			unset($this->typolinkConf['additionalParams.']);
+		}
 
 		// exit if the content should be skipped
 		if ($this->isContentToSkip()) return $content;		
@@ -371,21 +382,23 @@ class tx_contagged extends tslib_pibase {
 
 		// link the matched term to the front-end list page
 		if ($makeLink) {
-		    $cache = 0;
-		    $this->pi_USER_INT_obj = 1;
-		    $label = $matchedTerm;  // the link text
-		    $overrulePIvars = array(
-				'backPid' => $GLOBALS['TSFE']->id,
-				'key' => $termKey,
-			);
-		    $clearAnyway=1;    // the current values of piVars will NOT be preserved
-			if ($termArray['link']) {
-				$altPageId = $termArray['link']; // ID of the target page
-			} else {
-				$altPageId = $termArray['listPages'][0];
+			unset($typolinkConf);
+			$typolinkConf = $this->typolinkConf;
+			if (!empty($typeConfigArray['typolink.'])) {
+				$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
 			}
-			$GLOBALS['TSFE']->register['contagged_list_page'] = $altPageId;
-		    $matchedTerm = $this->pi_linkTP_keepPIvars($matchedTerm, $overrulePIvars, $cache, $clearAnyway, $altPageId);
+			if ($termArray['link']) {
+				$parameter = $termArray['link'];
+			} else {
+				$parameter = $termArray['listPages'][0];
+			}
+			$additionalParams = array(
+				'backPid' => $GLOBALS['TSFE']->id,
+				'key' => $termKey
+			);
+			$typolinkConf['additionalParams'] = t3lib_div::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
+			$typolinkConf['parameter'] = $parameter;
+			$matchedTerm = $this->local_cObj->typolink($matchedTerm, $typolinkConf);		
 		}
 		
 		return $matchedTerm;

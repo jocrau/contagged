@@ -1,3 +1,18 @@
+v1.0.0 2009-03-20 Jochen Rau <j.rau@web.de>
+
+	* CHG Status is now STABLE (thanks for the feed-back)
+	* ADD Default configuration of typolinks (e.g. "plugin.tx_contagged.typolink.target = _top" or "plugin.tx_contagged.types.definition.typolink.target = _top"); types configuration will overwrite global configuration
+	* ADD Added a CoolUrl example configuration to "doc" folder -- thanks to Carine who provided the code
+	* FIX $dataSourceConfigArray['mapping.']['uid.']['field'] was never used as an unique identifier -- thanks to Carine
+	* FIX Labels could not be overwritten by _LOCAL_LANG ($this->conf was set after $this->pi_loadLL() was invoked)
+	* FIX Unititialized $wrappedSubpartArray in contagged_pi1
+	
+v0.2.1 2009-03-10 Jochen Rau <j.rau@web.de>
+
+	* FIX Labels could not be overwritten by _LOCAL_LANG ($this->conf was set after $this->pi_loadLL() was invoked)
+	* FIX Uninitialized variables (arrays) if $tableArray is NULL
+	* FIX Handling of UTF-8 (if you have UTF-8 enabled, please add "u" to "contagged.modifier = Uisu" in your TS constants)
+	
 v0.2.1 2009-03-10 Jochen Rau <j.rau@web.de>
 
 	* FIX Uninitialized variables (arrays) if result from fetchRelatedTerms() and fetchIndex() is NULL (drops a warning)
