@@ -272,9 +272,9 @@ class tx_contagged extends tslib_pibase {
 		}
 				
 		// TODO Edit Icons
-		// $editIconsConf = array(
-		// 	'styleAttribute' => '',
-		// 	);
+		$editIconsConf = array(
+			'styleAttribute' => '',
+			);
 		$matchedTerm = $this->cObj->editIcons($matchedTerm,'tx_contagged_terms:sys_language_uid,hidden,starttime,endtime,fe_group,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid'],NULL,'&defVals[tx_contagged_terms][desc_short]=TEST');
 		
 		return $matchedTerm;

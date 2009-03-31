@@ -33,7 +33,7 @@ plugin.tx_contagged {
 	fieldsToMap = {$contagged.fieldsToMap}
 	secureFields = {$contagged.secureFields}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
-		
+			
 	images {
 		stdWrap.wrap = <div class="tx-contagged-images">|</div>
 		caption.stdWrap.wrap = <div class="tx-contagged-imagecaption"> | </div>

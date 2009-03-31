@@ -1,3 +1,8 @@
+v1.0.1 2009-03-31 Jochen Rau <j.rau@web.de>
+
+	* FIX Links in list view support cache again (removed typolink.target = _blank from default TS settings) 
+	* FIX Enabled edit icons for the upcoming fr_edit of v4.3 (3rd parameter of editIcons() must be an array)
+
 v1.0.0 2009-03-20 Jochen Rau <j.rau@web.de>
 
 	* CHG Status is now STABLE (thanks for the feed-back)
