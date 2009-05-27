@@ -32,6 +32,7 @@ plugin.tx_contagged {
 	sortField = {$contagged.sortField}
 	fieldsToMap = {$contagged.fieldsToMap}
 	secureFields = {$contagged.secureFields}
+	addBackLink = {$contagged.addBackLink}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
 			
 	images {

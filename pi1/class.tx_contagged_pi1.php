@@ -69,8 +69,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->backPid = $this->piVars['backPid'] ? intval($this->piVars['backPid']) : NULL;
 		$this->pointer = $this->piVars['pointer'] ? intval($this->piVars['pointer']) : NULL;
 		$this->indexChar = $this->piVars['index'] ? urldecode($this->piVars['index']) : NULL; // TODO The length should be configurable
-		if ( !is_null($this->piVars['key']) ) {
-			$termKey = intval($this->piVars['key']);
+		if (!is_null($this->piVars['termSource']) && !is_null($this->piVars['termUid'])) {
+			$termKey = stripslashes($this->piVars['termSource']) . '_' . intval($this->piVars['termUid']);
 		}		
 		$sword = $this->piVars['sword'] ? htmlspecialchars(urldecode($this->piVars['sword'])) : NULL;
 
@@ -272,7 +272,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		if (!empty($typeConfigArray['typolink.'])) {
 			$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
 		}
-		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[key]=' . $termKey;
+		$typolinkConf['useCacheHash'] = 1;
+		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[termSource]=' . $termArray['sourceName'] . '&' . $this->prefixId . '[termUid]=' . $termArray['uid'];
 		$typolinkConf['parameter'] = $termArray['listPages'][0];
 		$this->typolinkConf['parameter.']['current'] = 0;
 		$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
@@ -292,7 +293,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 					if (!empty($typeConfigArray['typolink.'])) {
 						$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
 					}
-					$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[key]=' . $key;
+					$typolinkConf['useCacheHash'] = 1;
+					$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[termSource]=' . $relatedTerm['sourceName'] . '&' . $this->prefixId . '[termUid]=' . $relatedTerm['uid'];
 					$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
 					$relatedCode .= $this->local_cObj->stdWrap($this->local_cObj->typoLink($relatedTerm['term'], $typolinkConf), $this->conf['related.']['single.']['stdWrap.']);					
 				}
@@ -398,6 +400,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$sortField = $this->model->getSortField($termArray);
 				foreach ($reverseIndexArray as $subChar => $indexChar) {
 					if ( preg_match('/^'.preg_quote($subChar).'/' . $this->conf['modifier'],$termArray[$sortField])>0 ) {
+						$typolinkConf['useCacheHash'] = 1;
 						$typolinkConf['additionalParams'] = '&' . $this->prefixId . '[index]=' . $indexChar;
 						$indexArray[$indexChar] = $this->local_cObj->typolink($indexChar, $typolinkConf);
 						$this->termsArray[$termKey]['indexChar'] = $indexChar;

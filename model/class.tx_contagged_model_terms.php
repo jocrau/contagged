@@ -163,10 +163,13 @@ class tx_contagged_model_terms {
 					$whereClause // WHERE ..
 					);
 				// map the fields
-				$dataArray = $this->mapper->getDataArray($result,$dataSource);
+				$mappedResult = $this->mapper->getDataArray($result,$dataSource);
 			}
-			$this->fetchRelatedTerms($dataArray);
+			$this->fetchRelatedTerms($mappedResult);
 			// $this->fetchIndex($dataArray);
+			foreach ($mappedResult as $result) {
+				$dataArray[$result['sourceName'] . '_' . $result['uid']] = $result;
+			}
 		}
 		
 		// TODO piVars as a data source

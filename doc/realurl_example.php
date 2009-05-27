@@ -7,22 +7,24 @@
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'] = array ( 
     '_DEFAULT' => array (
         'init' => array (
-            'enableCHashCache' => '1',
-            'appendMissingSlash' => 'ifNotFile',
-            'enableUrlDecodeCache' => '1',
-            'enableUrlEncodeCache' => '1',
+	      'enableCHashCache' => TRUE,
+	      'appendMissingSlash' => 'ifNotFile,redirect',
+	      'adminJumpToBackend' => TRUE,
+	      'enableUrlDecodeCache' => TRUE,
+	      'enableUrlEncodeCache' => TRUE,
+	      'emptyUrlReturnValue' => '/',
         ),
         'redirects' => array (
         ),
         'preVars' => array (
-            '0' => array (
+            0 => array (
                 'GETvar' => 'no_cache',
                 'valueMap' => array (
                     'nc' => '1',
                 ),
                 'noMatch' => 'bypass'
             ),
-            '1' => array (
+            1 => array (
                 'GETvar' => 'L',
                 'valueMap' => array (
                     'de' => '0',
@@ -30,7 +32,7 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'] = array (
                 ),
                 'noMatch' => 'bypass',
             ),
-            '2' => array (
+            2 => array (
                 'GETvar' => 'lang',
                 'valueMap' => array (
                     'de' => 'de',
@@ -45,7 +47,6 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'] = array (
             'spaceCharacter' => '-',
             'languageGetVar' => 'L',
             'expireDays' => '7',
-            'rootpage_id' => '2',
         ),
         'fixedPostVars' => array (
         ),
@@ -53,28 +54,44 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'] = array (
             '_DEFAULT' => array (
                'char' => array (
                     array (
-                        'GETvar' => 'tx_contagged_pi1[index]',
-                    ),
-                ),
-               'id' => array (
+                        'GETvar' => 'tx_contagged[index]',
+                    ),                           
+                ),                               
+               'source' => array (
                     array (
-                        'GETvar' => 'tx_contagged_pi1[key]',
-                    ),
+	                   'GETvar' => 'tx_contagged[termSource]',              
+                    ),                           
                 ),
-               'searchword' => array (
-                    array (
-                        'GETvar' => 'tx_contagged_pi1[sword]',
-                    ),
-                ),
-               'backToUid' => array (
-                    array (
-                        'GETvar' => 'tx_contagged_pi1[backPid]',
+				'term' => array (
+                    array (                      
+                       'GETvar' => 'tx_contagged[termUid]',
+	                   'lookUpTable' => array (
+	                       'table' => 'tx_contagged_terms',
+	                       'id_field' => 'uid',
+	                       'alias_field' => 'term_main',
+	                       'addWhereClause' => ' AND NOT deleted',
+	                       'useUniqueCache' => '1',
+	                       'useUniqueCache_conf' => array (
+	                           'strtolower' => '1',
+	                           'spaceCharacter' => '-',
+	                       ),
+                   		),
+                    ),                           
+                ),                             
+               'searchword' => array (           
+                    array (                      
+                        'GETvar' => 'tx_contagged[sword]',
+                    ),                           
+                ),                               
+               'backTo' => array (            
+                    array (                      
+                        'GETvar' => 'tx_contagged[backPid]',
                     ),
                 ),
             ),
         ),
         'fileName' => array (
-            'defaultToHTMLsuffixOnPrev' => true,
+            'defaultToHTMLsuffixOnPrev' => FALSE,
             'index' => array (
                 'rss.xml' => array (
                     'keyValues' => array (

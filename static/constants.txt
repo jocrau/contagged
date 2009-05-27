@@ -51,7 +51,9 @@ contagged {
 	fieldsToMap = uid,pid,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,imagecaption,imagealt,imagetitle,related,link,exclude
 	# cat=contagged (list)//94; type=string; label=Secured Fields
 	secureFields = 
-	# cat=contagged (list)/enable/99; type=boolean; label=Add Back Link: Add the page title to the back link.
+	# cat=contagged (list)/enable/96; type=boolean; label=Add Back Link: Add a back link.
+	addBackLink = 0
+	# cat=contagged (list)/enable/99; type=boolean; label=Add Back Link Desc.: Add the page title to the back link.
 	addBackLinkDescription = 1
 	# cat=contagged (list)/enable/10; type=boolean; label=Show index: Show the alphabetical index.
 	enableIndex = 1

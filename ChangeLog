@@ -1,11 +1,17 @@
-v1.0.0rev. 2009-05-27 Jochen Rau <jochen.rau@typoplanet.de>
+v1.0.2 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX plugin.tx_contagged.index.showOnlyMatchedIndexChars() = 1 had no effect (plugin.tx_contagged.showOnlyMatchedIndexChars() = 1 was evaluated)
+	* ADD Feature #2968: contagged uses now a unique identifyer (table name and uid) to link the terms (enables SEO friendly RealURL configuration)
+	* ADD Added configuration option "addBackLink" (defaults to 0)
+	* CHG Set default of addBackLinkDescription to 0
+	* CHG Adapted RealURL example (not yet optimal solution)
 
-v1.0.0rev. 2009-03-31 Jochen Rau <jochen.rau@typoplanet.de>
+v1.0.1 2009-03-31 Jochen Rau <jochen.rau@typoplanet.de>
 
-	* FIX Links in list view support cache again (removed typolink.target = _blank from default TS settings) 
-	* FIX Enabled edit icons for the upcoming fe_edit of v4.3 (3rd parameter of editIcons() must be an array)
+	* FIX Bug #3010: Links in list view support cache again (removed typolink.target = _blank from default TS settings) 
+	* CHG Enabled edit icons for the upcoming fe_edit of v4.3 (3rd parameter of editIcons() must be an array)
+	
+	FYI: From now on the patch level version number (0.0.x) will only be used for revisions in the svn repository. The sub versions (0.x.0) and main versions (x.0.0) will be deployed to TER.
 
 v1.0.0 2009-03-20 Jochen Rau <jochen.rau@typoplanet.de>
 
@@ -16,7 +22,7 @@ v1.0.0 2009-03-20 Jochen Rau <jochen.rau@typoplanet.de>
 	* FIX Labels could not be overwritten by _LOCAL_LANG ($this->conf was set after $this->pi_loadLL() was invoked)
 	* FIX Unititialized $wrappedSubpartArray in contagged_pi1
 	
-v0.2.1 2009-03-10 Jochen Rau <jochen.rau@typoplanet.de>
+v0.2.2 2009-03-10 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX Labels could not be overwritten by _LOCAL_LANG ($this->conf was set after $this->pi_loadLL() was invoked)
 	* FIX Uninitialized variables (arrays) if $tableArray is NULL

@@ -393,9 +393,12 @@ class tx_contagged extends tslib_pibase {
 				$parameter = $termArray['listPages'][0];
 			}
 			$additionalParams = array(
-				'backPid' => $GLOBALS['TSFE']->id,
-				'key' => $termKey
-			);
+				'termSource' => $termArray['sourceName'],
+				'termUid' => $termArray['uid'],
+				);
+			if ($this->checkLocalGlobal($typeConfigArray,'addBackLink')) {
+				$additionalParams['backPid'] = $GLOBALS['TSFE']->id;
+			}
 			$typolinkConf['additionalParams'] = t3lib_div::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
 			$typolinkConf['parameter'] = $parameter;
 			$matchedTerm = $this->local_cObj->typolink($matchedTerm, $typolinkConf);		
