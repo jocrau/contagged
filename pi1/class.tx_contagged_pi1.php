@@ -55,7 +55,9 @@ class tx_contagged_pi1 extends tslib_pibase {
 	function main($content, $conf) {
 		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
 		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
-		$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'], $conf);
+		if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'])) {
+			$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'], $conf);
+		}
 		$this->pi_loadLL();
 		$this->templateCode = $this->cObj->fileResource($this->conf['templateFile']?$this->conf['templateFile']:$this->templateFile);
 		$this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : array();
@@ -365,7 +367,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				}
 				if ($link) {
 					$markerArray['###SINGLE_CHAR###'] = '<span' . $cssClass . '>' . $link . '</span>';
-				} elseif ($this->conf['showOnlyMatchedIndexChars']==0) {
+				} elseif ($this->conf['index.']['showOnlyMatchedIndexChars'] == 0) {
 					$markerArray['###SINGLE_CHAR###'] = '<span' . $cssClass . '>' . $indexChar . '</span>';
 				} else {
 					$markerArray['###SINGLE_CHAR###'] = '';

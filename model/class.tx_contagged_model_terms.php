@@ -54,8 +54,12 @@ class tx_contagged_model_terms {
 			}
 		}
 		
-		foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
-			$this->configuredSources[] = $sourceConfiguration['sourceName'];
+		if (is_array($this->conf['dataSources.'])) {
+			foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
+				$this->configuredSources[] = $sourceConfiguration['sourceName'];
+			}
+		} else {
+			throw new RuntimeException('No configuration. Please include the static template.');
 		}
 		
 		$typesArray = $this->conf['types.'];
