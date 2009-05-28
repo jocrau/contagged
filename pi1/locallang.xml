@@ -32,6 +32,12 @@
 			<label index="lang.it">it.</label>
 			<label index="lang.es">span.</label>
 			<label index="pi_list_searchBox_search">Search</label>
+			<label index="pi_list_browseresults_first">&lt;&lt; first</label>
+			<label index="pi_list_browseresults_prev">&lt; prev.</label>
+			<label index="pi_list_browseresults_page">Page</label>
+			<label index="pi_list_browseresults_next">next &gt;</label>
+			<label index="pi_list_browseresults_last">last &gt;&gt;</label>
+			<label index="no_matches">No matches.</label>
 			<label index="no_matches">No matches.</label>
 		</languageKey>
 		<languageKey index="de" type="array">
@@ -60,6 +66,11 @@
 			<label index="lang.it">ital.</label>
 			<label index="lang.es">span.</label>
 			<label index="pi_list_searchBox_search">Suche</label>
+			<label index="pi_list_browseresults_first">&lt;&lt; erste</label>
+			<label index="pi_list_browseresults_prev">&lt; zurück</label>
+			<label index="pi_list_browseresults_page">Seite</label>
+			<label index="pi_list_browseresults_next">weiter &gt;</label>
+			<label index="pi_list_browseresults_last">letzte &gt;&gt;</label>
 			<label index="no_matches">No matches.</label>
 		</languageKey>
 		<languageKey index="fr" type="array">

@@ -59,6 +59,7 @@ class tx_contagged extends tslib_pibase {
 			$this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
 			unset($this->typolinkConf['additionalParams.']);
 		}
+		$this->typolinkConf['useCacheHash'] = 1;
 
 		// exit if the content should be skipped
 		if ($this->isContentToSkip()) return $content;		

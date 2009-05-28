@@ -1,3 +1,8 @@
+v1.0.3 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
+
+	* FIX Bug #3017: Page browser is not localised
+	* IMP Cache handling (useCacheHash = 1 default for all links)
+
 v1.0.2 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX plugin.tx_contagged.index.showOnlyMatchedIndexChars() = 1 had no effect (plugin.tx_contagged.showOnlyMatchedIndexChars() = 1 was evaluated)

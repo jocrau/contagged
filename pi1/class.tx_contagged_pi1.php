@@ -66,6 +66,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$this->typolinkConf['additionalParams'] = $this->cObj->stdWrap($typolinkConf['additionalParams'], $typolinkConf['additionalParams.']);
 			unset($this->typolinkConf['additionalParams.']);
 		}
+		$this->typolinkConf['useCacheHash'] = 1;
 		$this->backPid = $this->piVars['backPid'] ? intval($this->piVars['backPid']) : NULL;
 		$this->pointer = $this->piVars['pointer'] ? intval($this->piVars['pointer']) : NULL;
 		$this->indexChar = $this->piVars['index'] ? urldecode($this->piVars['index']) : NULL; // TODO The length should be configurable
@@ -272,7 +273,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 		if (!empty($typeConfigArray['typolink.'])) {
 			$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
 		}
-		$typolinkConf['useCacheHash'] = 1;
 		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[termSource]=' . $termArray['sourceName'] . '&' . $this->prefixId . '[termUid]=' . $termArray['uid'];
 		$typolinkConf['parameter'] = $termArray['listPages'][0];
 		$this->typolinkConf['parameter.']['current'] = 0;
@@ -400,7 +400,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$sortField = $this->model->getSortField($termArray);
 				foreach ($reverseIndexArray as $subChar => $indexChar) {
 					if ( preg_match('/^'.preg_quote($subChar).'/' . $this->conf['modifier'],$termArray[$sortField])>0 ) {
-						$typolinkConf['useCacheHash'] = 1;
 						$typolinkConf['additionalParams'] = '&' . $this->prefixId . '[index]=' . $indexChar;
 						$indexArray[$indexChar] = $this->local_cObj->typolink($indexChar, $typolinkConf);
 						$this->termsArray[$termKey]['indexChar'] = $indexChar;
