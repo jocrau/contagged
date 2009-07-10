@@ -160,8 +160,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$fieldsToSearch = t3lib_div::trimExplode(',', $this->conf['searchbox.']['fieldsToSearch'] );
 			foreach ($fieldsToSearch as $field) {						
 				if (is_array($termArray[$field])) {
-					foreach ($termArray[$field] as $subField) {
-						if (preg_match('/' . preg_quote($sword,'/') . '/Uis', strip_tags($termArray[$field][$subField])) > 0) {
+					foreach ($termArray[$field] as $subFieldValue) {
+						if (preg_match('/' . preg_quote($sword,'/') . '/Uis', strip_tags($subFieldValue)) > 0) {
 							$swordMatched = TRUE;
 							break;
 						}
@@ -254,6 +254,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');
 
+		$labelWrap = array();
 		$labelWrap['wrap'] = $typeConfigArray['labelWrap1']?$typeConfigArray['labelWrap1']:$this->conf['labelWrap1'];
 		$markerArray['###TERM_TYPE_LABEL###'] = $markerArray['###TERM_TYPE###']?$this->local_cObj->stdWrap($this->pi_getLL('term_type'),$labelWrap):'';
 		$markerArray['###TERM_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term'),$labelWrap);
@@ -268,7 +269,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 
 		// make "more..." link
 		$markerArray['###DETAILS###'] = $this->pi_getLL('details');
-		unset($typolinkConf);
 		$typolinkConf = $this->typolinkConf;
 		if (!empty($typeConfigArray['typolink.'])) {
 			$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
@@ -288,7 +288,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$key = key($result);
 				if (array_key_exists($key, $this->termsArray)) {
 					$relatedTerm = current($result);
-					unset($typolinkConf);
 					$typolinkConf = $this->typolinkConf;
 					if (!empty($typeConfigArray['typolink.'])) {
 						$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
@@ -328,6 +327,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 			}
 		} else {
 			$images = t3lib_div::trimExplode(',', $termArray['image'], 1);
+			$imagesWithPath = array();
 			foreach ($images as $image) {
 				$imagesWithPath[] = 'uploads/pics/' . $image;
 			}
@@ -383,6 +383,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 
 	function getIndexArray() {
+		$indexArray = array();
+		$reverseIndexArray = array();
 		// Get localized index chars.
 		foreach (t3lib_div::trimExplode(',', $this->pi_getLL('indexChars')) as $key => $value) {
 			$subCharArray = t3lib_div::trimExplode('|', $value);
@@ -393,7 +395,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 		}
 
 		// The configuered subchars like Ö will be linked as O (see documentation and file "locallang.xml").
-		unset($typolinkConf);
 		$typolinkConf = $this->typolinkConf;
 		foreach ($this->termsArray as $termKey => $termArray) {
 			if ( $termArray['exclude']!=1 && $this->conf['types.'][$termArray['term_type'].'.']['dontListTerms']!=1 && in_array($GLOBALS['TSFE']->id,$termArray['listPages']) ) {

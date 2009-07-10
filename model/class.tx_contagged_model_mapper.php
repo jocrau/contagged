@@ -91,7 +91,7 @@ class tx_contagged_model_mapper {
 
 			// post processing
 			$mappedDataArray['term_alt'] = t3lib_div::trimExplode(chr(10),$row['term_alt'],1);
-			$mappedDataArray['desc_long'] = $this->cObj->parseFunc($mappedDataArray['desc_long'],$conf='',$ref='< lib.parseFunc_RTE');
+			$mappedDataArray['desc_long'] = $this->cObj->parseFunc($mappedDataArray['desc_long'], array(), '< lib.parseFunc_RTE');
 			$mappedDataArray['storagePids'] = $this->getStoragePidsArray($typeConfigArray);
 						
 			if ($typeConfigArray['listPages']) {
