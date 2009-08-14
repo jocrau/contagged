@@ -1,3 +1,7 @@
+v1.1.0 2009-08-14 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[~TASK] Deployed contagged to TER.
+
 v1.0.5 2009-08-14 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX If two different terms with the same beginning are defined (like  "foo" and "foo bar"), the term "foo bar" now will have precedence. Otherwise it will not be found. Resolves #4249.
@@ -14,7 +18,7 @@ v1.0.3 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
 v1.0.2 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX plugin.tx_contagged.index.showOnlyMatchedIndexChars() = 1 had no effect (plugin.tx_contagged.showOnlyMatchedIndexChars() = 1 was evaluated)
-	* ADD Feature #2968: contagged uses now a unique identifyer (table name and uid) to link the terms (enables SEO friendly RealURL configuration)
+	* ADD contagged uses now a unique identifyer (table name and uid) to link the terms (enables SEO friendly RealURL configuration). Resolves #2968.
 	* ADD Added configuration option "addBackLink" (defaults to 0)
 	* CHG Set default of addBackLinkDescription to 0
 	* CHG Adapted RealURL example (not yet optimal solution)
