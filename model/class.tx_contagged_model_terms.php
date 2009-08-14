@@ -43,8 +43,7 @@ class tx_contagged_model_terms {
 		$this->conf = $controller->conf;
 		$this->cObj = $controller->cObj;
 
-		$mapperClassName = t3lib_div::makeInstanceClassName('tx_contagged_model_mapper');
-		$this->mapper = new $mapperClassName($this->controller);
+		$this->mapper = t3lib_div::makeInstance('tx_contagged_model_mapper', $this->controller);
 
 		// build an array of tables in the database
 		$tablesResult = mysql_list_tables(TYPO3_db);

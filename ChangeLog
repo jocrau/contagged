@@ -1,10 +1,14 @@
+v1.0.5 2009-08-14 Jochen Rau <jochen.rau@typoplanet.de>
+
+	* FIX If two different terms with the same beginning are defined (like  "foo" and "foo bar"), the term "foo bar" now will have precedence. Otherwise it will not be found. Resolves #4249.
+
 v1.0.4 2009-07-10 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX Alternative terms (term_alt) were not searched
 
 v1.0.3 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
 
-	* FIX Bug #3017: Page browser is not localised
+	* FIX Page browser is not localised. Resolves #3017. 
 	* IMP Cache handling (useCacheHash = 1 default for all links)
 
 v1.0.2 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
@@ -17,7 +21,7 @@ v1.0.2 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
 
 v1.0.1 2009-03-31 Jochen Rau <jochen.rau@typoplanet.de>
 
-	* FIX Bug #3010: Links in list view support cache again (removed typolink.target = _blank from default TS settings) 
+	* FIX Links in list view support cache again (removed typolink.target = _blank from default TS settings). Resolves #3010.
 	* CHG Enabled edit icons for the upcoming fe_edit of v4.3 (3rd parameter of editIcons() must be an array)
 	
 	FYI: From now on the patch level version number (0.0.x) will only be used for revisions in the svn repository. The sub versions (0.x.0) and main versions (x.0.0) will be deployed to TER.

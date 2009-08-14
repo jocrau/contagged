@@ -68,9 +68,19 @@ class tx_contagged extends tslib_pibase {
 		$this->typesArray = $this->conf['types.'];
 
 		// get the model (an associated array of terms)
-		$modelClassName = t3lib_div::makeInstanceClassName('tx_contagged_model_terms');
-		$model = new $modelClassName($this);
+		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
 		$this->termsArray = $model->findAllTerms();
+		$sortedTerms = array();
+		foreach ($this->termsArray as $termKey => $termArray) {
+			$sortedTerms[] = array('term' => $termArray['term_main'], 'key' => $termKey);
+			if (is_array($termArray['term_alt'])) {
+				foreach ($termArray['term_alt'] as $term) {
+					$sortedTerms[] = array('term' => $term, 'key' => $termKey);
+				}
+			}
+			// sort the array descending by length of the value, so the longest term will match
+			usort($sortedTerms,array($this,'sortArrayByLengthDescending'));
+		}
 
 		// get a comma separated list of all tags which should be omitted
 		$tagsToOmitt = $this->getTagsToOmitt();
@@ -81,24 +91,12 @@ class tx_contagged extends tslib_pibase {
 		foreach((array)$splittedContent as $intKey => $HTMLvalue) {
 			if (!($intKey%2)) {
 				$positionsArray = array();
-				// iterate through all terms
-				foreach ($this->termsArray as $termKey=>$termArray) {					
-					$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
-					
-					$terms = array();
-					$terms[] = $termArray['term_main'];
-					if ( $termArray['term_alt'] ) {
-						$terms = array_merge($terms,$termArray['term_alt']);
-					}
-					// sort the array descending by length of the value, so the longest term will match
-					usort($terms,array($this,'sortArrayByLengthDescending'));
-					foreach ( $terms as $term ) {
-						$this->getPositions($splittedContent[$intKey],$positionsArray,$typeConfigArray,$term,$termKey);
+					foreach ($sortedTerms as $termAndKey) {
+						$this->getPositions($splittedContent[$intKey],$positionsArray,$termAndKey['term'],$termAndKey['key']);
 					}
 				}
 				ksort($positionsArray);
 				$splittedContent[$intKey] = $this->doReplace($splittedContent[$intKey],$positionsArray);			
-			}
 		}
 		$parsedContent = implode('',$splittedContent);
 		
@@ -111,15 +109,15 @@ class tx_contagged extends tslib_pibase {
 	}
 	
 	function sortArrayByLengthDescending($a,$b) {
-		if (strlen($a)==strlen($b)) {
+		if (strlen($a['term'])==strlen($b['term'])) {
 			return 0;
 		}
-		
-		return strlen($a)<strlen($b) ? 1 : -1;
+		return strlen($a['term'])<strlen($b['term']) ? 1 : -1;
 	}
 
-	function getRegEx($term,$termKey,$typeConfigArray) {
+	function getRegEx($term,$termKey) {
 		$termArray = $this->termsArray[$termKey];
+		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
 		// stdWrap for the term to search for; usefull to realize custom tags like <person>|</person>
 		$regExTerm = $this->cObj->stdWrap($term,$typeConfigArray['termStdWrap.']);
 		$regEx = '';
@@ -136,8 +134,10 @@ class tx_contagged extends tslib_pibase {
 		return $regEx;
 	}
 
-	function getPositions($content,&$positionsArray,$typeConfigArray,$term,$termKey) {
-		$regEx = $this->getRegEx($term,$termKey,$typeConfigArray);
+	function getPositions($content,&$positionsArray,$term,$termKey) {
+		$termArray = $this->termsArray[$termKey];
+		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
+		$regEx = $this->getRegEx($term,$termKey);
 		preg_match_all($regEx,$content,$matchesArray,PREG_OFFSET_CAPTURE);
 		$matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx
 
