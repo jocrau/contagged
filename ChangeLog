@@ -1,3 +1,8 @@
+v1.2.0 2009-08-26 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+BUGFIX] Removed dependency to TYPO3 4.3 (t3lib_div::makeInstance()) which caused a Fatal error: Uncaught exception 'RuntimeException' with message 'No 
+configuration. Please include the static template.'
+
 v1.1.0 2009-08-14 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[~TASK] Deployed contagged to TER.

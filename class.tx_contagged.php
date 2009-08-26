@@ -68,7 +68,8 @@ class tx_contagged extends tslib_pibase {
 		$this->typesArray = $this->conf['types.'];
 
 		// get the model (an associated array of terms)
-		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
+		$modelClassName = t3lib_div::makeInstanceClassName('tx_contagged_model_terms');
+		$model = new $modelClassName($this);
 		$this->termsArray = $model->findAllTerms();
 		$sortedTerms = array();
 		foreach ($this->termsArray as $termKey => $termArray) {
