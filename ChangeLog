@@ -1,3 +1,8 @@
+v1.3.0 2009-09-16 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+BUGFIX] Fixed non-translated page titles in backlink (Thanks to Oliver Berg for reporting). Resolves #4478.
+	[+BUGFIX] Fixed an issue with the parser (appended terms to cObj in some rare cases).
+
 v1.2.1 2009-08-31 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Fixed link in documentation (thanks to Klemens Zleptnik).

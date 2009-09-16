@@ -107,10 +107,10 @@ class tx_contagged_model_terms {
 		$fetchedTerms = array();
 		foreach ($this->terms as $key => $term) {
 			if ($term['sourceName'] == $sourceName && $term['uid'] == $uid) {
-				return array($key => $term);
+				$fetchedTerms = array($key => $term);
 			}
 		}
-		return NULL;
+		return $fetchedTerms;
 	}
 	
 	function sourceIsConfigured($sourceName) {

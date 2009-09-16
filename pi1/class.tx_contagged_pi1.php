@@ -212,7 +212,10 @@ class tx_contagged_pi1 extends tslib_pibase {
 		// make "back to..." link
 		if ($this->backPid) {
 			if($this->conf['addBackLinkDescription']>0) {
-				$backPage = $this->pi_getRecord('pages', $this->backPid);
+				$pageSelectObject = new t3lib_pageSelect;
+				$pageSelectObject->init(FALSE);
+				$pageSelectObject->sys_language_uid = $GLOBALS['TSFE']->sys_language_uid;
+				$backPage = $pageSelectObject->getPage($this->backPid);
 				$markerArray['###BACK_TO###'] = $this->pi_getLL('backToPage') . " \"" . $backPage['title'] . "\"";
 			} else {
 				$markerArray['###BACK_TO###'] = $this->pi_getLL('back');

@@ -95,9 +95,9 @@ class tx_contagged extends tslib_pibase {
 					foreach ($sortedTerms as $termAndKey) {
 						$this->getPositions($splittedContent[$intKey],$positionsArray,$termAndKey['term'],$termAndKey['key']);
 					}
-				}
 				ksort($positionsArray);
 				$splittedContent[$intKey] = $this->doReplace($splittedContent[$intKey],$positionsArray);			
+			}
 		}
 		$parsedContent = implode('',$splittedContent);
 		
