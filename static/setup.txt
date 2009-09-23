@@ -5,8 +5,14 @@ includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
 # invoke the parser
 lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
-tt_content.text.20.postUserFunc = tx_contagged->main
-tt_content.bullets.20.postUserFunc = tx_contagged->main
+tt_content {
+	text.20.postUserFunc = tx_contagged->main
+	bullets.20.postUserFunc = tx_contagged->main
+	table.20.stdWrap.postUserFunc = tx_contagged->main
+	uploads.20.itemRendering.20.2.postUserFunc = tx_contagged->main
+	image.20.caption.1.postUserFunc = tx_contagged->main
+	html.postUserFunc = tx_contagged->main
+}
 
 plugin.tx_contagged {
 	templateFile = {$contagged.templateFile}

@@ -5,8 +5,14 @@ includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
 # invoke the parser
 lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
-tt_content.text.20.postUserFunc = tx_contagged->main
-tt_content.bullets.20.postUserFunc = tx_contagged->main
+tt_content {
+	text.20.postUserFunc = tx_contagged->main
+	bullets.20.postUserFunc = tx_contagged->main
+	table.20.stdWrap.postUserFunc = tx_contagged->main
+	uploads.20.itemRendering.20.2.postUserFunc = tx_contagged->main
+	image.20.caption.1.postUserFunc = tx_contagged->main
+	html.postUserFunc = tx_contagged->main
+}
 
 plugin.tx_contagged {
 	templateFile = {$contagged.templateFile}
@@ -32,6 +38,7 @@ plugin.tx_contagged {
 	sortField = {$contagged.sortField}
 	fieldsToMap = {$contagged.fieldsToMap}
 	secureFields = {$contagged.secureFields}
+	addBackLink = {$contagged.addBackLink}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
 	
 	images {
@@ -80,7 +87,7 @@ plugin.tx_contagged {
 		enable = {$contagged.enableSearchBox}
 		fieldsToSearch = {$contagged.fieldsToSearch}
 	}
-		
+	
 	types {
 
 		definition {
@@ -101,103 +108,103 @@ plugin.tx_contagged {
 			tag = abbr
 		}
 		
-				dfn_block {
-					label = Definition (tool-tip)
-					label.de = Definition (Tool-Tip)
-					tag = span
-					addCssClassAttribute = 1
-					cssClass = dfn_block
-					stripBlockTags = 1
-					stdWrap.innerWrap.cObject = COA
-					stdWrap.innerWrap.cObject {
-						10 = TEXT
-						10.value = | <span class="tx-contagged-dfn_block-content">
-						20 = TEXT
-						20.data = register:contagged_matchedTerm
-						20.typolink {
-							parameter.data = register:contagged_list_page
-							parameter.override.field = link
-							useCacheHash = 1
-							additionalParams.data = register:contagged_key
-							additionalParams.wrap = &tx_contagged[key]=|
-							additionalParams.dataWrap = |&tx_contagged[backPid]={TSFE:id}
-						}
-						30 = TEXT
-						30.value = <br />
-						40 = TEXT
-						40.required = 1
-						40.data = register:contagged_desc_long
-						50 = TEXT
-						50.value = </span>
-					}
+		dfn_block {
+			label = Definition (tool-tip)
+			label.de = Definition (Tool-Tip)
+			tag = span
+			addCssClassAttribute = 1
+			cssClass = dfn_block
+			stripBlockTags = 1
+			stdWrap.innerWrap.cObject = COA
+			stdWrap.innerWrap.cObject {
+				10 = TEXT
+				10.value = | <span class="tx-contagged-dfn_block-content">
+				20 = TEXT
+				20.data = register:contagged_matchedTerm
+				20.typolink {
+					parameter.data = register:contagged_list_page
+					parameter.override.field = link
+					useCacheHash = 1
+					additionalParams.data = register:contagged_key
+					additionalParams.wrap = &tx_contagged[key]=|
+					additionalParams.dataWrap = |&tx_contagged[backPid]={TSFE:id}
 				}
+				30 = TEXT
+				30.value = <br />
+				40 = TEXT
+				40.required = 1
+				40.data = register:contagged_desc_long
+				50 = TEXT
+				50.value = </span>
+			}
+		}
 
-				dfn_inline {
-					label = Definition (inline)
-					label.de = Definition (im Flieﬂtext)
-					tag = span
-					linkToListPage = 0
-					addCssClassAttribute = 1
-					stdWrap.innerWrap.cObject = COA
-					stdWrap.innerWrap.cObject {
-						10 = TEXT
-						10.value = | <span class="tx-contagged-dfn_block-content">&nbsp;[
-						20 = TEXT
-						20.required = 1
-						20.stripHtml = 1
-						20.data = register:contagged_desc_long
-						30 = TEXT
-						30.value = ] </span>
-					}
-				}
+		dfn_inline {
+			label = Definition (inline)
+			label.de = Definition (im Flieﬂtext)
+			tag = span
+			linkToListPage = 0
+			addCssClassAttribute = 1
+			stdWrap.innerWrap.cObject = COA
+			stdWrap.innerWrap.cObject {
+				10 = TEXT
+				10.value = | <span class="tx-contagged-dfn_block-content">&nbsp;[
+				20 = TEXT
+				20.required = 1
+				20.stripHtml = 1
+				20.data = register:contagged_desc_long
+				30 = TEXT
+				30.value = ] </span>
+			}
+		}
 
-		# 		location {
-		# 			label = Location
-		# 			label.de = Ortsbezeichnung
-		# 			tag = strong
-		# 		}
-		# 
-		# 		price {
-		# 			label = Price
-		# 			label.de = Preis
-		# 			termStdWrap.wrap = ***|***
-		# 			linkToListPage = 0
-		# 			stdWrap.wrap = |&nbsp;Euro
-		# 			dontListTerms = 1
-		# 		}
-		# 
-		# 		regex {
-		# 			label = Regular Expression
-		# 			label.de = Regul‰rer Ausdruck
-		# 			linkToListPage = 1
-		# 			termIsRegEx = 1
-		# 			secureFields =
-		# 			dontListTerms = 0
-		# 		}
-		# 		
-				person < plugin.tx_contagged.types.dfn_block
-				person {
-					label = Person
-					label.de = Person
-					dataSource = addresses
-					sortField = zip
-				}
-		# 		
-		# 		reference {
-		# 			label = Reference
-		# 			label.de = Quelle
-		# 			dataSource = references
-		# 			sortField = term_main
-		# 		}
-		# 		
-		# 		category < plugin.tx_contagged.types.dfn_block
-		# 		category {
-		# 			label = Category
-		# 			label.de = Kategorie
-		# 			dataSource = categories
-		# 		}
-				
-	}
+	# 	location {
+	# 		label = Location
+	# 		label.de = Ortsbezeichnung
+	# 		tag = strong
+	# 	}
+	# 
+	# 	price {
+	# 		label = Price
+	# 		label.de = Preis
+	# 		termStdWrap.wrap = ***|***
+	# 		linkToListPage = 0
+	# 		stdWrap.wrap = |&nbsp;Euro
+	# 		dontListTerms = 1
+	# 	}
+	# 
+	# 	regex {
+	# 		label = Regular Expression
+	# 		label.de = Regul‰rer Ausdruck
+	# 		linkToListPage = 1
+	# 		termIsRegEx = 1
+	# 		secureFields =
+	# 		dontListTerms = 0
+	# 	}
+	# 	
+	# 	person < plugin.tx_contagged.types.dfn_block
+	# 	person {
+	# 		label = Person
+	# 		label.de = Person
+	# 		dataSource = addresses
+	# 		sortField = zip
+	# 	}
+	# 	
+	# 	reference {
+	# 		label = Reference
+	# 		label.de = Quelle
+	# 		dataSource = references
+	# 		sortField = term_main
+	# 	}
+	# 	
+	# 	category < plugin.tx_contagged.types.dfn_block
+	# 	category {
+	# 		label = Category
+	# 		label.de = Kategorie
+	# 		dataSource = categories
+	# 	}
+	# 	
+	# }
 
 	dataSources {
 		
@@ -249,28 +256,28 @@ plugin.tx_contagged {
 		# 	}
 		# }
 		# 
-		
-		addresses {
-			sourceName = tt_address
-			hasSysLanguageUid = 0
-			storagePids = 91
-			fieldsToEdit = name,person,address
-			mapping {
-				uid.field = uid
-				pid.field = pid
-				first_name.field = first_name
-				middle_name.field = middle_name
-				term_main.field = last_name
-				term_main.stdWrap.dataWrap = |, {register:contagged_first_name} {register:contagged_middle_name}
-				term_type.value = person
-				zip.field = zip
-				city.field = city
-				desc_long.field = address
-				desc_long.stdWrap.dataWrap = |<br />{register:contagged_zip} {register:contagged_city}
-				exclude.value = 0
-			}
-		}
-		
+		# 
+		# addresses {
+		# 	sourceName = tt_address
+		# 	hasSysLanguageUid = 0
+		# 	storagePids = 91
+		# 	fieldsToEdit = name,person,address
+		# 	mapping {
+		# 		uid.field = uid
+		# 		pid.field = pid
+		# 		first_name.field = first_name
+		# 		middle_name.field = middle_name
+		# 		term_main.field = last_name
+		# 		term_main.stdWrap.dataWrap = |, {register:contagged_first_name} {register:contagged_middle_name}
+		# 		term_type.value = person
+		# 		zip.field = zip
+		# 		city.field = city
+		# 		desc_long.field = address
+		# 		desc_long.stdWrap.dataWrap = |<br />{register:contagged_zip} {register:contagged_city}
+		# 		exclude.value = 0
+		# 	}
+		# }
+		# 
 		# categories {
 		# 	sourceName = tx_categories
 		# 	hasSysLanguageUid = 1

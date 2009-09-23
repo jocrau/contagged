@@ -165,15 +165,16 @@ class tx_contagged_model_terms {
 				// map the fields
 				$mappedResult = $this->mapper->getDataArray($result,$dataSource);
 			}
-			$this->fetchRelatedTerms($mappedResult);
-			// $this->fetchIndex($dataArray);
-			foreach ($mappedResult as $result) {
-				$dataArray[$result['sourceName'] . '_' . $result['uid']] = $result;
+			if (is_array($mappedResult)) {
+				$this->fetchRelatedTerms($mappedResult);
+				// $this->fetchIndex($dataArray);
+				foreach ($mappedResult as $result) {
+					$dataArray[$result['sourceName'] . '_' . $result['uid']] = $result;
+				}
 			}
 		}
 		
 		// TODO piVars as a data source
-
 		return $dataArray;
 	}
 	

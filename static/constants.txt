@@ -16,11 +16,11 @@ contagged {
 	# cat=contagged (base settings)//80; type=int; label=Link to list page: Set this to 1 if all types of terms shold be linked to the list page specified by "listPage". This could be overwritten by the type configuration. you have to configure a list page globally (see below) or in the configuration of a type of term.
 	linkToListPage = 1
 	# cat=contagged (parser)//30; type=string; label=Tags to be excluded: A comma separated list of tags to be excluded from parsing.
-	excludeTags = h1,h2,h3,h4,h5,h6,a,dfn,abbr,acronym,exclude
+	excludeTags = h1,h2,h3,h4,h5,h6,a,dfn,abbr,acronym
 	# cat=contagged (parser)//35; type=boolean; label=Exclude used tags: Auto-exclude tags used by the contagged type definitions (like <dfn> or <abbr>).
 	autoExcludeTags = 0
-	# cat=contagged (parser)//48; type=boolean; label=Max. Recurrences: The maximum number of terms to be tagged in a cObject.
-	maxRecurrences = 
+	# cat=contagged (parser)//48; type=int; label=Max. Recurrences: The maximum number of terms to be tagged in a cObject.
+	maxRecurrences = 99999
 	# cat=contagged (parser)/enable/50; type=boolean; label=Check for joined words: Take pre- and/or post-matches of joined words (with dash) into account (see documentation for examples).
 	checkPreAndPostMatches = 1
 	# cat=contagged (parser)/enable/55; type=boolean; label=Add title attribute: Should the "title" attribute containing a short description of the term be added to the tag?
