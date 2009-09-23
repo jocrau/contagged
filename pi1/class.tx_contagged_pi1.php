@@ -23,6 +23,7 @@
 	***************************************************************/
 
 require_once (PATH_tslib . 'class.tslib_pibase.php');
+require_once (t3lib_extMgm::extPath('contagged') . 'class.tx_contagged.php');
 require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_terms.php');
 require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_mapper.php');
 
@@ -53,6 +54,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 	 * @return	string			a single or list view of terms
 	 */
 	function main($content, $conf) {
+		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
+		$this->parser = t3lib_div::makeInstance('tx_contagged');
 		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
 		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
 		if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'])) {
@@ -96,7 +99,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		// TODO hook "newRenderFunctionName"
 
 		$content = $this->removeUnfilledMarker($content);
-		
+				
 		return $this->pi_wrapInBaseClass($content);
 	}
 
@@ -252,7 +255,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt']?implode(', ',$termArray['term_alt']):$this->pi_getLL('na');
 		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace']?$termArray['term_replace']:$this->pi_getLL('na');
 		$markerArray['###DESC_SHORT###'] = $termArray['desc_short']?$termArray['desc_short']:$this->pi_getLL('na');
-		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$termArray['desc_long']:$this->pi_getLL('na');
+		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$this->parser->parse($termArray['desc_long']):$this->pi_getLL('na');
 		$markerArray['###IMAGES###'] = $this->renderImages($termArray);
 		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');
@@ -456,7 +459,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 	protected function removeUnfilledMarker($content) {
 		return preg_replace('/###.*?###/', '', $content);
 	}
-
+	
 }
 
 

@@ -31,13 +31,15 @@
  */
 class tx_contagged_model_mapper {
 	var $conf; // the TypoScript configuration array
-	var $cObj;
 	var $controller;
 
 	function tx_contagged_model_mapper($controller) {
 		$this->controller = $controller;
 		$this->conf = $controller->conf;
-		$this->cObj = $controller->cObj;
+		if (!is_object($this->cObj)) {
+			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
+		}
+
 	}
 
 	/**

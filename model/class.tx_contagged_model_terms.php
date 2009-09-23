@@ -32,7 +32,6 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
  */
 class tx_contagged_model_terms {
 	var $conf; // the TypoScript configuration array
-	var $cObj;
 	var $controller;
 	var $tablesArray = array(); // array of all tables in the database
 	var $terms = array();
@@ -41,7 +40,9 @@ class tx_contagged_model_terms {
 	function __construct($controller) {
 		$this->controller = $controller;
 		$this->conf = $controller->conf;
-		$this->cObj = $controller->cObj;
+		if (!is_object($this->cObj)) {
+			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
+		}
 
 		$mapperClassName = t3lib_div::makeInstanceClassName('tx_contagged_model_mapper');
 		$this->mapper = new $mapperClassName($this->controller);
@@ -154,7 +155,7 @@ class tx_contagged_model_terms {
 				$whereClause = '1=1';
 				$whereClause .= $storagePidsList ? ' AND pid IN (' . $storagePidsList . ')' : '';
 				$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
-				$whereClause .= tslib_cObj::enableFields($sourceName);
+				$whereClause .= $this->cObj->enableFields($sourceName);
 
 				// execute SQL-query
 				$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(

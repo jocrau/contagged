@@ -39,20 +39,31 @@ class tx_contagged extends tslib_pibase {
 	var $extKey = 'contagged'; // the extension key
 	var $conf; // the TypoScript configuration array
 	var $typolinkConf;
-	var $local_cObj;
 
 	/**
-	 * The main method to parse, tag and link terms
+	 * The main method. It instantly delegates the process to the parse function.
 	 *
 	 * @param	string		$content: The content
 	 * @param	array		$conf: The configuration array
 	 * @return	string		The parsed and tagged content that is displayed on the website
 	 */
-	function main($content,$conf) {
+	public function main($content, $conf = NULL) {
+		return $this->parse($content, $conf);
+	}
+	
+	/**
+	 * This method is to parse, tag and link specific terms in the given content.
+	 *
+	 * @param	string		$content: The content
+	 * @param	array		$conf: The configuration array
+	 * @return	string		The parsed and tagged content that is displayed on the website
+	 */
+	public function parse($content, $conf = NULL) {
 		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
-
-		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
-		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
+		if (!is_object($this->cObj)) {
+			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
+			$this->cObj->setCurrentVal($GLOBALS['TSFE']->id);
+		}
 
 		$this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : array();
 		if (!empty($this->typolinkConf['additionalParams'])) {
@@ -403,7 +414,7 @@ class tx_contagged extends tslib_pibase {
 			}
 			$typolinkConf['additionalParams'] = t3lib_div::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
 			$typolinkConf['parameter'] = $parameter;
-			$matchedTerm = $this->local_cObj->typolink($matchedTerm, $typolinkConf);		
+			$matchedTerm = $this->cObj->typolink($matchedTerm, $typolinkConf);		
 		}
 		
 		return $matchedTerm;
@@ -524,8 +535,10 @@ class tx_contagged extends tslib_pibase {
 		if ( $GLOBALS['TSFE']->page['tx_contagged_dont_parse'] == 1) {
 			$result = true;
 		}
-		if ( $this->cObj->getFieldVal('tx_contagged_dont_parse') == 1) {
-			$result = true;
+		if (!empty($this->cObj)) {
+			if ($this->cObj->getFieldVal('tx_contagged_dont_parse') == 1) {
+				$result = true;
+			}
 		}
 
 		return $result;
