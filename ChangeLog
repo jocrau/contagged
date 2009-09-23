@@ -1,3 +1,9 @@
+v1.3.1 2009-09-22 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[!!!][+FEATURE] Content of tables, uploads, captions, and html-cObj are now parsed, too. Please check, if this is the expected behaviour for your site. Comment out the appropriate lines in the setup if necessary.
+	[+BUGFIX] Set type of maxRecurrences now to integer to make it editable in the Constants Editor.
+	[+BUGFIX] Fixed a problem with empty SELECT results.
+
 v1.3.0 2009-09-16 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Fixed non-translated page titles in backlink (Thanks to Oliver Berg for reporting). Resolves #4478.
