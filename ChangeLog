@@ -1,3 +1,7 @@
+v1.3.2 2009-10-01 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+BUGFIX] Added Icon for hidden terms. Thanks to Matthias Koch.
+
 v1.3.1 2009-09-22 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[!!!][+FEATURE] Content of tables, uploads, captions, and html-cObj are now parsed, too. Please check, if this is the expected behaviour for your site. Comment out the appropriate lines in the setup if necessary.

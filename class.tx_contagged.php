@@ -60,6 +60,7 @@ class tx_contagged extends tslib_pibase {
 	 */
 	public function parse($content, $conf = NULL) {
 		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
+		$this->pi_setPiVarDefaults();
 		if (!is_object($this->cObj)) {
 			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
 			$this->cObj->setCurrentVal($GLOBALS['TSFE']->id);
