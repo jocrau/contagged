@@ -81,6 +81,15 @@ plugin.tx_contagged {
 		dontLinkActivePage = {$contagged.dontLinkActivePage}
 		showFirstLast = {$contagged.showFirstLast}
 		showResultCount = {$contagged.showResultCount}
+		wraps {
+			browseBoxWrap = <div class="browseBoxWrap">|</div>
+			showResultsWrap = <div class="showResultsWrap">|</div>
+			browseLinksWrap = <div class="browseLinksWrap">|</div>
+			showResultsNumbersWrap = <span class="showResultsNumbersWrap">|</span>
+			disabledLinkWrap = <span class="disabledLinkWrap">|</span>
+			inactiveLinkWrap = <span class="inactiveLinkWrap">|</span>
+			activeLinkWrap = <span class="activeLinkWrap">|</span>
+		}
 	}
 	
 	searchbox {

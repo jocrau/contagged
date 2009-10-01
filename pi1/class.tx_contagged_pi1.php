@@ -433,7 +433,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 	
 	function renderPageBrowser(&$markerArray, $resultCount) {
-		// setup the page browser
 		$this->internal['res_count'] = $resultCount;
 		$this->internal['results_at_a_time'] = $this->conf['pagebrowser.']['results_at_a_time'] ? intval($this->conf['pagebrowser.']['results_at_a_time']) : 20;
 		$this->internal['maxPages'] = $this->conf['pagebrowser.']['maxPages'] ? intval($this->conf['pagebrowser.']['maxPages']) : 3;
@@ -442,7 +441,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->internal['pagefloat'] = 'center';
 		if ( ($this->internal['res_count'] > $this->internal['results_at_a_time']) && ($this->conf['pagebrowser.']['enable'] > 0)) {
 			$showResultCount = $this->conf['pagebrowser.']['showResultCount'] ? (boolean)$this->conf['pagebrowser.']['showResultCount'] : FALSE;
-			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($showResultCount);
+			$wrapArray = is_array($this->conf['pagebrowser.']['wraps.']) ? $this->conf['pagebrowser.']['wraps.'] : array();
+			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($showResultCount, NULL, $wrapArray);
 		} else {
 			$markerArray['###PAGEBROWSER###'] = '';			
 		}
