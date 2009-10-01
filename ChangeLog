@@ -1,11 +1,12 @@
 v1.3.2 2009-10-01 Jochen Rau <jochen.rau@typoplanet.de>
 
-	[+BUGFIX] Added Icon for hidden terms. Thanks to Matthias Koch.
 	[!!!][+FEATURE] Added configuration option plugin.tx_contagged.pagebrowser.wraps to define wraps for the pagebrowser (passed to piBase). Switched from tables to divs. Please check the styling of your output!
+	[+BUGFIX] Added Icon for hidden terms. Thanks to Matthias Koch.
 	
 v1.3.1 2009-09-22 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[!!!][+FEATURE] Content of tables, uploads, captions, and html-cObj are now parsed, too. Please check, if this is the expected behaviour for your site. Comment out the appropriate lines in the setup if necessary.
+	[!!!][+FEATURE] Contagged is now self-aware. The long description of a term is now parsed by contagged again. This enables auto-cross-referencing. Don't forget to include the glossary page (or exclude it, if you don't want the description to be parsed).
 	[+BUGFIX] Set type of maxRecurrences now to integer to make it editable in the Constants Editor.
 	[+BUGFIX] Fixed a problem with empty SELECT results.
 
