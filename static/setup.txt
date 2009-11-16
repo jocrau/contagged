@@ -1,5 +1,3 @@
-# encoding: iso-8859-1
-
 # include class tx_contagged as library 
 includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
@@ -113,7 +111,7 @@ plugin.tx_contagged {
 
 		abbrevation {
 			label = Abbrevation
-			label.de = Abkürzung (Beispiel: u.s.w.)			
+			label.de = AbkÃ¼rzung (Beispiel: u.s.w.)			
 			tag = abbr
 		}
 				
