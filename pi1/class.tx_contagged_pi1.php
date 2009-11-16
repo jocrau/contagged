@@ -213,7 +213,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 
 	function renderLinks(&$markerArray, &$wrappedSubpartArray) {
 		// make "back to..." link
-		if ($this->backPid) {
+		if ($this->backPid && $this->conf['addBackLink'] !== '0') {
 			if($this->conf['addBackLinkDescription']>0) {
 				$pageSelectObject = new t3lib_pageSelect;
 				$pageSelectObject->init(FALSE);
@@ -223,12 +223,12 @@ class tx_contagged_pi1 extends tslib_pibase {
 			} else {
 				$markerArray['###BACK_TO###'] = $this->pi_getLL('back');
 			}
+			unset($typolinkConf);
+			$typolinkConf['parameter'] = $this->backPid;
+			$wrappedSubpartArray['###LINK_BACK_TO###'] = $this->local_cObj->typolinkWrap($typolinkConf);
 		} else {
-			$markerArray['###BACK_TO###'] = '';
+			$markerArray['###LINK_BACK_TO###'] = '';
 		}
-		unset($typolinkConf);
-		$typolinkConf['parameter'] = $this->backPid;
-		$wrappedSubpartArray['###LINK_BACK_TO###'] = $this->local_cObj->typolinkWrap($typolinkConf);
 
 		// make "link to all entries"
 	    $markerArray['###INDEX_ALL###'] = $this->pi_linkTP($this->pi_getLL('all'));
@@ -436,15 +436,17 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->internal['res_count'] = $resultCount;
 		$this->internal['results_at_a_time'] = $this->conf['pagebrowser.']['results_at_a_time'] ? intval($this->conf['pagebrowser.']['results_at_a_time']) : 20;
 		$this->internal['maxPages'] = $this->conf['pagebrowser.']['maxPages'] ? intval($this->conf['pagebrowser.']['maxPages']) : 3;
-		$this->internal['dontLinkActivePage'] = $this->conf['pagebrowser.']['dontLinkActivePage'] ? (boolean)$this->conf['pagebrowser.']['dontLinkActivePage'] : FALSE;
-		$this->internal['showFirstLast'] = $this->conf['pagebrowser.']['showFirstLast'] ? (boolean)$this->conf['pagebrowser.']['showFirstLast'] : FALSE;
-		$this->internal['pagefloat'] = $this->conf['pagebrowser.']['pagefloat'];
+		$this->internal['dontLinkActivePage'] = $this->conf['pagebrowser.']['dontLinkActivePage'] === '0' ? FALSE : TRUE;
+		$this->internal['showFirstLast'] = $this->conf['pagebrowser.']['showFirstLast'] === '0' ? FALSE : TRUE;
+		$this->internal['pagefloat'] = strlen($this->conf['pagebrowser.']['pagefloat']) > 0 ? $this->conf['pagebrowser.']['pagefloat'] : 'center';
 		$this->internal['showRange'] = $this->conf['pagebrowser.']['showRange'];
 		$this->pi_alwaysPrev = intval($this->conf['pagebrowser.']['alwaysPrev']);
 
 		if (($this->internal['res_count'] > $this->internal['results_at_a_time']) && ($this->conf['pagebrowser.']['enable'] > 0)) {
 			$wrapArray = is_array($this->conf['pagebrowser.']['wraps.']) ? $this->conf['pagebrowser.']['wraps.'] : array();
-			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($this->conf['pagebrowser.']['showResultCount'], $this->conf['pagebrowser.']['tableParams'], $wrapArray);
+			$pointerName = strlen($this->conf['pagebrowser.']['pointerName']) > 0 ? $this->conf['pagebrowser.']['pointerName'] : 'pointer';
+			$enableHtmlspecialchars = $this->conf['pagebrowser.']['enableHtmlspecialchars'] === '0' ? FALSE : TRUE;
+			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($this->conf['pagebrowser.']['showResultCount'], $this->conf['pagebrowser.']['tableParams'], $wrapArray, $pointerName, $enableHtmlspecialchars);
 		} else {
 			$markerArray['###PAGEBROWSER###'] = '';			
 		}

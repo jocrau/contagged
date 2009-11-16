@@ -77,11 +77,14 @@ plugin.tx_contagged {
 		results_at_a_time = {$contagged.results_at_a_time}
 		maxPages = {$contagged.maxPages}
 		dontLinkActivePage = {$contagged.dontLinkActivePage}
+		pagefloat = {$contagged.pagefloat}
 		showFirstLast = {$contagged.showFirstLast}
 		alwaysPrev = {$contagged.alwaysPrev}
 		showResultCount = {$contagged.showResultCount}
 		showRange = {$contagged.showRange}
 		tableParams = {$contagged.tableParams}
+		pointerName = {$contagged.pointerName}
+		enableHtmlspecialchars = {$contagged.enableHtmlspecialchars}
 		wraps {
 			browseBoxWrap = <div class="browseBoxWrap">|</div>
 			showResultsWrap = <div class="showResultsWrap">|</div>

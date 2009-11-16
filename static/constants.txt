@@ -35,50 +35,56 @@ contagged {
 	updateKeywords = 1
 	# cat=contagged (parser)//90; type=string; label=RegEx modifier: RegEx modifier of the main RegEx. You have to add "u" if you have a site with UTF-8 encoding.
 	modifier = Uis
-	# cat=contagged (list)/dims/76; type=int; label=Image max width: Maximum width of an image in single view.
+	# cat=contagged (list)/dims/10; type=int; label=Image max width: Maximum width of an image in single view.
 	singleMaxW = 200
-	# cat=contagged (list)/dims/77; type=int; label=Image max height: Maximum height of an image in single view.
+	# cat=contagged (list)/dims/11; type=int; label=Image max height: Maximum height of an image in single view.
 	singleMaxH = 200
-	# cat=contagged (list)//80; type=wrap; label=Label Wrap 1
+	# cat=contagged (list)//20; type=wrap; label=Label Wrap 1
 	labelWrap1 = <strong>|:</strong>&nbsp;
-	# cat=contagged (list)//85; type=wrap; label=Label Wrap 2
+	# cat=contagged (list)//21; type=wrap; label=Label Wrap 2
 	labelWrap2 = &nbsp;(|)
-	# cat=contagged (list)//91; type=string; label=Fields to be searched
-	fieldsToSearch = term_main,term_alt,term_replace,desc_short,desc_long,imagecaption
-	# cat=contagged (list)//92; type=string; label=Sort Field: The front-end lists will be sorted by this field.
-	sortField = term
-	# cat=contagged (list)//93; type=string; label=Fields to Map: Fields to be mapped.
-	fieldsToMap = uid,pid,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,imagecaption,imagealt,imagetitle,related,link,exclude
-	# cat=contagged (list)//94; type=string; label=Secured Fields
-	secureFields = 
-	# cat=contagged (list)/enable/96; type=boolean; label=Add Back Link: Add a back link.
-	addBackLink = 0
-	# cat=contagged (list)/enable/99; type=boolean; label=Add Back Link Desc.: Add the page title to the back link.
-	addBackLinkDescription = 1
-	# cat=contagged (list)/enable/10; type=boolean; label=Show index: Show the alphabetical index.
-	enableIndex = 1
-	# cat=contagged (list)/enable/20; type=boolean; label=Show search box
+	# cat=contagged (list)//30; type=boolean; label=Show search box
 	enableSearchBox = 1
-	# cat=contagged (list)/enable/30; type=boolean; label=Show page browser:
-	enablePageBrowser = 1
-	# cat=contagged (list)//20; type=boolean; label=Only matched Index: Show only those index chars, for which a term matches.
+	# cat=contagged (list)//32; type=string; label=Fields to be searched
+	fieldsToSearch = term_main,term_alt,term_replace,desc_short,desc_long,imagecaption
+	# cat=contagged (list)//34; type=string; label=Sort Field: The front-end lists will be sorted by this field.
+	sortField = term
+	# cat=contagged (list)//40; type=string; label=Fields to Map: Fields to be mapped.
+	fieldsToMap = uid,pid,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,imagecaption,imagealt,imagetitle,related,link,exclude
+	# cat=contagged (list)//41; type=string; label=Secured Fields
+	secureFields = 
+	# cat=contagged (list)//50; type=boolean; label=Add Back Link: Add a back link to the refering page. Be aware of caching if you activate this!
+	addBackLink = 0
+	# cat=contagged (list)//51; type=boolean; label=Add Back Link Desc.: Add the page title to the back link.
+	addBackLinkDescription = 1
+	# cat=contagged (list)//60; type=boolean; label=Show index: Show the alphabetical index.
+	enableIndex = 1
+	# cat=contagged (list)//62; type=boolean; label=Only matched Index: Show only those index chars, for which a term matches.
 	showOnlyMatchedIndexChars = 0
-	# cat=contagged (list)/index/30; type=boolean; label=Add index chars: Supplement missing index chars automatically.
+	# cat=contagged (list)//64; type=boolean; label=Add index chars: Supplement missing index chars automatically.
 	autoAddIndexChars = 1
-	# cat=contagged (list)//10; type=int; label=Results at a time: Number of results to be displayed on a single page.
+	# cat=contagged (list)//70; type=boolean; label=Show page browser:
+	enablePageBrowser = 1
+	# cat=contagged (list)//71; type=int; label=Results at a time: Number of results to be displayed on a single page.
 	results_at_a_time = 20
-	# cat=contagged (list)//20; type=int; label=Number of pages: Number of pages to be displayed in the page browser at once.
+	# cat=contagged (list)//72; type=int; label=Number of pages: Number of pages to be displayed in the page browser at once.
 	maxPages = 3            
-	# cat=contagged (list)//30; type=boolean; label=Don't link active page
+	# cat=contagged (list)//73; type=boolean; label=Don't link active page
 	dontLinkActivePage = 1  
-	# cat=contagged (list)//40; type=boolean; label=Show "First"/"Last": Show link to first and last page.
-	showFirstLast = 0       
-	# cat=contagged (list)//45; type=boolean; label=Show always link to previous.
-	alwaysPrev = 1       
-	# cat=contagged (list)//50; type=boolean; label=Show result counter
+	# cat=contagged (list)//74; type=string; label=Page position in the list of pages: This defines were the current page is shown in the list of pages in the Pagebrowser. If this var is an integer it will be interpreted as position in the list of pages. If its value is the keyword "center" the current page will be shown in the middle of the pagelist. As the current implementation of pi_pagebrowser is buggy keep it set to "center".
+	pagefloat = center
+	# cat=contagged (list)//75; type=boolean; label=Show "First"/"Last": Show link to first and last page.
+	showFirstLast = 0
+	# cat=contagged (list)//76; type=boolean; label=Show always link to previous.
+	alwaysPrev = 1
+	# cat=contagged (list)//77; type=int; label=Show result counter: Determines how the results of the pagerowser will be shown. If set to 0: only the result-browser will be shown. 1: (default) the text "Displaying results..." and the result-browser will be shown. 2: only the text "Displaying results..." will be shown.
 	showResultCount = 0
-	# cat=contagged (list)//60; type=boolean; label=Show page links as range (1-5 6-10 11-15... instead of 1 2 3...)
+	# cat=contagged (list)//78; type=boolean; label=Show page links as range (1-5 6-10 11-15... instead of 1 2 3...)
 	showRange = 0
-	# cat=contagged (list)//60; type=string; label=Additional table tag params.
+	# cat=contagged (list)//79; type=string; label=Additional table tag params.
 	tableParams = 
+	# cat=contagged (list)//80; type=string; label=The pointer name.
+	pointerName = pointer
+	# cat=contagged (list)//81; type=boolean; label=Enable htmlspecialchars():Enable htmlspecialchars() for pagebrowser (set this to 0 if you want f.e use images instead of text for links like 'previous' and 'next')
+	enableHtmlspecialchars = 1
 }
