@@ -1,3 +1,7 @@
+v1.4.0 2009-10-01 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[~TASK] Deployed version 1.4.0 to TER. Tagged version 1.4.0.
+
 v1.3.2 2009-10-01 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[!!!][+FEATURE] Added configuration option plugin.tx_contagged.pagebrowser.wraps to define wraps for the pagebrowser (passed to piBase). Switched from tables to divs. Please check the styling of your output!
