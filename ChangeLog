@@ -1,3 +1,10 @@
+v1.4.1 2009-11-16 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[-FEATURE] Removed experimental RTE integration.
+	[+BUGFIX] Added missing option "showRange" to pagebrowser.
+	[+FEATURE] You can now pass additional table tag params (pagebrowser.tableParams= class="foo"). This is only active if you don't overwrite the wraps.
+	[+FEATURE] You can now specify, if the "prev." link should always be shown (pagebrowser.alwaysPrev = 1).
+	
 v1.4.0 2009-10-01 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[~TASK] Deployed version 1.4.0 to TER. Tagged version 1.4.0.

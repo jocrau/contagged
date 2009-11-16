@@ -78,7 +78,10 @@ plugin.tx_contagged {
 		maxPages = {$contagged.maxPages}
 		dontLinkActivePage = {$contagged.dontLinkActivePage}
 		showFirstLast = {$contagged.showFirstLast}
+		alwaysPrev = {$contagged.alwaysPrev}
 		showResultCount = {$contagged.showResultCount}
+		showRange = {$contagged.showRange}
+		tableParams = {$contagged.tableParams}
 		wraps {
 			browseBoxWrap = <div class="browseBoxWrap">|</div>
 			showResultsWrap = <div class="showResultsWrap">|</div>

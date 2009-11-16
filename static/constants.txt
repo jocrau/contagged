@@ -73,6 +73,12 @@ contagged {
 	dontLinkActivePage = 1  
 	# cat=contagged (list)//40; type=boolean; label=Show "First"/"Last": Show link to first and last page.
 	showFirstLast = 0       
+	# cat=contagged (list)//45; type=boolean; label=Show always link to previous.
+	alwaysPrev = 1       
 	# cat=contagged (list)//50; type=boolean; label=Show result counter
 	showResultCount = 0
+	# cat=contagged (list)//60; type=boolean; label=Show page links as range (1-5 6-10 11-15... instead of 1 2 3...)
+	showRange = 0
+	# cat=contagged (list)//60; type=string; label=Additional table tag params.
+	tableParams = 
 }

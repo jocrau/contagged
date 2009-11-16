@@ -438,11 +438,13 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->internal['maxPages'] = $this->conf['pagebrowser.']['maxPages'] ? intval($this->conf['pagebrowser.']['maxPages']) : 3;
 		$this->internal['dontLinkActivePage'] = $this->conf['pagebrowser.']['dontLinkActivePage'] ? (boolean)$this->conf['pagebrowser.']['dontLinkActivePage'] : FALSE;
 		$this->internal['showFirstLast'] = $this->conf['pagebrowser.']['showFirstLast'] ? (boolean)$this->conf['pagebrowser.']['showFirstLast'] : FALSE;
-		$this->internal['pagefloat'] = 'center';
-		if ( ($this->internal['res_count'] > $this->internal['results_at_a_time']) && ($this->conf['pagebrowser.']['enable'] > 0)) {
-			$showResultCount = $this->conf['pagebrowser.']['showResultCount'] ? (boolean)$this->conf['pagebrowser.']['showResultCount'] : FALSE;
+		$this->internal['pagefloat'] = $this->conf['pagebrowser.']['pagefloat'];
+		$this->internal['showRange'] = $this->conf['pagebrowser.']['showRange'];
+		$this->pi_alwaysPrev = intval($this->conf['pagebrowser.']['alwaysPrev']);
+
+		if (($this->internal['res_count'] > $this->internal['results_at_a_time']) && ($this->conf['pagebrowser.']['enable'] > 0)) {
 			$wrapArray = is_array($this->conf['pagebrowser.']['wraps.']) ? $this->conf['pagebrowser.']['wraps.'] : array();
-			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($showResultCount, NULL, $wrapArray);
+			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($this->conf['pagebrowser.']['showResultCount'], $this->conf['pagebrowser.']['tableParams'], $wrapArray);
 		} else {
 			$markerArray['###PAGEBROWSER###'] = '';			
 		}
