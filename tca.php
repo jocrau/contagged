@@ -303,21 +303,14 @@ function user_addTermTypes(&$params,&$pObj) {
 	global $BE_USER;
 	$BE_USER->uc['lang'] = $BE_USER->uc['lang'] ? $BE_USER->uc['lang'] : 'default';
 
-	// get extension configuration
-	$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
-	if ( (int)$extConfArray['mainConfigStoragePid']>0 ) {
-		$mainConfigStoragePid = intval($extConfArray['mainConfigStoragePid']);
-	} else {
-		// TODO parse static setup
-	}
-	
-	$rootLine = t3lib_BEfunc::BEgetRootLine($mainConfigStoragePid);
-	$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
-	$TSObj->tt_track = 0;
-	$TSObj->init();
-	$TSObj->runThroughTemplates($rootLine);
-	$TSObj->generateConfig();
-	$conf = $TSObj->setup['plugin.']['tx_contagged.'];
+	$template = t3lib_div::makeInstance('t3lib_TStemplate');
+	$template->tt_track = 0;
+	$template->init();
+	$sysPage = t3lib_div::makeInstance('t3lib_pageSelect');
+	$rootline = $sysPage->getRootLine(getCurrentPageId());
+	$template->runThroughTemplates($rootline, 0);
+	$template->generateConfig();
+	$conf = $template->setup['plugin.']['tx_contagged.'];
 
 	// make localized labels
 	$LOCAL_LANG_ARRAY = array();
@@ -334,4 +327,25 @@ function user_addTermTypes(&$params,&$pObj) {
 		}
 	}
 }
+
+function getCurrentPageId() {
+	$pageId = (integer)t3lib_div::_GP('id');
+	if ($pageId > 0) {
+		return $pageId;
+	}
+
+	$rootTemplates = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pid', 'sys_template', 'deleted=0 AND hidden=0 AND root=1', '', '', '1');
+	if (count($rootTemplates) > 0) {
+		return $rootTemplates[0]['pid'];
+	}
+
+	$rootPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid', 'pages', 'deleted=0 AND hidden=0 AND is_siteroot=1', '', '', '1');
+	if (count($rootPages) > 0) {
+		return $rootPages[0]['uid'];
+	}
+
+	// take pid 1 as fallback
+	return 1;
+}
+
 ?>
