@@ -1,5 +1,6 @@
 v1.4.3 2010-01-08 Jochen Rau <jochen.rau@typoplanet.de>
 
+	[+FEATURE] Added config option "respectCase". You can now choose whether contagged should try to set the replacement in the same case as the original term (default respectCase = 1).
 	[+BUGFIX] Replaced deprecated mysql_list_tables().
 
 v1.4.2 2009-12-08 Jochen Rau <jochen.rau@typoplanet.de>

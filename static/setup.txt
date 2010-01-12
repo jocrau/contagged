@@ -24,6 +24,7 @@ plugin.tx_contagged {
 	excludeTags = {$contagged.excludeTags}
 	autoExcludeTags = {$contagged.autoExcludeTags}
 	checkPreAndPostMatches = {$contagged.checkPreAndPostMatches}
+	respectCase = {$contagged.respectCase}
 	addTitleAttribute = {$contagged.addTitleAttribute}
 	addLangAttribute = {$contagged.addLangAttribute}
 	addCssClassAttribute = {$contagged.addCssClassAttribute}

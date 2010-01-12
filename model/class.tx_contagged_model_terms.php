@@ -48,12 +48,7 @@ class tx_contagged_model_terms {
 		$this->mapper = new $mapperClassName($this->controller);
 
 		// build an array of tables in the database
-		$tablesResult = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
-		if (!mysql_error()) {
-			while($table = mysql_fetch_assoc($tablesResult)) {
-				$this->tablesArray[] = current($table);
-			}
-		}
+		$this->tablesArray = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
 		
 		if (is_array($this->conf['dataSources.'])) {
 			foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
@@ -150,7 +145,7 @@ class tx_contagged_model_terms {
 
 		// check if the table exists in the database
 		if (is_array($this->tablesArray)) {
-			if (t3lib_div::inArray($this->tablesArray,$sourceName) ) {
+			if (array_key_exists($sourceName, $this->tablesArray) ) {
 				// Build WHERE-clause
 				$whereClause = '1=1';
 				$whereClause .= $storagePidsList ? ' AND pid IN (' . $storagePidsList . ')' : '';

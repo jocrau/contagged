@@ -257,7 +257,7 @@ class tx_contagged extends tslib_pibase {
 			// (\p{Lu} stands for "unicode letter uppercase")
 			$GLOBALS['TSFE']->register['contagged_matchedTerm'] = $termArray['term_replace'];
 			$this->updateIndex($termKey, $termArray['term_replace']);
-			if ( preg_match('/^\p{Lu}/u',$matchedTerm)>0 ) {
+			if (preg_match('/^\p{Lu}/u', $matchedTerm) > 0 && ($this->checkLocalGlobal($typeConfigArray, 'respectCase') > 0)) {
 				$matchedTerm = $preMatch . ucfirst($termArray['term_replace']) . $postMatch;
 				// TODO ucfirst is not UTF8 safe; it depends on the locale settings (they could be ASCII)
 			} else {
@@ -296,7 +296,7 @@ class tx_contagged extends tslib_pibase {
 
 
 	function updateIndex($termKey, $matchedTerm) {
-		$currentRecord = split(':',$this->cObj->currentRecord);
+		$currentRecord = t3lib_div::trimExplode(':', $this->cObj->currentRecord);
 		$GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id][$termKey] = array(
 			'matchedTerm' => $matchedTerm,
 			'termSourceName' => $this->termsArray[$termKey]['sourceName'],

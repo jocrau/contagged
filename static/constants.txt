@@ -23,6 +23,8 @@ contagged {
 	maxRecurrences = 99999
 	# cat=contagged (parser)/enable/50; type=boolean; label=Check for joined words: Take pre- and/or post-matches of joined words (with dash) into account (see documentation for examples).
 	checkPreAndPostMatches = 1
+	# cat=contagged (parser)/enable/52; type=boolean; label=Respect case: Respect the case of the first letter. Contagged tries to determine the case of the first letter and sets the replacement to this case if enabled.
+	respectCase = 1
 	# cat=contagged (parser)/enable/55; type=boolean; label=Add title attribute: Should the "title" attribute containing a short description of the term be added to the tag?
 	addTitleAttribute = 1
 	# cat=contagged (parser)/enable/60; type=boolean; label=Add language attribute: Should a "lang" attribute be added to the tag?
