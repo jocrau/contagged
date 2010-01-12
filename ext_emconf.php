@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext "contagged".
 #
-# Auto generated 01-10-2009 11:18
+# Auto generated 12-01-2010 11:47
 #
 # Manual updates:
 # Only the data in the array - everything else is removed by next
@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'This extension parses your content to tag, replace and link specific terms. It is useful to auto-generate a glossary - but not only. See \'ChangeLog\' and WiKi (\'http://wiki.typo3.org/index.php/Contagged\').',
 	'category' => 'fe',
 	'shy' => 0,
-	'version' => '1.4.2',
+	'version' => '1.5.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -40,7 +40,7 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:32:{s:9:"ChangeLog";s:4:"1bc0";s:10:"README.txt";s:4:"72b7";s:22:"class.tx_contagged.php";s:4:"fad6";s:21:"ext_conf_template.txt";s:4:"3d40";s:12:"ext_icon.gif";s:4:"50a3";s:17:"ext_localconf.php";s:4:"f640";s:14:"ext_tables.php";s:4:"7a50";s:14:"ext_tables.sql";s:4:"0afa";s:27:"icon_tx_contagged_terms.gif";s:4:"50a3";s:30:"icon_tx_contagged_terms__h.gif";s:4:"930e";s:16:"locallang_db.xml";s:4:"0305";s:7:"tca.php";s:4:"7ed7";s:23:"doc/cooluri_example.xml";s:4:"3b41";s:14:"doc/manual.sxw";s:4:"8abc";s:23:"doc/realurl_example.php";s:4:"7bac";s:55:"extensions/contagged/class.tx_rtehtmlarea_contagged.php";s:4:"6e77";s:34:"extensions/contagged/locallang.xml";s:4:"9489";s:38:"extensions/contagged/skin/htmlarea.css";s:4:"5e97";s:46:"extensions/contagged/skin/images/contagged.gif";s:4:"50a3";s:46:"extensions/contagged/skin/images/contagged.png";s:4:"63d3";s:39:"htmlarea/plugins/contagged/contagged.js";s:4:"41da";s:40:"htmlarea/plugins/contagged/locallang.xml";s:4:"e333";s:16:"js/selecttext.js";s:4:"1179";s:41:"model/class.tx_contagged_model_mapper.php";s:4:"94af";s:40:"model/class.tx_contagged_model_terms.php";s:4:"869d";s:30:"pi1/class.tx_contagged_pi1.php";s:4:"382d";s:18:"pi1/contagged.tmpl";s:4:"55bf";s:17:"pi1/locallang.xml";s:4:"bcfe";s:20:"static/constants.txt";s:4:"f1c8";s:16:"static/setup.txt";s:4:"d0e9";s:20:"static/css/setup.txt";s:4:"bfc8";s:25:"static/examples/setup.txt";s:4:"3806";}',
+	'_md5_values_when_last_written' => 'a:24:{s:9:"ChangeLog";s:4:"6513";s:10:"README.txt";s:4:"72b7";s:22:"class.tx_contagged.php";s:4:"98b0";s:21:"ext_conf_template.txt";s:4:"2cdd";s:12:"ext_icon.gif";s:4:"50a3";s:17:"ext_localconf.php";s:4:"f640";s:14:"ext_tables.php";s:4:"7a50";s:14:"ext_tables.sql";s:4:"0afa";s:27:"icon_tx_contagged_terms.gif";s:4:"50a3";s:30:"icon_tx_contagged_terms__h.gif";s:4:"930e";s:16:"locallang_db.xml";s:4:"0305";s:7:"tca.php";s:4:"3455";s:23:"doc/cooluri_example.xml";s:4:"3b41";s:14:"doc/manual.sxw";s:4:"8abc";s:23:"doc/realurl_example.php";s:4:"7bac";s:41:"model/class.tx_contagged_model_mapper.php";s:4:"94af";s:40:"model/class.tx_contagged_model_terms.php";s:4:"481f";s:30:"pi1/class.tx_contagged_pi1.php";s:4:"1298";s:18:"pi1/contagged.tmpl";s:4:"55bf";s:17:"pi1/locallang.xml";s:4:"bcfe";s:20:"static/constants.txt";s:4:"20a4";s:16:"static/setup.txt";s:4:"6af3";s:20:"static/css/setup.txt";s:4:"bfc8";s:25:"static/examples/setup.txt";s:4:"3806";}',
 	'suggests' => array(
 	),
 );
