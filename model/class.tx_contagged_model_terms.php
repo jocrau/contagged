@@ -48,7 +48,7 @@ class tx_contagged_model_terms {
 		$this->mapper = new $mapperClassName($this->controller);
 
 		// build an array of tables in the database
-		$tablesResult = mysql_list_tables(TYPO3_db);
+		$tablesResult = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
 		if (!mysql_error()) {
 			while($table = mysql_fetch_assoc($tablesResult)) {
 				$this->tablesArray[] = current($table);
