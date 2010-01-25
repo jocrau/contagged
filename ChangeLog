@@ -1,3 +1,10 @@
+v1.5.1 2010-01-25 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+TASK] Performance optimization and refactorings after an extensive profiling session.
+	[-CONFIGURATION] Removed option	'secureFields'.
+	[+CONFIGURATION] Added option 'fieldsToParse' (comma separated list of fields to be parsed by contagged again in list view).
+	[-CONFIGURATION] The long description is not pardes via lib.parseFunc_RTE by default anymore (due to performance reasons). You have to uncomment the appropriate line in the TS setup. It's recommended to do so only on pages where the long description is displayed.
+
 v1.5.0 2010-01-09 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[~TASK] Deployed version 1.5.0 to TER. Tagged version 1.5.0.
