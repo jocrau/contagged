@@ -132,7 +132,7 @@ $TCA["tx_contagged_terms"] = array (
 				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang",		
 				"config" => Array (
 					"type" => "select",
-// TODO Make selectable languages configurable. 
+					// TODO Make selectable languages configurable. 
 					"items" => Array (
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.0", ""),
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.1", "en"),
@@ -169,17 +169,6 @@ $TCA["tx_contagged_terms"] = array (
 					"type" => "text",
 					"cols" => "30",
 					"rows" => "5",
-					"wizards" => Array(
-						"_PADDING" => 2,
-						"RTE" => array(
-							"notNewRecords" => 1,
-							"RTEonly" => 1,
-							"type" => "script",
-							"title" => "Full screen Rich Text Editing|Formatteret redigering i hele vinduet",
-							"icon" => "wizard_rte2.gif",
-							"script" => "wizard_rte.php",
-						),
-					),
 				)
 			),
 			'related' => Array (

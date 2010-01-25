@@ -30,12 +30,15 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
  * @package	TYPO3
  * @subpackage	tx_contagged_model_terms
  */
-class tx_contagged_model_terms {
+class tx_contagged_model_terms implements t3lib_Singleton {
 	var $conf; // the TypoScript configuration array
 	var $controller;
 	var $tablesArray = array(); // array of all tables in the database
+	var $dataSourceArray = array();
+	var $cachedSources = array();
 	var $terms = array();
-	var $configuredSources;
+	var $configuredSources = array();
+	var $listPagesCache = array();
 
 	function __construct($controller) {
 		$this->controller = $controller;
@@ -44,90 +47,73 @@ class tx_contagged_model_terms {
 			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
 		}
 
-		$mapperClassName = t3lib_div::makeInstanceClassName('tx_contagged_model_mapper');
-		$this->mapper = new $mapperClassName($this->controller);
+		$this->mapper  = t3lib_div::makeInstance('tx_contagged_model_mapper', $this->controller);
 
 		// build an array of tables in the database
 		$this->tablesArray = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
 		
 		if (is_array($this->conf['dataSources.'])) {
 			foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
-				$this->configuredSources[] = $sourceConfiguration['sourceName'];
+				$this->configuredSources[$sourceConfiguration['sourceName']] = substr($dataSource, 0, -1);
 			}
 		} else {
 			throw new RuntimeException('No configuration. Please include the static template.');
 		}
 		
 		$typesArray = $this->conf['types.'];
-		$dataSourceArray = array();
 		foreach ($typesArray as $type=>$typeConfigArray) {
-			$storagePidsArray = $this->mapper->getStoragePidsArray($typeConfigArray);
+			$storagePidsArray = $this->getStoragePidsArray($typeConfigArray);
 			$dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
 			foreach ($storagePidsArray as $pid) {
 				// if there is an entry for the data source: check for duplicates before adding the pid
 				// otherwise: create a new entry and add the pid
-				if ($dataSourceArray[$dataSource]) {
-					if ( !in_array($pid,$dataSourceArray[$dataSource]) ) {
-						$dataSourceArray[$dataSource][] = $pid;
-					}
+				if (is_array($this->dataSourceArray[$dataSource]) && !in_array(intval($pid),$this->dataSourceArray[$dataSource])) {
+					$this->dataSourceArray[$dataSource][] = intval($pid);
 				} else {
-					$dataSourceArray[$dataSource][] = $pid;
+					$this->dataSourceArray[$dataSource][] = intval($pid);
 				}
 			}
 		}
 		
-		// get an array of all data rows in the configured tables
-		foreach ($dataSourceArray as $dataSource => $storagePidsArray ) {
-			$this->terms = array_merge($this->terms, $this->fetchAllTermsFromSource($dataSource,$storagePidsArray));
-		}
-
-		uasort($this->terms, array($this, 'sortByTermAscending'));
 	}
 
 	function findAllTerms() {
+		foreach ($this->dataSourceArray as $dataSource => $storagePidsArray ) {
+			$this->terms = array_merge($this->terms, $this->fetchTermsFromSource($dataSource,$storagePidsArray));
+		}
 		return $this->terms;
 	}
 	
 	function findAllTermsToListOnPage($pid = NULL) {
-		$terms = array();
 		if ($pid === NULL) $pid = $GLOBALS['TSFE']->id;
+		foreach ($this->dataSourceArray as $dataSource => $storagePidsArray ) {
+			$this->terms = array_merge($this->terms, $this->fetchTermsFromSource($dataSource, $storagePidsArray, ' AND exclude=0'));
+		}
+		$terms = array();
 		foreach ($this->terms as $key => $term) {
-			if ( ($term['exclude'] == 0) && ($this->conf['types.'][$term['term_type'].'.']['dontListTerms'] == 0) && (in_array($pid, $term['listPages']) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key])) ) {
+			$typeConfigurationArray = $this->conf['types.'][$term['term_type'] . '.'];
+			$listPidsArray = $this->getListPidsArray($term['term_type']);
+			if (($typeConfigurationArray['dontListTerms'] == 0) && (in_array($pid, $listPidsArray) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key])) ) {
 				$terms[$key] = $term;
 			}
 		}
+		uasort($terms, array($this, 'sortByTermAscending'));
 		return $terms;
-	}
-		
-	function findTermByUid($sourceName, $uid) {
-		$fetchedTerms = array();
-		foreach ($this->terms as $key => $term) {
-			if ($term['sourceName'] == $sourceName && $term['uid'] == $uid) {
-				$fetchedTerms = array($key => $term);
-			}
-		}
-		return $fetchedTerms;
-	}
-	
-	function sourceIsConfigured($sourceName) {
-		return in_array($sourceName, $this->configuredSources);
 	}
 
 	function sortByTermAscending($termArrayA, $termArrayB) {
-		$sortFieldA = $this->getSortField($termArrayA);
-		$sortFieldB = $this->getSortField($termArrayB);
-		$termsArray = array($termArrayA[$sortFieldA], $termArrayB[$sortFieldB]);
-		// $GLOBALS['TSFE']->csConvObj->convArray($termsArray,'utf-8','iso-8859-1');
-		$termsArrayBefore = $termsArray;
-		natcasesort($termsArray);
-		$termsArrayAfterwards = $termsArray;
-		if (array_pop($termsArrayBefore) == array_pop($termsArrayAfterwards)) {
-			$result = -1;
+		return strnatcasecmp($termArrayA['term'], $termArrayB['term']);
+	}
+	
+	function findTermByUid($dataSource, $uid) {
+		$additionalWhereClause = ' AND uid=' . intval($uid);
+		$terms = $this->fetchTermsFromSource($dataSource, $storagePidsArray, $additionalWhereClause);
+		$this->fetchRelatedTerms($terms);
+		if (is_array($terms) && count($terms) > 0) {
+			return array_shift($terms);
 		} else {
-			$result = 1;
+			return NULL;
 		}
-
-		return $result;
 	}
 
 	/**
@@ -137,39 +123,34 @@ class tx_contagged_model_terms {
 	 * @param	[type]		$storagePids: ...
 	 * @return	An		array with the terms an their configuration
 	 */
-	function fetchAllTermsFromSource($dataSource, $storagePidsArray=NULL) {
+	function fetchTermsFromSource($dataSource, $storagePidsArray= array(), $additionalWhereClause = '') {
 		$dataArray = array();
-		$storagePidsList = implode(',',$storagePidsArray);
 		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 		$sourceName = $dataSourceConfigArray['sourceName'];
-
 		// check if the table exists in the database
-		if (is_array($this->tablesArray)) {
-			if (array_key_exists($sourceName, $this->tablesArray) ) {
-				// Build WHERE-clause
-				$whereClause = '1=1';
-				$whereClause .= $storagePidsList ? ' AND pid IN (' . $storagePidsList . ')' : '';
-				$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
-				$whereClause .= $this->cObj->enableFields($sourceName);
+		if (array_key_exists($sourceName, $this->tablesArray) ) {				
+			// Build WHERE-clause
+			$whereClause = '1=1';
+			$whereClause .= count($storagePidsArray) > 0 ? ' AND pid IN (' . implode(',',$storagePidsArray) . ')' : '';
+			$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
+			$whereClause .= $this->cObj->enableFields($sourceName);
+			$whereClause .= $additionalWhereClause;
 
-				// execute SQL-query
-				$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-					'*', // SELECT ...
-					$sourceName, // FROM ...
-					$whereClause // WHERE ..
-					);
-				// map the fields
-				$mappedResult = $this->mapper->getDataArray($result,$dataSource);
-			}
-			if (is_array($mappedResult)) {
-				$this->fetchRelatedTerms($mappedResult);
-				// $this->fetchIndex($dataArray);
-				foreach ($mappedResult as $result) {
-					$dataArray[$result['sourceName'] . '_' . $result['uid']] = $result;
-				}
+			// execute SQL-query
+			$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+				'*', // SELECT ...
+				$sourceName, // FROM ...
+				$whereClause // WHERE ..
+				);
+			// map the fields
+			$mappedResult = $this->mapper->getDataArray($result,$dataSource);
+			$this->cachedSources[] = $sourceName;
+		}
+		if (is_array($mappedResult)) {
+			foreach ($mappedResult as $result) {
+				$dataArray[$result['sourceName'] . '_' . $result['uid']] = $result;
 			}
 		}
-		
 		// TODO piVars as a data source
 		return $dataArray;
 	}
@@ -187,8 +168,9 @@ class tx_contagged_model_terms {
 			if (!empty($result)) {
 				$termArray['related'] = array();
 				foreach ($result as $row) {
-					if ($this->sourceIsConfigured($row['tablenames'])) {
-						$termArray['related'][] = array('sourceName' => $row['tablenames'], 'uid' => $row['uid_foreign']);
+					$dataSource = $this->configuredSources[$row['tablenames']];
+					if ($dataSource !== NULL) {
+						$termArray['related'][] = array('source' => $dataSource, 'uid' => $row['uid_foreign']);
 					}
 				}
 			} else {
@@ -199,36 +181,43 @@ class tx_contagged_model_terms {
 		$dataArray = $newDataArray;
 	}
 
-	function fetchIndex(&$dataArray) {
-		$newDataArray = array();		
-		foreach ($dataArray as $key => $termArray) {
-			if (!empty($result)) {
-				$termArray['related'] = array();
-				foreach ($result as $row) {
-					if ($this->sourceIsConfigured($row['tablenames'])) {
-						$termArray['related'][] = array('sourceName' => $row['tablenames'], 'uid' => $row['uid_foreign']);
-					}
-				}
-			} else {
-				$termArray['related'] = NULL;
-			}
-			$newDataArray[] = $termArray;
+	/**
+	 * get the storage pids; cascade: type > dataSource > globalConfig
+	 *
+	 * @param string	$typeConfigArray 
+	 * @return array	An array containing the storage PIDs of the type given by
+	 * @author Jochen Rau
+	 */
+	function getStoragePidsArray($typeConfigArray) {
+		$storagePidsArray = array();
+		$dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
+		if (!empty($typeConfigArray['storagePids'])) {
+			$storagePidsArray = t3lib_div::intExplode(',',$typeConfigArray['storagePids']);
+		} elseif (!empty($this->conf['dataSources.'][$dataSource.'.']['storagePids']) ) {
+			$storagePidsArray = t3lib_div::intExplode(',',$this->conf['dataSources.'][$dataSource.'.']['storagePids']);
+		} elseif (!empty($this->conf['storagePids'])) {
+			$storagePidsArray = t3lib_div::intExplode(',',$this->conf['storagePids']);
 		}
-		$dataArray = $newDataArray;
+		return $storagePidsArray;
 	}
-	
-	
-	
-	function getSortField($termArray) {
-		if ($this->conf['types.'][$termArray['term_type'].'.']['sortField']) {
-			$sortField = $this->conf['types.'][$termArray['term_type'].'.']['sortField'];
-		} elseif ($this->conf['sortField']) {
-			$sortField = $this->conf['sortField'];
-		} else {
-			$sortField = 'term';
-		}
 
-		return $sortField;
+	/**
+	 * get the lsit pids; cascade: type > globalConfig
+	 *
+	 * @param string	$typeConfigArray 
+	 * @return array	An array containing the list PIDs of the type given by
+	 * @author Jochen Rau
+	 */
+	function getListPidsArray($termType) {
+		if (!isset($this->listPagesCache[$termType])) {		
+			$listPidsArray = array();
+			if (!empty($this->conf['types.'][$termArray['term_type'].'.']['listPages'])) {
+				$this->listPagesCache[$termType] = t3lib_div::intExplode(',',$this->conf['types.'][$termArray['term_type'].'.']['listPages']);
+			} elseif (!empty($this->conf['listPages'])) {
+				$this->listPagesCache[$termType] = t3lib_div::intExplode(',',$this->conf['listPages']);
+			}
+		}
+		return $this->listPagesCache[$termType];
 	}
 
 }

@@ -80,9 +80,9 @@ class tx_contagged extends tslib_pibase {
 		$this->typesArray = $this->conf['types.'];
 
 		// get the model (an associated array of terms)
-		$modelClassName = t3lib_div::makeInstanceClassName('tx_contagged_model_terms');
-		$model = new $modelClassName($this);
+		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
 		$this->termsArray = $model->findAllTerms();
+
 		$sortedTerms = array();
 		foreach ($this->termsArray as $termKey => $termArray) {
 			$sortedTerms[] = array('term' => $termArray['term_main'], 'key' => $termKey);
@@ -91,8 +91,6 @@ class tx_contagged extends tslib_pibase {
 					$sortedTerms[] = array('term' => $term, 'key' => $termKey);
 				}
 			}
-			// sort the array descending by length of the value, so the longest term will match
-			usort($sortedTerms,array($this,'sortArrayByLengthDescending'));
 		}
 
 		// get a comma separated list of all tags which should be omitted
@@ -121,36 +119,19 @@ class tx_contagged extends tslib_pibase {
 		return $parsedContent;
 	}
 	
-	function sortArrayByLengthDescending($a,$b) {
-		if (strlen($a['term'])==strlen($b['term'])) {
-			return 0;
-		}
-		return strlen($a['term'])<strlen($b['term']) ? 1 : -1;
-	}
-
-	function getRegEx($term,$termKey) {
-		$termArray = $this->termsArray[$termKey];
-		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
-		// stdWrap for the term to search for; usefull to realize custom tags like <person>|</person>
-		$regExTerm = $this->cObj->stdWrap($term,$typeConfigArray['termStdWrap.']);
-		$regEx = '';
-		if ( $this->checkLocalGlobal($typeConfigArray,'termIsRegEx')>0 ) {
-			$regEx = $termArray['term_main'].$this->conf['modifier'];
-		} else {
-			if (strstr($this->conf['modifier'], 'u') !== FALSE) {
-				$regEx = '/(?<=\P{L}|^)' . preg_quote($regExTerm,'/') . '(?=\P{L}|$)/' . $this->conf['modifier'];
-			} else {
-				$regEx = '/(?<=\W|^)' . preg_quote($regExTerm,'/') . '(?=\W|$)/' . $this->conf['modifier'];
-			}
-		}
-		
-		return $regEx;
-	}
-
 	function getPositions($content,&$positionsArray,$term,$termKey) {
 		$termArray = $this->termsArray[$termKey];
 		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
-		$regEx = $this->getRegEx($term,$termKey);
+		// $regEx = $regEx = '/(?<=\P{L}|^)' . preg_quote($term,'/') . '(?=\P{L}|$)/' . $this->conf['modifier'];//$this->getRegEx($term,$termKey);
+		if ($typeConfigArray['termIsRegEx'] > 0) {
+			$regEx = $termArray['term_main'].$this->conf['modifier'];
+		} else {
+			// if (strstr($this->conf['modifier'], 'u') !== FALSE) {
+				$regEx = '/(?<=\P{L}|^)' . preg_quote($term,'/') . '(?=\P{L}|$)/' . $this->conf['modifier'];
+			// } else {
+			// 	$regEx = '/(?<=\W|^)' . preg_quote($term,'/') . '(?=\W|$)/' . $this->conf['modifier'];
+			// }
+		}
 		preg_match_all($regEx,$content,$matchesArray,PREG_OFFSET_CAPTURE);
 		$matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx
 
@@ -404,11 +385,15 @@ class tx_contagged extends tslib_pibase {
 			if ($termArray['link']) {
 				$parameter = $termArray['link'];
 			} else {
-				$parameter = $termArray['listPages'][0];
+				if ($typeConfigArray['listPages']) {
+					$parameter = array_shift(t3lib_div::trimExplode(',',$typeConfigArray['listPages'],1));
+				} else {
+					$parameter = array_shift(t3lib_div::trimExplode(',',$this->conf['listPages'],1));
+				}
 			}
 			$additionalParams = array(
-				'termSource' => $termArray['sourceName'],
-				'termUid' => $termArray['uid'],
+				'source' => $termArray['sourceName'],
+				'uid' => $termArray['uid'],
 				);
 			if ($this->checkLocalGlobal($typeConfigArray,'addBackLink')) {
 				$additionalParams['backPid'] = $GLOBALS['TSFE']->id;

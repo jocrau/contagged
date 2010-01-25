@@ -51,10 +51,10 @@ contagged {
 	fieldsToSearch = term_main,term_alt,term_replace,desc_short,desc_long,imagecaption
 	# cat=contagged (list)//34; type=string; label=Sort Field: The front-end lists will be sorted by this field.
 	sortField = term
+	# cat=contagged (list)//38; type=string; label=Fields to be parsed: Fields to be parsed by contagged again before they are outputted in the list view.
+	fieldsToParse = 
 	# cat=contagged (list)//40; type=string; label=Fields to Map: Fields to be mapped.
 	fieldsToMap = uid,pid,term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,imagecaption,imagealt,imagetitle,related,link,exclude
-	# cat=contagged (list)//41; type=string; label=Secured Fields
-	secureFields = 
 	# cat=contagged (list)//50; type=boolean; label=Add Back Link: Add a back link to the refering page. Be aware of caching if you activate this!
 	addBackLink = 0
 	# cat=contagged (list)//51; type=boolean; label=Add Back Link Desc.: Add the page title to the back link.

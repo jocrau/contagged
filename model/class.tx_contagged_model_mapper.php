@@ -29,7 +29,7 @@
  * @package	TYPO3
  * @subpackage	tx_contagged_model_mapper
  */
-class tx_contagged_model_mapper {
+class tx_contagged_model_mapper implements t3lib_Singleton {
 	var $conf; // the TypoScript configuration array
 	var $controller;
 
@@ -73,7 +73,7 @@ class tx_contagged_model_mapper {
 			$term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
 			$mappedDataArray = array();
 			$mappedDataArray['term'] = $term;
-			$mappedDataArray['sourceName'] = $sourceName;
+			$mappedDataArray['sourceName'] = $dataSource;
 			foreach ( $fieldsToMapArray as $field) {
 				$value = $dataSourceConfigArray['mapping.'][$field.'.'];
 				if ( $value['value'] ) {
@@ -93,32 +93,6 @@ class tx_contagged_model_mapper {
 
 			// post processing
 			$mappedDataArray['term_alt'] = t3lib_div::trimExplode(chr(10),$row['term_alt'],1);
-			$mappedDataArray['desc_long'] = $this->cObj->parseFunc($mappedDataArray['desc_long'], array(), '< lib.parseFunc_RTE');
-			$mappedDataArray['storagePids'] = $this->getStoragePidsArray($typeConfigArray);
-						
-			if ($typeConfigArray['listPages']) {
-				$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$typeConfigArray['listPages'],1);
-			} else {
-				$mappedDataArray['listPages'] = t3lib_div::trimExplode(',',$this->conf['listPages'],1);
-			}
-
-			$secureFields = $typeConfigArray['termIsRegEx']>0 ? $this->conf['types.'][$row['term_type'].'.']['secureFields'] : $this->conf['secureFields'];
-			foreach ($mappedDataArray as $field => $fieldContent) {
-				if ($fieldContent) {
-					if ( is_array($fieldContent) ) {
-						foreach ($fieldContent as $termAltKey => $innerContent) {
-							if ( t3lib_div::inList($secureFields,$field) ) {
-								$mappedDataArray[$field][$termAltKey] = htmlspecialchars($innerContent);
-							}
-						}
-					} else {
-						if ( t3lib_div::inList($secureFields,$field) ) {
-							$mappedDataArray[$field] = htmlspecialchars($fieldContent);
-						}
-					}
-				}
-			}
-			
 			// TODO: hook "mappingPostProcessing"
 			
 			if (!empty($dataSourceConfigArray['mapping.']['uid.']['field'])) {
@@ -131,27 +105,6 @@ class tx_contagged_model_mapper {
 		return $dataArray;
 	}
 	
-	/**
-	 * get the storage pids; cascade: type > dataSource > globalConfig
-	 *
-	 * @param string	$typeConfigArray 
-	 * @return array	An array containing the storage PIDs of the type given by
-	 * @author Jochen Rau
-	 */
-	function getStoragePidsArray($typeConfigArray) {
-		$storagePidsArray = array();		
-		$dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
-		if ( $typeConfigArray['storagePids'] ) {
-			$storagePidsArray = t3lib_div::trimExplode(',',$typeConfigArray['storagePids']);
-		} elseif ( $this->conf['dataSources.'][$dataSource.'.']['storagePids'] ) {
-			$storagePidsArray = t3lib_div::trimExplode(',',$this->conf['dataSources.'][$dataSource.'.']['storagePids']);
-		} elseif ( $this->conf['storagePids']) {
-			$storagePidsArray = t3lib_div::trimExplode(',',$this->conf['storagePids']);
-		}
-		
-		return $storagePidsArray;
-	}
-
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/contagged/model/class.tx_contagged_model_mapper.php']) {

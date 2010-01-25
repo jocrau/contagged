@@ -2,14 +2,14 @@
 includeLibs.tx_contagged = EXT:contagged/class.tx_contagged.php
 
 # invoke the parser
-lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
+# lib.stdheader.stdWrap.postUserFunc = tx_contagged->main
 tt_content {
 	text.20.postUserFunc = tx_contagged->main
-	bullets.20.postUserFunc = tx_contagged->main
-	table.20.stdWrap.postUserFunc = tx_contagged->main
-	uploads.20.itemRendering.20.2.postUserFunc = tx_contagged->main
-	image.20.caption.1.postUserFunc = tx_contagged->main
-	html.postUserFunc = tx_contagged->main
+	# bullets.20.postUserFunc = tx_contagged->main
+	# table.20.stdWrap.postUserFunc = tx_contagged->main
+	# uploads.20.itemRendering.20.2.postUserFunc = tx_contagged->main
+	# image.20.caption.1.postUserFunc = tx_contagged->main
+	# html.postUserFunc = tx_contagged->main
 }
 
 plugin.tx_contagged {
@@ -36,7 +36,7 @@ plugin.tx_contagged {
 	modifier = {$contagged.modifier}
 	sortField = {$contagged.sortField}
 	fieldsToMap = {$contagged.fieldsToMap}
-	secureFields = {$contagged.secureFields}
+	fieldsToParse = {$contagged.fieldsToParse}
 	addBackLink = {$contagged.addBackLink}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
 			
@@ -141,6 +141,7 @@ plugin.tx_contagged {
 				term_lang.field = term_lang
 				desc_short.field = desc_short
 				desc_long.field = desc_long
+				# desc_long.stdWrap.parseFunc < lib.parseFunc_RTE
 				image.field = image
 				imagecaption.field = imagecaption
 				imagealt.field = imagealt
