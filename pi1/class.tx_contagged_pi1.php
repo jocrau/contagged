@@ -260,8 +260,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###TERM###'] = $termArray['term'];
 		$editIconsConf = array(
 			'styleAttribute' => '',
-			);
-		$markerArray['###TERM_KEY###'] = $termArray['source'] . '_' . $termArray['uid'];
+			);		$markerArray['###TERM_KEY###'] = $termArray['source'] . '_' . $termArray['uid'];
 		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'],'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid']);
 		$markerArray['###TERM_MAIN###'] = $termArray['term_main'];
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt']?implode(', ',$termArray['term_alt']):$this->pi_getLL('na');
@@ -291,7 +290,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		if (!empty($typeConfigArray['typolink.'])) {
 			$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
 		}
-		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[source]=' . $termArray['sourceName'] . '&' . $this->prefixId . '[uid]=' . $termArray['uid'];
+		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[source]=' . $termArray['source'] . '&' . $this->prefixId . '[uid]=' . $termArray['uid'];
 		$typolinkConf['parameter'] = array_shift($this->model->getListPidsArray($termArray['term_type']));
 		$this->typolinkConf['parameter.']['current'] = 0;
 		$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
