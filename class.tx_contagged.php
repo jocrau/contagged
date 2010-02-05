@@ -75,7 +75,7 @@ class tx_contagged extends tslib_pibase {
 
 		// exit if the content should be skipped
 		if ($this->isContentToSkip()) return $content;		
-
+		
 		// get an array of all type configurations
 		$this->typesArray = $this->conf['types.'];
 
@@ -115,6 +115,7 @@ class tx_contagged extends tslib_pibase {
 		if ($this->conf['updateKeywords'] > 0) {
 			$this->updatePageKeywords();
 		}
+		$this->addJavaScript();
 
 		return $parsedContent;
 	}
@@ -339,10 +340,9 @@ class tx_contagged extends tslib_pibase {
 	 * @param	int			$termKey: Internal key of the term
 	 */
 	function registerFields($typeConfigArray,$termKey) {
-		// Replace <p></p> with <br/>; Idea from Markus Timtner. Thank you!
-		// TODO: strip or replace all block-tags
 		if ($typeConfigArray['stripBlockTags']>0) {
-			$this->termsArray[$termKey]['desc_long'] = preg_replace('/<p[^<>]*>(.*?)<\/p\s*>/' . $this->conf['modifier'],'$1<br />',$this->termsArray[$termKey]['desc_long']);
+			$text = $this->cObj->parseFunc($this->termsArray[$termKey]['desc_long'], array(), '< lib.parseFunc_RTE');
+			$this->termsArray[$termKey]['desc_long_inline'] = $this->stripBlockTags($text);
 		}
 
 		$GLOBALS['TSFE']->register['contagged_key'] = $termKey;
@@ -391,6 +391,7 @@ class tx_contagged extends tslib_pibase {
 					$parameter = array_shift(t3lib_div::trimExplode(',',$this->conf['listPages'],1));
 				}
 			}
+			$GLOBALS['TSFE']->register['contagged_list_page'] = $parameter;
 			$additionalParams = array(
 				'source' => $termArray['source'],
 				'uid' => $termArray['uid'],
@@ -400,6 +401,7 @@ class tx_contagged extends tslib_pibase {
 			}
 			$typolinkConf['additionalParams'] = t3lib_div::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
 			$typolinkConf['parameter'] = $parameter;
+			$GLOBALS['TSFE']->register['contagged_link_url'] = $this->cObj->typoLink_URL($typolinkConf);
 			$matchedTerm = $this->cObj->typolink($matchedTerm, $typolinkConf);		
 		}
 		
@@ -528,6 +530,100 @@ class tx_contagged extends tslib_pibase {
 		}
 
 		return $result;
+	}
+	
+	/**
+	 * Replaces block elements with inline versions (if possible)
+	 * 
+	 * @param string $text 
+	 * @return string The reformatted text
+	 */
+	protected function stripBlockTags($text) {
+		$blockElements = 'address|blockquote|center|del|dir|div|dl|fieldset|form|h[1-6]|hr|ins|isindex|menu|noframes|noscript|ol|p|pre|table|ul|center|dir|isindex|menu|noframes';
+	    $text = preg_replace('%' . $this->getOpeningTag('li|dd') . '%xs', '&nbsp;&nbsp;*&nbsp;', $text);
+	    $text = preg_replace('%' . $this->getClosingTag('li|dt') . '%xs', '<br />', $text);
+	    $text = preg_replace('%' . $this->getClosingTag('ol|ul|dl') . '%xs', '', $text);
+	    $text = preg_replace('%' . $this->getOpeningTag($blockElements) . '%xs', '', $text);
+	    $text = preg_replace('%' . $this->getClosingTag($blockElements) . '%xs', '<br />', $text);
+	    $text = preg_replace('%' . $this->getOpeningTag('br') . '{2,2}%xs', '<br />', $text);
+	    return $text;
+	}
+	
+	/**
+	 * Returns an opening tag of the allowed elements.
+	 *
+	 * @param string $allowedElements The allowed elements ("a|b|c")
+	 * @return void
+	 */
+	protected function getOpeningTag($allowedElements) {
+		$tag = "
+			(
+				<(?:" . $allowedElements . ")		# opening tag ('<tag') or closing tag ('</tag')
+				(?:
+					(?:
+						\s+\w+					# EITHER spaces, followed by word characters (attribute names)
+						(?:
+							\s*=?\s*			# equals
+							(?>
+								\".*?\"			# attribute values in double-quotes
+								|
+								'.*?'			# attribute values in single-quotes
+								|
+								[^'\">\s]+		# plain attribute values
+							)
+						)?
+					)+\s*
+					|							# OR only spaces
+					\s*
+				)
+				/?>								# closing the tag with '>' or '/>'
+			)";
+		return $tag;		
+	}
+
+	/**
+	 * Returns a closing tag of the allowed elements.
+	 *
+	 * @param string $allowedElements The allowed elements ("a|b|c")
+	 * @return void
+	 */
+	protected function getClosingTag($allowedElements) {
+		$tag = "
+			(
+				</(?:" . $allowedElements . ")		# opening tag ('<tag') or closing tag ('</tag')
+				(?:
+					(?:
+						\s+\w+					# EITHER spaces, followed by word characters (attribute names)
+						(?:
+							\s*=?\s*			# equals
+							(?>
+								\".*?\"			# attribute values in double-quotes
+								|
+								'.*?'			# attribute values in single-quotes
+								|
+								[^'\">\s]+		# plain attribute values
+							)
+						)?
+					)+\s*
+					|							# OR only spaces
+					\s*
+				)
+				>								# closing the tag with '>' or '/>'
+			)";
+		return $tag;		
+	}
+	
+	/**
+	 * Adds the qTip plugin script (jQuery). You can call this function in you TS setup if necessary.
+	 *
+	 * @return void
+	 */
+	protected function addJavaScript() {
+		$extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
+		$javaScriptPathAndFilename = $extensionConfiguration['javaScriptPathAndFilename'];
+		if (is_string($javaScriptPathAndFilename) && $javaScriptPathAndFilename !== '') {
+			$GLOBALS['TSFE']->additionalHeaderData['contagged'] .= '<script src="' . $javaScriptPathAndFilename . '" type="text/javascript"></script>';
+		}
 	}
 }
 

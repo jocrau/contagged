@@ -109,6 +109,28 @@ plugin.tx_contagged {
 			label.de = Definition
 			tag = dfn
 		}
+		
+		tooltip {
+			label = Definition (tool-tip)
+			label.de = Definition (Tool-Tip)
+			tag = span
+			addCssClassAttribute = 1
+			cssClass = tooltip
+			stripBlockTags = 1
+			stdWrap.innerWrap.cObject = COA
+			stdWrap.innerWrap.cObject {
+				10 = TEXT
+				10.value = | <span id="{register:contagged_key}" class="tx-contagged-tooltip-content"><a href="{register:contagged_link_url}">{register:contagged_matchedTerm}</a>
+				10.insertData = 1
+				50 = TEXT
+				50.value = <br />
+				60 = TEXT
+				60.required = 1
+				60.data = register:contagged_desc_long_inline
+				70 = TEXT
+				70.value = </span>
+			}
+		}
 
 		acronym {
 			label = Acronym
@@ -141,7 +163,6 @@ plugin.tx_contagged {
 				term_lang.field = term_lang
 				desc_short.field = desc_short
 				desc_long.field = desc_long
-				# desc_long.stdWrap.parseFunc < lib.parseFunc_RTE
 				image.field = image
 				imagecaption.field = imagecaption
 				imagealt.field = imagealt

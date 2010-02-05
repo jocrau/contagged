@@ -1,2 +1,5 @@
 	# cat=basic//20; type=boolean; label= DAM as image source: Take DAM (digital asset management) as image source.
 	getImagesFromDAM = 0
+	
+	# cat=basic//30; type=string; label= JavaScript: The Path and filename of the JavaScript to be included on parsed pages (e.g.to display tooltips).
+	javaScriptPathAndFilename = typo3conf/ext/contagged/javascript/contagged.js

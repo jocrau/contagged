@@ -18,5 +18,30 @@ plugin.tx_contagged {
 		div.tx-contagged-index span {
 			margin: 0;
 		}
+		
+		/* position:relative is necessary for correct positioning of inline descriptions */
+		span.tx-contagged-tooltip {
+			position: relative;
+		}
+
+		/* z-index makes sure the block is the top most element */
+		span.tx-contagged-tooltip span.tx-contagged-tooltip-content {
+			background: #EEEEEE;
+			display: none;
+		 	position: absolute;
+			z-index: 9999;
+		}
+
+		span.tx-contagged-tooltip:hover span.tx-contagged-tooltip-content {
+			display: inline;
+		 	position: absolute;
+			top: -1px;
+			left: -11px;
+			width: 300px;
+			margin-top: -1px;
+			border: 1px #CCCCCC solid;
+			padding: 0px 10px 10px 10px;
+		}
+		
 	)
 }
