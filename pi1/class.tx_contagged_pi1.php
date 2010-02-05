@@ -260,7 +260,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###TERM###'] = $termArray['term'];
 		$editIconsConf = array(
 			'styleAttribute' => '',
-			);		$markerArray['###TERM_KEY###'] = $termArray['source'] . '_' . $termArray['uid'];
+			);
+		$markerArray['###TERM_KEY###'] = $termArray['source'] . '_' . $termArray['uid'];
 		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'],'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid']);
 		$markerArray['###TERM_MAIN###'] = $termArray['term_main'];
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt']?implode(', ',$termArray['term_alt']):$this->pi_getLL('na');

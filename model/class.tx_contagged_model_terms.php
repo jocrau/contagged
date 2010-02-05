@@ -146,7 +146,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		}
 		if (is_array($mappedResult)) {
 			foreach ($mappedResult as $result) {
-				$dataArray[$result['sourceName'] . '_' . $result['uid']] = $result;
+				$dataArray[$result['source'] . '_' . $result['uid']] = $result;
 			}
 		}
 		// TODO piVars as a data source

@@ -51,15 +51,14 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 	 */
 	function getDataArray($result,$dataSource) {
 		$dataArray = array();
-
 		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
-		$sourceName = $dataSourceConfigArray['sourceName'];
 
 		// add additional fields configured in the mapping configuration of the data source
-		$fieldsToMapfromTS = t3lib_div::trimExplode(',', $this->conf['fieldsToMap'], 1);
+		$fieldsToMapArray = array();
 		foreach ($dataSourceConfigArray['mapping.'] as $fieldToMap => $value) {
 				$fieldsToMapArray[] = substr($fieldToMap,0,-1);
 		}
+		$fieldsToMapfromTS = t3lib_div::trimExplode(',', $this->conf['fieldsToMap'], 1);
 		foreach ($fieldsToMapfromTS as $key => $fieldToMap) {
 			if ( !t3lib_div::inArray($fieldsToMapArray,$fieldToMap) ) {
 				$fieldsToMapArray[] = $fieldToMap;
@@ -89,7 +88,6 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 				$GLOBALS['TSFE']->register['contagged_'.$field] = $mappedDataArray[$field];
 			}
 			// TODO $desc_long = preg_replace('/(\015\012)|(\015)|(\012)/ui','<br />',$row['desc_long']);
-			$typeConfigArray = $this->conf['types.'][$mappedDataArray['term_type'].'.'];
 
 			// post processing
 			$mappedDataArray['term_alt'] = t3lib_div::trimExplode(chr(10),$row['term_alt'],1);
