@@ -35,7 +35,6 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 	var $controller;
 	var $tablesArray = array(); // array of all tables in the database
 	var $dataSourceArray = array();
-	var $cachedSources = array();
 	var $terms = array();
 	var $configuredSources = array();
 	var $listPagesCache = array();
@@ -77,28 +76,28 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		
 	}
 
-	function findAllTerms() {
-		foreach ($this->dataSourceArray as $dataSource => $storagePidsArray ) {
-			$this->terms = array_merge($this->terms, $this->fetchTermsFromSource($dataSource,$storagePidsArray));
+	function findAllTerms($additionalWhereClause = '') {
+		if (empty($this->terms)) {
+			foreach ($this->dataSourceArray as $dataSource => $storagePidsArray ) {
+				$this->terms = array_merge($this->terms, $this->fetchTermsFromSource($dataSource,$storagePidsArray));
+			}
 		}
 		return $this->terms;
 	}
 	
 	function findAllTermsToListOnPage($pid = NULL) {
+		$terms = $this->findAllTerms(' AND exclude=0');
 		if ($pid === NULL) $pid = $GLOBALS['TSFE']->id;
-		foreach ($this->dataSourceArray as $dataSource => $storagePidsArray ) {
-			$this->terms = array_merge($this->terms, $this->fetchTermsFromSource($dataSource, $storagePidsArray, ' AND exclude=0'));
-		}
-		$terms = array();
-		foreach ($this->terms as $key => $term) {
+		$filteredTerms = array();
+		foreach ($terms as $key => $term) {
 			$typeConfigurationArray = $this->conf['types.'][$term['term_type'] . '.'];
 			$listPidsArray = $this->getListPidsArray($term['term_type']);
 			if (($typeConfigurationArray['dontListTerms'] == 0) && (in_array($pid, $listPidsArray) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key])) ) {
-				$terms[$key] = $term;
+				$filteredTerms[$key] = $term;
 			}
 		}
-		uasort($terms, array($this, 'sortByTermAscending'));
-		return $terms;
+		uasort($filteredTerms, array($this, 'sortByTermAscending'));
+		return $filteredTerms;
 	}
 
 	function sortByTermAscending($termArrayA, $termArrayB) {
@@ -126,25 +125,24 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 	function fetchTermsFromSource($dataSource, $storagePidsArray= array(), $additionalWhereClause = '') {
 		$dataArray = array();
 		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
-		$sourceName = $dataSourceConfigArray['sourceName'];
+		$tableName = $dataSourceConfigArray['sourceName'];
 		// check if the table exists in the database
-		if (array_key_exists($sourceName, $this->tablesArray) ) {				
+		if (array_key_exists($tableName, $this->tablesArray) ) {				
 			// Build WHERE-clause
 			$whereClause = '1=1';
 			$whereClause .= count($storagePidsArray) > 0 ? ' AND pid IN (' . implode(',',$storagePidsArray) . ')' : '';
 			$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
-			$whereClause .= $this->cObj->enableFields($sourceName);
+			$whereClause .= $this->cObj->enableFields($tableName);
 			$whereClause .= $additionalWhereClause;
 
 			// execute SQL-query
 			$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 				'*', // SELECT ...
-				$sourceName, // FROM ...
+				$tableName, // FROM ...
 				$whereClause // WHERE ..
 				);
 			// map the fields
 			$mappedResult = $this->mapper->getDataArray($result,$dataSource);
-			$this->cachedSources[] = $sourceName;
 		}
 		if (is_array($mappedResult)) {
 			foreach ($mappedResult as $result) {

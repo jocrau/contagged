@@ -261,12 +261,13 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$editIconsConf = array(
 			'styleAttribute' => '',
 			);
+		$markerArray['###TERM_KEY###'] = $termArray['source'] . '_' . $termArray['uid'];
 		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'],'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid']);
 		$markerArray['###TERM_MAIN###'] = $termArray['term_main'];
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt']?implode(', ',$termArray['term_alt']):$this->pi_getLL('na');
 		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace']?$termArray['term_replace']:$this->pi_getLL('na');
 		$markerArray['###DESC_SHORT###'] = $termArray['desc_short']?$termArray['desc_short']:$this->pi_getLL('na');
-		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$termArray['desc_long']:$this->pi_getLL('na');
+		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$this->cObj->parseFunc($termArray['desc_long'], array(), '< lib.parseFunc_RTE'):$this->pi_getLL('na');
 		$markerArray['###IMAGES###'] = $this->renderImages($termArray);
 		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');

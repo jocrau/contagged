@@ -73,7 +73,7 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 			$term = $row[$termReplace] ? $row[$termReplace] : $row[$termMain];
 			$mappedDataArray = array();
 			$mappedDataArray['term'] = $term;
-			$mappedDataArray['sourceName'] = $dataSource;
+			$mappedDataArray['source'] = $dataSource;
 			foreach ( $fieldsToMapArray as $field) {
 				$value = $dataSourceConfigArray['mapping.'][$field.'.'];
 				if ( $value['value'] ) {

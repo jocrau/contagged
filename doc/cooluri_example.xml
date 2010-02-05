@@ -31,7 +31,7 @@
  
   <uriparts>
     <part>
-      <parameter>tx_contagged[key]</parameter>
+      <parameter>tx_contagged[uid]</parameter>
       <lookindb>
         <to>SELECT term_main FROM tx_contagged_terms WHERE uid=$1</to>
         <translatetoif>

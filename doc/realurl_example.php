@@ -59,12 +59,12 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl'] = array (
                 ),                               
                'source' => array (
                     array (
-	                   'GETvar' => 'tx_contagged[termSource]',              
+	                   'GETvar' => 'tx_contagged[source]',              
                     ),                           
                 ),
 				'term' => array (
                     array (                      
-                       'GETvar' => 'tx_contagged[termUid]',
+                       'GETvar' => 'tx_contagged[uid]',
 	                   'lookUpTable' => array (
 	                       'table' => 'tx_contagged_terms',
 	                       'id_field' => 'uid',

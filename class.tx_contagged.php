@@ -280,9 +280,9 @@ class tx_contagged extends tslib_pibase {
 		$currentRecord = t3lib_div::trimExplode(':', $this->cObj->currentRecord);
 		$GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id][$termKey] = array(
 			'matchedTerm' => $matchedTerm,
-			'termSourceName' => $this->termsArray[$termKey]['sourceName'],
-			'termUid' => $this->termsArray[$termKey]['uid'],
-			'currentRecordSourceName' => $currentRecord[0],
+			'source' => $this->termsArray[$termKey]['source'],
+			'uid' => $this->termsArray[$termKey]['uid'],
+			'currentRecordSource' => $currentRecord[0],
 			'currentRecordUid' => $currentRecord[1],
 			'currentPid' => $GLOBALS['TSFE']->id
 			);
@@ -392,7 +392,7 @@ class tx_contagged extends tslib_pibase {
 				}
 			}
 			$additionalParams = array(
-				'source' => $termArray['sourceName'],
+				'source' => $termArray['source'],
 				'uid' => $termArray['uid'],
 				);
 			if ($this->checkLocalGlobal($typeConfigArray,'addBackLink')) {
