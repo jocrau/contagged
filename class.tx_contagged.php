@@ -341,6 +341,7 @@ class tx_contagged extends tslib_pibase {
 	 */
 	function registerFields($typeConfigArray,$termKey) {
 		if ($typeConfigArray['stripBlockTags']>0) {
+			$this->termsArray[$termKey]['desc_short_inline'] = $this->stripBlockTags($this->termsArray[$termKey]['desc_short']);
 			$text = $this->cObj->parseFunc($this->termsArray[$termKey]['desc_long'], array(), '< lib.parseFunc_RTE');
 			$this->termsArray[$termKey]['desc_long_inline'] = $this->stripBlockTags($text);
 		}

@@ -120,15 +120,13 @@ plugin.tx_contagged {
 			stdWrap.innerWrap.cObject = COA
 			stdWrap.innerWrap.cObject {
 				10 = TEXT
-				10.value = | <span id="{register:contagged_key}" class="tx-contagged-tooltip-content"><a href="{register:contagged_link_url}">{register:contagged_matchedTerm}</a>
+				10.value = | <span class="tx-contagged-tooltip-content"><a href="{register:contagged_link_url}">{register:contagged_matchedTerm}</a><br />
 				10.insertData = 1
-				50 = TEXT
-				50.value = <br />
-				60 = TEXT
-				60.required = 1
-				60.data = register:contagged_desc_long_inline
-				70 = TEXT
-				70.value = </span>
+				20 = TEXT
+				20.data = register:contagged_desc_short_inline
+				20.ifEmpty.data = register:contagged_desc_long_inline
+				30 = TEXT
+				30.value = </span>
 			}
 		}
 
@@ -173,4 +171,41 @@ plugin.tx_contagged {
 			}
 		}
 	}
+}
+
+plugin.tx_contagged {
+	_CSS_DEFAULT_STYLE (
+		
+		div.tx-contagged-pi1 dt {
+			font-size: 1.2em;
+		}
+		div.tx-contagged-index span {
+			margin: 0;
+		}
+		
+		/* position:relative is necessary for correct positioning of inline descriptions */
+		span.tx-contagged-tooltip {
+			position: relative;
+		}
+
+		/* z-index makes sure the block is the top most element */
+		span.tx-contagged-tooltip span.tx-contagged-tooltip-content {
+			background: #EEEEEE;
+			display: none;
+		 	position: absolute;
+			z-index: 9999;
+		}
+
+		span.tx-contagged-tooltip:hover span.tx-contagged-tooltip-content {
+			display: inline;
+		 	position: absolute;
+			top: -1px;
+			left: -11px;
+			width: 300px;
+			margin-top: -1px;
+			border: 1px #CCCCCC solid;
+			padding: 0px 10px 10px 10px;
+		}
+		
+	)
 }

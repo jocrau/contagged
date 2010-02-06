@@ -1,7 +1,7 @@
 v1.5.1 2010-01-26 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+TASK] Performance optimization and refactorings after an extensive profiling session.
-	[-CONFIGURATION] Removed option	'secureFields'.
+	[!!!][-CONFIGURATION] Removed option 'secureFields'. You can apply this in the mapping: "desc_short.htmlSpecialChars = 1".
 	[!!!][+CONFIGURATION] Added option 'fieldsToParse' (comma separated list of fields to be parsed by contagged again in list view).
 	[!!!][~CONFIGURATION] The long description is parsed via lib.parseFunc_RTE by default only in list view. You have to uncomment the appropriate line in the TS setup if you need this also for "normal" pages.
 	[!!!][~CONFIGURATION] The TS name of the datasource is taken as GET parameter value for 'source' (was the table name). Instead of 'tx_contagged[source]=tx-contagged_terms' there is now 'tx_contagged[source]=default'. The registered key and internal referrer (register:contagged_key) is now 'default_123' instead of 'tx_contagged_term_123'.
