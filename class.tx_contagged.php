@@ -92,6 +92,9 @@ class tx_contagged extends tslib_pibase {
 				}
 			}
 		}
+		
+		// sort the array descending by length of the value, so the longest term will match
+		usort($sortedTerms,array($this,'sortArrayByLengthDescending'));
 
 		// get a comma separated list of all tags which should be omitted
 		$tagsToOmitt = $this->getTagsToOmitt();
@@ -121,6 +124,13 @@ class tx_contagged extends tslib_pibase {
 		$this->addJavaScript();
 
 		return $parsedContent;
+	}
+
+	function sortArrayByLengthDescending($a,$b) {
+		if (strlen($a['term'])==strlen($b['term'])) {
+			return 0;
+		}
+		return strlen($a['term'])<strlen($b['term']) ? 1 : -1;
 	}
 	
 	function getPositions($content,&$positionsArray,$term,$termKey) {
