@@ -290,8 +290,7 @@ require_once (PATH_t3lib.'class.t3lib_tsparser_ext.php');
 	
 function user_addTermTypes(&$params,&$pObj) {
 	global $BE_USER;
-	$BE_USER->uc['lang'] = $BE_USER->uc['lang'] ? $BE_USER->uc['lang'] : 'default';
-
+	
 	$template = t3lib_div::makeInstance('t3lib_TStemplate');
 	$template->tt_track = 0;
 	$template->init();
@@ -322,17 +321,22 @@ function getCurrentPageId() {
 	if ($pageId > 0) {
 		return $pageId;
 	}
+	
+	preg_match('/(?<=id=)[0-9]a/', urldecode(t3lib_div::_GET('returnUrl')), $matches);
+	if (count($matches) > 0) {
+		return $matches[0];
+	}
 
 	$rootTemplates = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pid', 'sys_template', 'deleted=0 AND hidden=0 AND root=1', '', '', '1');
 	if (count($rootTemplates) > 0) {
 		return $rootTemplates[0]['pid'];
 	}
-
+	
 	$rootPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid', 'pages', 'deleted=0 AND hidden=0 AND is_siteroot=1', '', '', '1');
 	if (count($rootPages) > 0) {
 		return $rootPages[0]['uid'];
 	}
-
+	
 	// take pid 1 as fallback
 	return 1;
 }
