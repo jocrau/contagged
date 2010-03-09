@@ -1,3 +1,7 @@
+v1.6.2 2010-03-09 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+BUGFIX] Re-enabled support for non non-UTF-8 sites in main RegEx.
+	
 v1.6.1 2010-03-09 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+FEATURE] It is now possible to add additionalParams to the link via mapping. The additionalParams are processed by stdWrap again. (link.value = 164 [CR] link.additionalParams.stdWrap.dataWrap = &tx_myext_pi1[id]={register:contagged_theid})	

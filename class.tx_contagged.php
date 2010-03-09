@@ -126,15 +126,14 @@ class tx_contagged extends tslib_pibase {
 	function getPositions($content,&$positionsArray,$term,$termKey) {
 		$termArray = $this->termsArray[$termKey];
 		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
-		// $regEx = $regEx = '/(?<=\P{L}|^)' . preg_quote($term,'/') . '(?=\P{L}|$)/' . $this->conf['modifier'];//$this->getRegEx($term,$termKey);
 		if ($typeConfigArray['termIsRegEx'] > 0) {
 			$regEx = $termArray['term_main'].$this->conf['modifier'];
 		} else {
-			// if (strstr($this->conf['modifier'], 'u') !== FALSE) {
+			if (strstr($this->conf['modifier'], 'u') !== FALSE) {
 				$regEx = '/(?<=\P{L}|^)' . preg_quote($term,'/') . '(?=\P{L}|$)/' . $this->conf['modifier'];
-			// } else {
-			// 	$regEx = '/(?<=\W|^)' . preg_quote($term,'/') . '(?=\W|$)/' . $this->conf['modifier'];
-			// }
+			} else {
+				$regEx = '/(?<=\W|^)' . preg_quote($term,'/') . '(?=\W|$)/' . $this->conf['modifier'];
+			}
 		}
 		preg_match_all($regEx,$content,$matchesArray,PREG_OFFSET_CAPTURE);
 		$matchesArray = $matchesArray[0]; // only take the full pattern matches of the regEx
