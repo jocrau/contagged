@@ -306,8 +306,10 @@ function user_addTermTypes(&$params,&$pObj) {
 		foreach ($conf['types.'] as $typeName => $typeConfigArray ) {
 			unset($LOCAL_LANG_ARRAY);
 			if ( !$typeConfigArray['hideSelection']>0 && !$typeConfigArray['dataSource'] ) {
-				foreach ($typeConfigArray['label.'] as $langKey => $labelText) {
-					$LOCAL_LANG_ARRAY[$langKey]['label'] = $labelText;
+				if (is_array($typeConfigArray['label.'])) {
+					foreach ($typeConfigArray['label.'] as $langKey => $labelText) {
+						$LOCAL_LANG_ARRAY[$langKey]['label'] = $labelText;
+					}
 				}
 				$LOCAL_LANG_ARRAY['default']['label'] = $typeConfigArray['label'] ? $typeConfigArray['label'] : $typeConfigArray['label.']['default'];
 				$params['items'][]= array( $GLOBALS['LANG']->getLLL('label',$LOCAL_LANG_ARRAY), substr($typeName,0,-1) );

@@ -85,9 +85,14 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 				if ( $value['stdWrap.'] ) {
 					$mappedDataArray[$field] = $this->cObj->stdWrap($mappedDataArray[$field],$value['stdWrap.']);
 				}
+				if ($field === 'link' && $value['additionalParams']) {
+					$mappedDataArray[$field . '.']['additionalParams'] = $value['additionalParams'];
+					if ($value['additionalParams.']['stdWrap.']) {
+						$mappedDataArray[$field . '.']['additionalParams'] = $this->cObj->stdWrap($mappedDataArray[$field . '.']['additionalParams'], $value['additionalParams.']['stdWrap.']);
+					}
+				}
 				$GLOBALS['TSFE']->register['contagged_'.$field] = $mappedDataArray[$field];
 			}
-			// TODO $desc_long = preg_replace('/(\015\012)|(\015)|(\012)/ui','<br />',$row['desc_long']);
 
 			// post processing
 			$mappedDataArray['term_alt'] = t3lib_div::trimExplode(chr(10),$row['term_alt'],1);
@@ -97,7 +102,7 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 				$dataArray[$row[$dataSourceConfigArray['mapping.']['uid.']['field']]] = $mappedDataArray;
 			} else {
 				$dataArray[] = $mappedDataArray;
-			}			
+			}
 		}
 
 		return $dataArray;

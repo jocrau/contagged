@@ -103,6 +103,9 @@ class tx_contagged extends tslib_pibase {
 			if (!($intKey%2)) {
 				$positionsArray = array();
 					foreach ($sortedTerms as $termAndKey) {
+						if (empty($termAndKey['term'])) {
+							continue;
+						}
 						$this->getPositions($splittedContent[$intKey],$positionsArray,$termAndKey['term'],$termAndKey['key']);
 					}
 				ksort($positionsArray);
@@ -384,24 +387,22 @@ class tx_contagged extends tslib_pibase {
 				$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
 			}
 			if ($termArray['link']) {
-				$parameter = $termArray['link'];
+				$typolinkConf['parameter'] = $termArray['link'];
+				$typolinkConf['additionalParams'] = $termArray['link.']['additionalParams'];
 			} else {
 				if ($typeConfigArray['listPages']) {
-					$parameter = array_shift(t3lib_div::trimExplode(',',$typeConfigArray['listPages'],1));
+					$typolinkConf['parameter'] = array_shift(t3lib_div::trimExplode(',',$typeConfigArray['listPages'],1));
 				} else {
-					$parameter = array_shift(t3lib_div::trimExplode(',',$this->conf['listPages'],1));
+					$typolinkConf['parameter'] = array_shift(t3lib_div::trimExplode(',',$this->conf['listPages'],1));
 				}
+				$GLOBALS['TSFE']->register['contagged_list_page'] = $typolinkConf['parameter'];
+				$additionalParams['source'] = $termArray['source'];
+				$additionalParams['uid'] = $termArray['uid'];
+				if ($this->checkLocalGlobal($typeConfigArray,'addBackLink')) {
+					$additionalParams['backPid'] = $GLOBALS['TSFE']->id;
+				}
+				$typolinkConf['additionalParams'] = t3lib_div::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
 			}
-			$GLOBALS['TSFE']->register['contagged_list_page'] = $parameter;
-			$additionalParams = array(
-				'source' => $termArray['source'],
-				'uid' => $termArray['uid'],
-				);
-			if ($this->checkLocalGlobal($typeConfigArray,'addBackLink')) {
-				$additionalParams['backPid'] = $GLOBALS['TSFE']->id;
-			}
-			$typolinkConf['additionalParams'] = t3lib_div::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
-			$typolinkConf['parameter'] = $parameter;
 			$GLOBALS['TSFE']->register['contagged_link_url'] = $this->cObj->typoLink_URL($typolinkConf);
 			$matchedTerm = $this->cObj->typolink($matchedTerm, $typolinkConf);		
 		}

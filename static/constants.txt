@@ -70,9 +70,9 @@ contagged {
 	# cat=contagged (list)//71; type=int; label=Results at a time: Number of results to be displayed on a single page.
 	results_at_a_time = 20
 	# cat=contagged (list)//72; type=int; label=Number of pages: Number of pages to be displayed in the page browser at once.
-	maxPages = 3            
+	maxPages = 3
 	# cat=contagged (list)//73; type=boolean; label=Don't link active page
-	dontLinkActivePage = 1  
+	dontLinkActivePage = 1
 	# cat=contagged (list)//74; type=string; label=Page position in the list of pages: This defines were the current page is shown in the list of pages in the Pagebrowser. If this var is an integer it will be interpreted as position in the list of pages. If its value is the keyword "center" the current page will be shown in the middle of the pagelist. As the current implementation of pi_pagebrowser is buggy keep it set to "center".
 	pagefloat = center
 	# cat=contagged (list)//75; type=boolean; label=Show "First"/"Last": Show link to first and last page.

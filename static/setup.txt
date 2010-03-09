@@ -138,7 +138,7 @@ plugin.tx_contagged {
 
 		abbrevation {
 			label = Abbrevation
-			label.de = Abkürzung (Beispiel: u.s.w.)			
+			label.de = Abkürzung (Beispiel: u.s.w.)
 			tag = abbr
 		}
 				
