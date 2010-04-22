@@ -37,6 +37,7 @@ plugin.tx_contagged {
 	sortField = {$contagged.sortField}
 	fieldsToMap = {$contagged.fieldsToMap}
 	fieldsToParse = {$contagged.fieldsToParse}
+	autoExcludeTerms = {$contagged.autoExcludeTerms}
 	addBackLink = {$contagged.addBackLink}
 	addBackLinkDescription = {$contagged.addBackLinkDescription}
 			

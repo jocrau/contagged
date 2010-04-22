@@ -58,8 +58,11 @@ class tx_contagged extends tslib_pibase {
 	 * @param	array		$conf: The configuration array
 	 * @return	string		The parsed and tagged content that is displayed on the website
 	 */
-	public function parse($content, $conf = NULL) {
-		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
+	public function parse($content, $conf) {
+		if (!is_array($conf)) {
+			$conf = array();
+		}
+		$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'], $conf);
 		$this->pi_setPiVarDefaults();
 		if (!is_object($this->cObj)) {
 			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
@@ -83,11 +86,14 @@ class tx_contagged extends tslib_pibase {
 		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
 		$this->termsArray = $model->findAllTerms();
 
+		$excludeTerms = explode(',', $this->conf['excludeTerms']);
 		$sortedTerms = array();
 		foreach ($this->termsArray as $termKey => $termArray) {
+			if ($this->conf['autoExcludeTerms'] == 1 && in_array($termArray['term_main'], $excludeTerms)) continue;
 			$sortedTerms[] = array('term' => $termArray['term_main'], 'key' => $termKey);
 			if (is_array($termArray['term_alt'])) {
 				foreach ($termArray['term_alt'] as $term) {
+					if ($this->conf['autoExcludeTerms'] == 1 && in_array($term, $excludeTerms)) continue;
 					$sortedTerms[] = array('term' => $term, 'key' => $termKey);
 				}
 			}

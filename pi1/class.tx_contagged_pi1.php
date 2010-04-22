@@ -156,6 +156,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 
 	function renderListBySword($sword) {
+		$markerArray = array();
+		$wrappedSubpartArray = array();
 		$swordMatched = FALSE;
 		$subparts = $this->getSubparts('LIST');
 		$termsArray = $this->model->findAllTermsToListOnPage();
@@ -195,11 +197,13 @@ class tx_contagged_pi1 extends tslib_pibase {
 	}
 
 	function renderSingleItemByKey($dataSource, $uid) {
+		$markerArray = array();
+		$wrappedSubpartArray = array();
 		$termArray = $this->model->findTermByUid($dataSource, $uid);
 		$subparts = $this->getSubparts('SINGLE');
 		$this->renderLinks($markerArray,$wrappedSubpartArray);
-		$terms =  array($termArray);
-		$this->renderIndex($markerArray, $terms);
+		$termsArray = $this->model->findAllTermsToListOnPage();
+		$this->renderIndex($markerArray, $termsArray);
 		$this->renderSingleItem($termArray,$markerArray,$wrappedSubpartArray);
 		$subpartArray['###LIST###'] = $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
 		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);
@@ -249,10 +253,13 @@ class tx_contagged_pi1 extends tslib_pibase {
 	function renderSingleItem ($termArray,&$markerArray,&$wrappedSubpartArray) {
 		$typeConfigArray = $this->conf['types.'][$termArray['term_type'] . '.'];
 
+		$termArray['desc_long'] = $this->cObj->parseFunc($termArray['desc_long'], array(), '< lib.parseFunc_RTE');
 		if (!empty($this->conf['fieldsToParse'])) {
 			$fieldsToParse = t3lib_div::trimExplode(',', $this->conf['fieldsToParse']);
+			$excludeTerms = $termArray['term_alt'];
+			$excludeTerms[] = $termArray['term_main'];
 			foreach ($fieldsToParse as $fieldName) {
-				$termArray[$fieldName] = $this->parser->parse($termArray[$fieldName]);
+				$termArray[$fieldName] = $this->parser->parse($termArray[$fieldName], array('excludeTerms' => implode(',', $excludeTerms)));
 			}
 		}
 		
@@ -267,7 +274,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt']?implode(', ',$termArray['term_alt']):$this->pi_getLL('na');
 		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace']?$termArray['term_replace']:$this->pi_getLL('na');
 		$markerArray['###DESC_SHORT###'] = $termArray['desc_short']?$termArray['desc_short']:$this->pi_getLL('na');
-		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$this->cObj->parseFunc($termArray['desc_long'], array(), '< lib.parseFunc_RTE'):$this->pi_getLL('na');
+		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$termArray['desc_long']:$this->pi_getLL('na');
 		$markerArray['###IMAGES###'] = $this->renderImages($termArray);
 		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');
