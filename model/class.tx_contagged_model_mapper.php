@@ -85,7 +85,7 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 				if ( $value['stdWrap.'] ) {
 					$mappedDataArray[$field] = $this->cObj->stdWrap($mappedDataArray[$field],$value['stdWrap.']);
 				}
-				if ($field === 'link' && $value['additionalParams']) {
+				if ($field === 'link') {
 					$mappedDataArray[$field . '.']['additionalParams'] = $value['additionalParams'];
 					if ($value['additionalParams.']['stdWrap.']) {
 						$mappedDataArray[$field . '.']['additionalParams'] = $this->cObj->stdWrap($mappedDataArray[$field . '.']['additionalParams'], $value['additionalParams.']['stdWrap.']);

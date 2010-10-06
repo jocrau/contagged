@@ -1,6 +1,7 @@
-v1.6.3 2010-04-23 Jochen Rau <jochen.rau@typoplanet.de>
+v1.6.3 2010-04-24 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Parsed fields in a single view are no longer htmlspecialchared by lib.parseFunc_RTE.
+	[+BUGFIX] Fixed a problem with the additionalParams introduced in 1.6.1.
 	[+BUGFIX] Index chars are now linked correctly in a single view.
 	[+FEATURE] Added new option autoExcludeTerms. Set this to avoid parsed terms linking to themselves in a single view (defaults to 1).
 	[~TASK] Changed default templates. An index is now shown on a single view page, too.
@@ -8,7 +9,7 @@ v1.6.3 2010-04-23 Jochen Rau <jochen.rau@typoplanet.de>
 v1.6.2 2010-03-09 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Re-enabled support for non non-UTF-8 sites in main RegEx.
-	[+BUGFIX] Fixed a bug where the short terms are in favour to be replaced copmpared to longer terms with the same beginning.
+	[+BUGFIX] Fixed a bug where the short terms are in favour to be replaced compared to longer terms with the same beginning.
 	
 v1.6.1 2010-03-09 Jochen Rau <jochen.rau@typoplanet.de>
 
