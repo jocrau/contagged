@@ -1,3 +1,8 @@
+v1.6.4 2010-10-06 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+BUGFIX] Reverted a change that led to a non-functional control flow. Thanks to Fatoux Sébastien. Resolves #6743.
+	[+BUGFIX] Removed an obsolete line causing PHP warnings. Thanks to Armin Guenther.
+	
 v1.6.3 2010-04-24 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Parsed fields in a single view are no longer htmlspecialchared by lib.parseFunc_RTE.
@@ -5,7 +10,7 @@ v1.6.3 2010-04-24 Jochen Rau <jochen.rau@typoplanet.de>
 	[+BUGFIX] Index chars are now linked correctly in a single view.
 	[+FEATURE] Added new option autoExcludeTerms. Set this to avoid parsed terms linking to themselves in a single view (defaults to 1).
 	[~TASK] Changed default templates. An index is now shown on a single view page, too.
-	
+
 v1.6.2 2010-03-09 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Re-enabled support for non non-UTF-8 sites in main RegEx.
