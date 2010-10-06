@@ -66,8 +66,10 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 			foreach ($storagePidsArray as $pid) {
 				// if there is an entry for the data source: check for duplicates before adding the pid
 				// otherwise: create a new entry and add the pid
-				if (is_array($this->dataSourceArray[$dataSource]) && !in_array(intval($pid),$this->dataSourceArray[$dataSource])) {
-					$this->dataSourceArray[$dataSource][] = intval($pid);
+				if ($this->dataSourceArray[$dataSource]) {
+					if ( !in_array($pid,$dataSourceArray[$dataSource]) ) {
+						$this->dataSourceArray[$dataSource][] = intval($pid);
+					}
 				} else {
 					$this->dataSourceArray[$dataSource][] = intval($pid);
 				}
