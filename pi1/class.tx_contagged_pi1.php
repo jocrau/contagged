@@ -310,7 +310,6 @@ class tx_contagged_pi1 extends tslib_pibase {
 		if (is_array($term['related'])) {
 			foreach ($term['related'] as $termReference) {
 				$relatedTerm = $this->model->findTermByUid($termReference['source'], $termReference['uid']);
-				$key = key($result);
 				$typolinkConf = $this->typolinkConf;
 				if (!empty($typeConfigArray['typolink.'])) {
 					$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
