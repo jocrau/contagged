@@ -262,7 +262,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$termArray[$fieldName] = $this->parser->parse($termArray[$fieldName], array('excludeTerms' => implode(',', $excludeTerms)));
 			}
 		}
-		
+				
 		$markerArray['###TERM_TYPE###'] = $typeConfigArray['label'];
 		$markerArray['###TERM###'] = $termArray['term'];
 		$editIconsConf = array(
@@ -275,7 +275,12 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace']?$termArray['term_replace']:$this->pi_getLL('na');
 		$markerArray['###DESC_SHORT###'] = $termArray['desc_short']?$termArray['desc_short']:$this->pi_getLL('na');
 		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$termArray['desc_long']:$this->pi_getLL('na');
+		$markerArray['###REFERENCE###'] = $termArray['reference']?$termArray['reference']:$this->pi_getLL('na');
+		$markerArray['###PRONUNCIATION###'] = $termArray['pronunciation']?$termArray['pronunciation']:$this->pi_getLL('na');
 		$markerArray['###IMAGES###'] = $this->renderImages($termArray);
+		$multimediaConfiguration = $this->conf['multimedia.'];
+		$multimediaConfiguration['file'] = $termArray['multimedia'];
+		$markerArray['###MULTIMEDIA###'] = $this->cObj->cObjGetSingle('MULTIMEDIA', $multimediaConfiguration);
 		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
 		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');
 
@@ -288,6 +293,9 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###TERM_REPLACE_LABEL###'] = $markerArray['###TERM_REPLACE###']?$this->local_cObj->stdWrap($this->pi_getLL('term_replace'),$labelWrap):'';
 		$markerArray['###DESC_SHORT_LABEL###'] = $markerArray['###DESC_SHORT###']?$this->local_cObj->stdWrap($this->pi_getLL('desc_short'),$labelWrap):'';
 		$markerArray['###DESC_LONG_LABEL###'] = $markerArray['###DESC_LONG###']?$this->local_cObj->stdWrap($this->pi_getLL('desc_long'),$labelWrap):'';
+		$markerArray['###REFERENCE_LABEL###'] = $markerArray['###REFERENCE###']?$this->local_cObj->stdWrap($this->pi_getLL('reference'),$labelWrap):'';
+		$markerArray['###PRONUNCIATION_LABEL###'] = $markerArray['###PRONUNCIATION###']?$this->local_cObj->stdWrap($this->pi_getLL('pronunciation'),$labelWrap):'';
+		$markerArray['###MULTIMEDIA_LABEL###'] = $markerArray['###MULTIMEDIA###']?$this->local_cObj->stdWrap($this->pi_getLL('multimedia'),$labelWrap):'';
 		$markerArray['###RELATED_LABEL###'] = $markerArray['###RELATED###']?$this->local_cObj->stdWrap($this->pi_getLL('related'),$labelWrap):'';
 		$markerArray['###IMAGES_LABEL###'] = $markerArray['###IMAGES###']?$this->local_cObj->stdWrap($this->pi_getLL('images'),$labelWrap):'';
 		$markerArray['###TERM_LANG_LABEL###'] = $markerArray['###TERM_LANG###']?$this->local_cObj->stdWrap($this->pi_getLL('term_lang'),$labelWrap):'';

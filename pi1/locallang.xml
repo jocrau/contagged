@@ -24,7 +24,10 @@
 			<label index="term_lang">Term Language</label>
 			<label index="desc_short">Short Description</label>
 			<label index="desc_long">Long Description</label>
+			<label index="reference">Source</label>
+			<label index="pronunciation">Pronunciation</label>
 			<label index="images">Images</label>
+			<label index="multimedia">Media</label>
 			<label index="related">See also</label>
 			<label index="lang.en">en.</label>
 			<label index="lang.fr">fr.</label>
@@ -58,7 +61,10 @@
 			<label index="term_lang">Sprache</label>
 			<label index="desc_short">Kurzbeschreibung</label>
 			<label index="desc_long">Ausführliche Beschreibung</label>
+			<label index="reference">Quelle</label>
+			<label index="pronunciation">Aussprache</label>
 			<label index="images">Bilder</label>
+			<label index="multimedia">Medien</label>
 			<label index="related">Siehe auch</label>
 			<label index="lang.en">engl.</label>
 			<label index="lang.fr">franz.</label>
@@ -79,11 +85,14 @@
 			<label index="backToPage">Retour à la page</label>
 			<label index="desc_long">Longue Description</label>
 			<label index="desc_short">Courte Description</label>
+			<label index="reference">Source</label>
+			<label index="pronunciation">Prononciation</label>
 			<label index="details">Plus de détails</label>
 			<label index="header">Glossaire</label>
 			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</label>
 			<label index="no_matches">Pas de résultat.</label>
 			<label index="pi_list_searchBox_search">Recherche</label>
+			<label index="multimedia">Media</label>
 			<label index="related">Voir aussi</label>
 			<label index="term">Terme</label>
 			<label index="term_alt">Termes Alternatifs</label>

@@ -5,7 +5,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 $TCA["tx_contagged_terms"] = array (
 	"ctrl" => $TCA["tx_contagged_terms"]["ctrl"],
 	"interface" => array (
-		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, image, dam_images,imagecaption, imagealt, imagetitle, related, link, exclude"
+		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,starttime,endtime,fe_group term_main, term_alt, term_type, term_lang, replacement, desc_short, desc_long, reference, pronunciation, image, dam_images,imagecaption, imagealt, imagetitle, multimedia, related, link, exclude"
 	),
 	"feInterface" => $TCA["tx_contagged_terms"]["feInterface"],
 	"columns" => array (
@@ -171,6 +171,36 @@ $TCA["tx_contagged_terms"] = array (
 					"rows" => "5",
 				)
 			),
+			"reference" => Array (
+				"exclude" => 1,
+				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.reference",
+				"config" => Array (
+					"type" => "text",
+					"cols" => "30",
+					"rows" => "2",
+				)
+			),
+			"pronunciation" => Array (
+				"exclude" => 1,
+				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.pronunciation",
+				"config" => Array (
+					"type" => "input",
+					"size" => "30",
+				)
+			),
+			'multimedia' => Array (
+				'label' => 'LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.multimedia',
+				'config' => Array (
+					'type' => 'group',
+					'internal_type' => 'file',
+					'allowed' => 'swf,swa,dcr,wav,avi,au,mov,asf,mpg,wmv,mp3,mp4,m4v',
+					'max_size' => $GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize'],
+					'uploadfolder' => 'uploads/media',
+					'size' => '2',
+					'maxitems' => '1',
+					'minitems' => '0'
+				)
+			),
 			'related' => Array (
 				'exclude' => 1,
 				'l10n_mode' => 'exclude',
@@ -217,7 +247,7 @@ $TCA["tx_contagged_terms"] = array (
 			),
 		),
 		"types" => array (
-			"0" => array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long;;;richtext[*]:rte_transform[mode=ts_css|imgpath=uploads/tx_contagged/rte/], image, dam_images, imagecaption, imagealt, imagetitle, related, link, exclude")
+			"0" => array("showitem" => "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource, hidden;;1, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long;;;richtext[*]:rte_transform[mode=ts_css|imgpath=uploads/tx_contagged/rte/], reference, pronunciation, image, dam_images, imagecaption, imagealt, imagetitle, multimedia, related, link, exclude")
 		),
 		"palettes" => array (
 			"1" => array("showitem" => "starttime, endtime, fe_group"),

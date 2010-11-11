@@ -102,6 +102,18 @@ plugin.tx_contagged {
 		enable = {$contagged.enableSearchBox}
 		fieldsToSearch = {$contagged.fieldsToSearch}
 	}
+	
+	multimedia {
+		# see cObj MULTIMEDIA for reference
+		file.wrap = uploads/media/
+		params (
+			width = 100
+			height = 16
+			autostart = false
+			controller = true 
+			loop = false
+		)        
+	}
 		
 	types {
 
@@ -162,10 +174,13 @@ plugin.tx_contagged {
 				term_lang.field = term_lang
 				desc_short.field = desc_short
 				desc_long.field = desc_long
+				reference.field = reference
+				pronunciation.field = pronunciation
 				image.field = image
 				imagecaption.field = imagecaption
 				imagealt.field = imagealt
 				imagetitle.field = imagetitle
+				multimedia.field = multimedia
 				related.field = related
 				link.field = link
 				exclude.field = exclude
