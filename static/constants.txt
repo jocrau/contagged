@@ -21,6 +21,8 @@ contagged {
 	autoExcludeTags = 0
 	# cat=contagged (parser)//48; type=int; label=Max. Recurrences: The maximum number of terms to be tagged in a cObject.
 	maxRecurrences = 99999
+	# cat=contagged (parser)//49; type=int; label=Max. Recurrences per Page: The maximum number of terms to be tagged on a page.
+	maxRecurrencesPerPage = 99999
 	# cat=contagged (parser)/enable/50; type=boolean; label=Check for joined words: Take pre- and/or post-matches of joined words (with dash) into account (see documentation for examples).
 	checkPreAndPostMatches = 1
 	# cat=contagged (parser)/enable/52; type=boolean; label=Respect case: Respect the case of the first letter. Contagged tries to determine the case of the first letter and sets the replacement to this case if enabled.

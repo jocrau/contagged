@@ -158,6 +158,10 @@ class tx_contagged extends tslib_pibase {
 		$maxRecurrences = (!empty($this->conf['maxRecurrences'])) ? min($this->conf['maxRecurrences'], count($matchesArray)) : count($matchesArray);
 		$step = $maxRecurrences != 0 ? ceil(count($matchesArray) / $maxRecurrences) : 1;
 		for ($i=0; $i < count($matchesArray); $i = $i + $step) {
+			if (!empty($this->conf['maxRecurrencesPerPage'])
+				&& $GLOBALS['contagged']['occurences'][$termKey] > (int)$this->conf['maxRecurrencesPerPage']) {
+					break;
+			}
 			$preContent = substr($content,0,$matchesArray[$i][1]);
 			$postContent = substr($content,strlen($matchesArray[$i][0])+$matchesArray[$i][1]);
 
@@ -200,6 +204,7 @@ class tx_contagged extends tslib_pibase {
 						'preMatch' => $preMatch[0],
 						'postMatch' => $postMatch[0]
 						);
+					$GLOBALS['contagged']['occurences'][$termKey]++;
 				}	
 			}
 		}

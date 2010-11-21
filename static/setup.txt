@@ -30,6 +30,7 @@ plugin.tx_contagged {
 	addCssClassAttribute = {$contagged.addCssClassAttribute}
 	replaceTerm = {$contagged.replaceTerm}
 	maxRecurrences = {$contagged.maxRecurrences}
+	maxRecurrencesPerPage = {$contagged.maxRecurrencesPerPage}
 	updateKeywords = {$contagged.updateKeywords}
 	labelWrap1 = {$contagged.labelWrap1}
 	labelWrap2 = {$contagged.labelWrap2}
