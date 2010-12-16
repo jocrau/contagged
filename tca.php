@@ -326,7 +326,14 @@ function user_addTermTypes(&$params,&$pObj) {
 	$template->init();
 	$sysPage = t3lib_div::makeInstance('t3lib_pageSelect');
 	$rootline = $sysPage->getRootLine(getCurrentPageId());
-	$template->runThroughTemplates($rootline, 0);
+	$rootlineIndex = 0;
+	foreach ($rootline as $index => $rootlinePart) {
+		if ($rootlinePart['is_siteroot'] == 1) {
+			$rootlineIndex = $index;
+			break;
+		}
+	}
+	$template->runThroughTemplates($rootline, $rootlineIndex);
 	$template->generateConfig();
 	$conf = $template->setup['plugin.']['tx_contagged.'];
 

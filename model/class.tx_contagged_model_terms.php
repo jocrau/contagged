@@ -1,26 +1,26 @@
 <?php
 /***************************************************************
-	*  Copyright notice
-	*
-	*  (c) 2007 Jochen Rau <j.rau@web.de>
-	*  All rights reserved
-	*
-	*  This script is part of the TYPO3 project. The TYPO3 project is
-	*  free software; you can redistribute it and/or modify
-	*  it under the terms of the GNU General Public License as published by
-	*  the Free Software Foundation; either version 2 of the License, or
-	*  (at your option) any later version.
-	*
-	*  The GNU General Public License can be found at
-	*  http://www.gnu.org/copyleft/gpl.html.
-	*
-	*  This script is distributed in the hope that it will be useful,
-	*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	*  GNU General Public License for more details.
-	*
-	*  This copyright notice MUST APPEAR in all copies of the script!
-	***************************************************************/
+ *  Copyright notice
+ *
+ *  (c) 2007 Jochen Rau <j.rau@web.de>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_mapper.php');
 
 /**
@@ -50,7 +50,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 
 		// build an array of tables in the database
 		$this->tablesArray = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
-		
+
 		if (is_array($this->conf['dataSources.'])) {
 			foreach ($this->conf['dataSources.'] as $dataSource => $sourceConfiguration) {
 				$this->configuredSources[$sourceConfiguration['sourceName']] = substr($dataSource, 0, -1);
@@ -58,7 +58,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		} else {
 			throw new RuntimeException('No configuration. Please include the static template.');
 		}
-		
+
 		$typesArray = $this->conf['types.'];
 		foreach ($typesArray as $type=>$typeConfigArray) {
 			$storagePidsArray = $this->getStoragePidsArray($typeConfigArray);
@@ -67,7 +67,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 				// if there is an entry for the data source: check for duplicates before adding the pid
 				// otherwise: create a new entry and add the pid
 				if ($this->dataSourceArray[$dataSource]) {
-					if ( !in_array($pid,$dataSourceArray[$dataSource]) ) {
+					if ( !in_array($pid,$this->dataSourceArray[$dataSource]) ) {
 						$this->dataSourceArray[$dataSource][] = intval($pid);
 					}
 				} else {
@@ -75,7 +75,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 				}
 			}
 		}
-		
+
 	}
 
 	function findAllTerms($additionalWhereClause = '') {
@@ -86,7 +86,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		}
 		return $this->terms;
 	}
-	
+
 	function findAllTermsToListOnPage($pid = NULL) {
 		$terms = $this->findAllTerms(' AND exclude=0');
 		if ($pid === NULL) $pid = $GLOBALS['TSFE']->id;
@@ -105,7 +105,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 	function sortByTermAscending($termArrayA, $termArrayB) {
 		return strnatcasecmp($termArrayA['term'], $termArrayB['term']);
 	}
-	
+
 	function findTermByUid($dataSource, $uid) {
 		$additionalWhereClause = ' AND uid=' . intval($uid);
 		$terms = $this->fetchTermsFromSource($dataSource, $storagePidsArray, $additionalWhereClause);
@@ -142,7 +142,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 				'*', // SELECT ...
 				$tableName, // FROM ...
 				$whereClause // WHERE ..
-				);
+			);
 			// map the fields
 			$mappedResult = $this->mapper->getDataArray($result,$dataSource);
 		}
@@ -154,7 +154,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		// TODO piVars as a data source
 		return $dataArray;
 	}
-	
+
 	function fetchRelatedTerms(&$dataArray) {
 		$newDataArray = array();
 		foreach ($dataArray as $key => $termArray) {
@@ -163,7 +163,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 				'tx_contagged_related_mm', // FROM ...
 				'uid_local=' . $termArray['uid'], // WHERE ..
 				'sorting'
-				);
+			);
 
 			if (!empty($result)) {
 				$termArray['related'] = array();

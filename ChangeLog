@@ -1,3 +1,9 @@
+v1.6.5 2010-12-15 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+BUGFIX] Parse template in TCA works now with rootpage on level > 0. Thanks to Christopher Hlubek. Resolves #11454.
+	[+FEATURE] You can now specify the maximum number of recurrences per page by maxRecurrencesPerPage option. It can be combined with the maxRecurrences (per cObj) option. Thanks to Felix Oertel. Resolves #10973.
+	[+FEATURE] Implemented reference, pronounciation, and media property. The reference property is a textual representation of the term source. The media property can store a reference to video and sound files. See the cObj MULTIMEDIA for documentation.
+
 v1.6.4 2010-10-06 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Reverted a change that led to a non-functional control flow. Thanks to Fatoux Sébastien. Resolves #6743.
