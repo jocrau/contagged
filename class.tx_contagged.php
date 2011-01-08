@@ -145,6 +145,7 @@ class tx_contagged extends tslib_pibase {
 		if ($typeConfigArray['termIsRegEx'] > 0) {
 			$regEx = $termArray['term_main'].$this->conf['modifier'];
 		} else {
+			$term = $this->cObj->stdWrap($term, $typeConfigArray['termStdWrap.']);
 			if (strstr($this->conf['modifier'], 'u') !== FALSE) {
 				$regEx = '/(?<=\P{L}|^)' . preg_quote($term,'/') . '(?=\P{L}|$)/' . $this->conf['modifier'];
 			} else {
