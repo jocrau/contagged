@@ -55,7 +55,7 @@ class tx_contagged extends tslib_pibase {
 	 * @param    array        $conf: The configuration array
 	 * @return    string        The parsed and tagged content that is displayed on the website
 	 */
-	public function parse($content, $conf) {
+	public function parse($content, $conf = NULL) {
 		if (!is_array($conf)) {
 			$conf = array();
 		}
