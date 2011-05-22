@@ -137,7 +137,13 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 			$whereClause = '1=1';
 			$whereClause .= count($storagePidsArray) > 0 ? ' AND pid IN (' . implode(',', $storagePidsArray) . ')' : '';
 			$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
-			$whereClause .= $this->cObj->enableFields($tableName);
+			if (isset($GLOBALS['TSFE'])) {
+				$GLOBALS['TSFE']->cObj->enableFields($tableName);
+			} else {
+				require_once (PATH_t3lib . 'class.t3lib_page.php');
+				//$whereClause .= t3lib_pageSelect::enableFields($tableName);
+			}
+			// FIXME $whereClause .= $this->local_cObj->enableFields($tableName);
 			$whereClause .= $additionalWhereClause;
 
 			// execute SQL-query

@@ -29,9 +29,8 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 	var $conf; // the TypoScript configuration array
 	var $controller;
 
-	function tx_contagged_model_mapper($controller) {
-		$this->controller = $controller;
-		$this->conf = $controller->conf;
+	function tx_contagged_model_mapper($conf) {
+		$this->conf = $conf;
 		if (!is_object($this->cObj)) {
 			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
 		}

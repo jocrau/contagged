@@ -82,7 +82,7 @@ class tx_contagged extends tslib_pibase {
 		$this->typesArray = $this->conf['types.'];
 
 		// get the model (an associated array of terms)
-		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
+		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this->conf);
 		$this->termsArray = $model->findAllTerms();
 
 		$excludeTerms = explode(',', $this->conf['excludeTerms']);
