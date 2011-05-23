@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <T3locallang>
 	<meta type="array">
-		<description>Labels for Language plugin of htmlArea RTE</description>
+		<description>Labels for Annotate Element plugin of htmlArea RTE</description>
 		<type>module</type>
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="LeftToRight-Tooltip">Direction left to right</label>
-			<label index="RightToLeft-Tooltip">Direction right to left</label>
-			<label index="TermSelector-Tooltip">Language</label>
-			<label index="ShowLanguageMarks-Tooltip">Show language marks</label>
+			<label index="TermSelector-Tooltip">Select a term</label>
+			<label index="ShowTaggedTerms-Tooltip">Show tagged terms</label>
 		</languageKey>
 	</data>
-	<orig_hash type="array">
-		<languageKey index="default" type="array">
-		</languageKey>
-	</orig_hash>
-	<orig_text type="array">
-		<languageKey index="default" type="array">
-		</languageKey>
-	</orig_text>
 </T3locallang>

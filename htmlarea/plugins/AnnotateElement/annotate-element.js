@@ -153,26 +153,6 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	},
 
 	/*
-	 * Sets the dir attribute
-	 *
-	 * @param	string		buttonId: the button id
-	 *
-	 * @return	void
-	 */
-	setDirAttribute : function (buttonId) {
-		var direction = (buttonId == "RightToLeft") ? "rtl" : "ltr";
-		var element = this.editor.getParentElement();
-		if (element) {
-			if (element.nodeName.toLowerCase() === "bdo") {
-				element.dir = direction;
-			} else {
-				element.dir = (element.dir == direction || element.style.direction == direction) ? "" : direction;
-			}
-			element.style.direction = "";
-		}
-	 },
-
-	/*
 	 * Toggles the display of language marks
 	 *
 	 * @param	boolean		forceLanguageMarks: if set, language marks are displayed whatever the current state
@@ -233,8 +213,8 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		} else if (endPointsInSameBlock) {
 				// The selection is not empty, nor full element
 			if (language != "none") {
-					// Add span element with lang attribute(s)
-				var newElement = this.editor._doc.createElement("span");
+					// Add tag with lang attribute(s)
+				var newElement = this.editor._doc.createElement("acronym");
 				this.setLanguageAttributes(newElement, language);
 				this.editor.wrapWithInlineElement(newElement, selection, range);
 				if (!Ext.isIE) {
@@ -273,15 +253,13 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	setLanguageAttributes : function (element, language) {
 		if (language == "none") {
 				// Remove language mark, if any
-			element.removeAttribute("lang");
+			element.removeAttribute("title");
 				// Remove the span tag if it has no more attribute
-			if ((element.nodeName.toLowerCase() == "span") && !HTMLArea.hasAllowedAttributes(element, this.allowedAttributes)) {
+			if ((element.nodeName.toLowerCase() == "acronym") && !HTMLArea.hasAllowedAttributes(element, this.allowedAttributes)) {
 				this.editor.removeMarkup(element);
 			}
 		} else {
-			if (this.useAttribute.lang) {
-				element.setAttribute("lang", language);
-			}
+			element.setAttribute("title", language);
 		}
 	},
 
@@ -352,20 +330,10 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 			var range = this.editor._createRange(selection);
 			var parent = this.editor.getParentElement(selection);
 			switch (button.itemId) {
-				case 'RightToLeft':
-				case 'LeftToRight':
-					if (parent) {
-						var direction = (button.itemId === 'RightToLeft') ? 'rtl' : 'ltr';
-						button.setInactive(parent.dir != direction && parent.style.direction != direction);
-						button.setDisabled(/^body$/i.test(parent.nodeName));
-					} else {
-						button.setDisabled(true);
-					}
-					break;
-				case 'ShowLanguageMarks':
+				case 'ShowTaggedTerms':
 					button.setInactive(!HTMLArea.DOM.hasClass(this.editor._doc.body, 'htmlarea-show-tagged-terms'));
 					break;
-				case 'Language':
+				case 'TermSelector':
 						// Updating the language drop-down
 					var fullNodeSelected = false;
 					var language = this.getLanguageAttribute(parent);
