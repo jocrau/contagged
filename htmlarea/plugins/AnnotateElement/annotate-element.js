@@ -31,11 +31,34 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	/*
 	 * This function gets called by the class constructor
 	 */
-	configurePlugin: function(editor) {
-		this.pageTSConfiguration = this.editorConfiguration.buttons.editelement;
-		this.removedFieldsets = (this.pageTSConfiguration && this.pageTSConfiguration.removeFieldsets) ? this.pageTSConfiguration.removeFieldsets : '';
-		this.properties = (this.pageTSConfiguration && this.pageTSConfiguration.properties) ? this.pageTSConfiguration.properties : '';
-		this.removedProperties = (this.properties && this.properties.removed) ? this.properties.removed : '';
+	configurePlugin: function (editor) {
+		/*
+		 * Setting up some properties from PageTSConfig
+		 */
+		this.buttonsConfiguration = this.editorConfiguration.buttons;
+		this.useAttribute = {};
+		this.useAttribute.lang = (this.buttonsConfiguration.language && this.buttonsConfiguration.language.useLangAttribute) ? this.buttonsConfiguration.language.useLangAttribute : true;
+		this.useAttribute.xmlLang = (this.buttonsConfiguration.language && this.buttonsConfiguration.language.useXmlLangAttribute) ? this.buttonsConfiguration.language.useXmlLangAttribute : false;
+		if (!this.useAttribute.lang && !this.useAttribute.xmlLang) {
+			this.useAttribute.lang = true;
+		}
+
+			// Importing list of allowed attributes
+		if (this.getPluginInstance("TextStyle")) {
+			this.allowedAttributes = this.getPluginInstance("TextStyle").allowedAttributes;
+		}
+		if (!this.allowedAttributes && this.getPluginInstance("InlineElements")) {
+			this.allowedAttributes = this.getPluginInstance("InlineElements").allowedAttributes;
+		}
+		if (!this.allowedAttributes && this.getPluginInstance("BlockElements")) {
+			this.allowedAttributes = this.getPluginInstance("BlockElements").allowedAttributes;
+		}
+		if (!this.allowedAttributes) {
+			this.allowedAttributes = new Array("id", "title", "lang", "xml:lang", "dir", "class");
+			if (Ext.isIE) {
+				this.allowedAttributes.push("className");
+			}
+		}
 		/*
 		 * Registering plugin "About" information
 		 */
@@ -50,430 +73,349 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		};
 		this.registerPluginInformation(pluginInformation);
 		/*
-		 * Registering the button
+		 * Registering the buttons
 		 */
-		var buttonId = 'AnnotateElement';
+		buttonId = 'ShowAnnotatedTerms';
 		var buttonConfiguration = {
 			id		: buttonId,
-			tooltip		: this.localize('annotateElement'),
-			action		: 'onButtonPress',
-			dialog		: true,
-			iconCls		: 'htmlarea-action-element-edit',
-			dataUrl     : this.editorConfiguration.buttons.dataUrl
+			tooltip		: this.localize(buttonId + '-Tooltip'),
+			iconCls		: 'htmlarea-action-show-annotated-terms',
+			action		: 'onButtonPress'
 		};
 		this.registerButton(buttonConfiguration);
+		/*
+		 * Registering the dropdown list
+		 */
+		var buttonId = 'TermSelector';
+		if (this.buttonsConfiguration[buttonId.toLowerCase()] && this.buttonsConfiguration[buttonId.toLowerCase()].dataUrl) {
+			var dropDownConfiguration = {
+				id		: buttonId,
+				tooltip		: this.localize(buttonId + '-Tooltip'),
+				storeUrl	: this.buttonsConfiguration[buttonId.toLowerCase()].dataUrl,
+				action		: 'onChange'
+			};
+			if (this.buttonsConfiguration.language) {
+				dropDownConfiguration.width = this.buttonsConfiguration.language.width ? parseInt(this.buttonsConfiguration.language.width, 10) : 200;
+				if (this.buttonsConfiguration.language.listWidth) {
+					dropDownConfiguration.listWidth = parseInt(this.buttonsConfiguration.language.listWidth, 10);
+				}
+				if (this.buttonsConfiguration.language.maxHeight) {
+					dropDownConfiguration.maxHeight = parseInt(this.buttonsConfiguration.language.maxHeight, 10);
+				}
+			}
+			this.registerDropDown(dropDownConfiguration);
+		}
 		return true;
 	},
 	/*
-	 * Sets of default configuration values for dialogue form fields
+	 * This function gets called when the editor is generated
 	 */
-	configDefaults: {
-		combo: {
-			editable: true,
-			selectOnFocus: true,
-			typeAhead: true,
-			triggerAction: 'all',
-			forceSelection: true,
-			mode: 'local',
-			valueField: 'value',
-			displayField: 'text',
-			helpIcon: true,
-			tpl: '<tpl for="."><div ext:qtip="{value}" style="text-align:left;font-size:11px;" class="x-combo-list-item">{text}</div></tpl>'
+	onGenerate: function () {
+			// Add rules to the stylesheet for language mark highlighting
+			// Model: body.htmlarea-show-tagged-terms *[lang=en]:before { content: "en: "; }
+			// Works in IE8, but not in earlier versions of IE
+		var select = this.getButton('Language');
+		if (select) {
+			var styleSheet = this.editor._doc.styleSheets[0];
+			select.getStore().each(function (option) {
+				var selector = 'body.htmlarea-show-tagged-terms *[' + 'lang="' + option.get('value') + '"]:before';
+				var style = 'content: "' + option.get('value') + ': ";';
+				var rule = selector + ' { ' + style + ' }';
+				if (!Ext.isIE) {
+					try {
+						styleSheet.insertRule(rule, styleSheet.cssRules.length);
+					} catch (e) {
+						this.appendToLog('onGenerate', 'Error inserting css rule: ' + rule + ' Error text: ' + e, 'warn');
+					}
+				} else {
+					styleSheet.addRule(selector, style);
+				}
+				return true;
+			}, this);
+				// Monitor the combo's store being loaded
+			select.mon(select.getStore(), 'load', function () { this.updateValue(select); }, this);
 		}
 	},
 	/*
-	 * This function gets called when the button was pressed
+	 * This function gets called when a button was pressed.
 	 *
 	 * @param	object		editor: the editor instance
 	 * @param	string		id: the button id or the key
 	 *
 	 * @return	boolean		false if action is completed
 	 */
-	onButtonPress: function(editor, id) {
+	onButtonPress : function (editor, id, target) {
 			// Could be a button or its hotkey
 		var buttonId = this.translateHotKey(id);
 		buttonId = buttonId ? buttonId : id;
-			// Get the parent element of the current selection
-		this.element = this.editor.getParentElement();
-		if (this.element && !/^body$/i.test(this.element.nodeName)) {
-				// Open the dialogue window
-			this.openDialogue(
-				buttonId,
-				'annotateElement',
-				this.getWindowDimensions(
-					{
-						width: 450
-					},
-					buttonId
-				),
-				this.buildTabItemsConfig(this.element),
-				this.buildButtonsConfig(this.element, this.okHandler, this.deleteHandler)
-			);
-		}
+		this.toggleLanguageMarks();
 		return false;
 	},
+
 	/*
-	 * Open the dialogue window
+	 * Sets the dir attribute
 	 *
 	 * @param	string		buttonId: the button id
-	 * @param	string		title: the window title
-	 * @param	object		dimensions: the opening dimensions of the window
-	 * @param	object		tabItems: the configuration of the tabbed panel
-	 * @param	object		buttonsConfig: the configuration of the buttons
 	 *
 	 * @return	void
 	 */
-	openDialogue: function (buttonId, title, dimensions, tabItems, buttonsConfig) {
-		this.dialog = new Ext.Window({
-			title: this.getHelpTip('', title),
-			cls: 'htmlarea-window',
-			border: false,
-			width: dimensions.width,
-			height: 'auto',
-				// As of ExtJS 3.1, JS error with IE when the window is resizable
-			resizable: !Ext.isIE,
-			iconCls: this.getButton(buttonId).iconCls,
-			listeners: {
-				close: {
-					fn: this.onClose,
-					scope: this
-				}
-			},
-			items: {
-				xtype: 'tabpanel',
-				activeTab: 0,
-				defaults: {
-					xtype: 'container',
-					layout: 'form',
-					defaults: {
-						labelWidth: 150
-					}
-				},
-				listeners: {
-					tabchange: {
-						fn: this.syncHeight,
-						scope: this
-					}
-				},
-				items: tabItems
-			},
-			buttons: buttonsConfig
-		});
-		this.show();
-	},
-	/*
-	 * Build the dialogue tab items config
-	 *
-	 * @param	object		element: the element being edited, if any
-	 *
-	 * @return	object		the tab items configuration
-	 */
-	buildTabItemsConfig: function (element) {
-		var tabItems = [];
-		var generalTabItemConfig = [];
-		if (this.removedFieldsets.indexOf('identification') == -1) {
-			this.addConfigElement(this.buildIdentificationFieldsetConfig(element), generalTabItemConfig);
-		}
-		if (this.removedFieldsets.indexOf('style') == -1 && this.removedProperties.indexOf('className') == -1) {
-			this.addConfigElement(this.buildClassFieldsetConfig(element), generalTabItemConfig);
-		}
-		tabItems.push({
-			title: this.localize('general'),
-			itemId: 'general',
-			items: generalTabItemConfig
-		});
-		if (this.removedFieldsets.indexOf('language') == -1 && this.getPluginInstance('Language')) {
-			var languageTabItemConfig = [];
-			this.addConfigElement(this.buildLanguageFieldsetConfig(element), languageTabItemConfig);
-			tabItems.push({
-				title: this.localize('Language'),
-				itemId: 'language',
-				items: languageTabItemConfig
-			});
-		}
-		if (this.removedFieldsets.indexOf('events') == -1) {
-			var eventsTabItemConfig = [];
-			this.addConfigElement(this.buildEventsFieldsetConfig(element), eventsTabItemConfig);
-			tabItems.push({
-				title: this.localize('events'),
-				itemId: 'events',
-				items: eventsTabItemConfig
-			});
-		}
-		return tabItems;
-	},
-	/*
-	 * This function builds the configuration object for the Identification fieldset
-	 *
-	 * @param	object		element: the element being edited, if any
-	 *
-	 * @return	object		the fieldset configuration object
-	 */
-	buildIdentificationFieldsetConfig: function (element) {
-		var itemsConfig = [];
-		if (this.removedProperties.indexOf('id') == -1) {
-			itemsConfig.push({
-				itemId: 'id',
-				fieldLabel: this.getHelpTip('id', 'id'),
-				value: element ? element.getAttribute('id') : '',
-				width: ((this.properties['id'] && this.properties['id'].width) ? this.properties['id'].width : 300)
-			});
-		}
-		if (this.removedProperties.indexOf('title') == -1) {
-			itemsConfig.push({
-				itemId: 'title',
-				fieldLabel: this.getHelpTip('title', 'title'),
-				value: element ? element.getAttribute('title') : '',
-				width: ((this.properties['title'] && this.properties['title'].width) ? this.properties['title'].width : 300)
-			});
-		}
-		return {
-			xtype: 'fieldset',
-			title: this.localize('identification'),
-			defaultType: 'textfield',
-			labelWidth: 100,
-			defaults: {
-				labelSeparator: ':'
-			},
-			items: itemsConfig
-		};
-	},
-	/*
-	 * This function builds the configuration object for the CSS Class fieldset
-	 *
-	 * @param	object		element: the element being edited, if any
-	 *
-	 * @return	object		the fieldset configuration object
-	 */
-	buildClassFieldsetConfig: function (element) {
-		var itemsConfig = [];
-		var stylingCombo = this.buildStylingField('className', 'className', 'className');
-		this.setStyleOptions(stylingCombo, element);
-		itemsConfig.push(stylingCombo);
-		return {
-			xtype: 'fieldset',
-			title: this.localize('className'),
-			labelWidth: 100,
-			defaults: {
-				labelSeparator: ':'
-			},
-			items: itemsConfig
-		};
-	},
-	/*
-	 * This function builds a style selection field
-	 *
-	 * @param	string		fieldName: the name of the field
-	 * @param	string		fieldLabel: the label for the field
-	 * @param	string		cshKey: the csh key
-	 *
-	 * @return	object		the style selection field object
-	 */
-	buildStylingField: function (fieldName, fieldLabel, cshKey) {
-		return new Ext.form.ComboBox(Ext.apply({
-			xtype: 'combo',
-			itemId: fieldName,
-			fieldLabel: this.getHelpTip(fieldLabel, cshKey),
-			width: ((this.properties['className'] && this.properties['className'].width) ? this.properties['className'].width : 300),
-			store: new Ext.data.ArrayStore({
-				autoDestroy:  true,
-				fields: [ { name: 'text'}, { name: 'value'}, { name: 'style'} ],
-				data: [[this.localize('No style'), 'none']]
-			})
-			}, {
-			tpl: '<tpl for="."><div ext:qtip="{value}" style="{style}text-align:left;font-size:11px;" class="x-combo-list-item">{text}</div></tpl>'
-			}, this.configDefaults['combo']
-		));
-	},
-	/*
-	 * This function populates the class store and sets the selected option
-	 *
-	 * @param	object:		comboBox: the combobox object
-	 * @param	object		element: the element being edited, if any
-	 *
-	 * @return	object		the fieldset configuration object
-	 */
-	setStyleOptions: function (comboBox, element) {
-		var nodeName = element.nodeName.toLowerCase();
-		this.stylePlugin = this.getPluginInstance(HTMLArea.isBlockElement(element) ? 'BlockStyle' : 'TextStyle');
-		if (comboBox && this.stylePlugin) {
-			var classNames = HTMLArea.DOM.getClassNames(element);
-			this.stylePlugin.buildDropDownOptions(comboBox, nodeName);
-			this.stylePlugin.setSelectedOption(comboBox, classNames, 'noUnknown');
-		}
-	},
-	/*
-	 * This function builds the configuration object for the Language fieldset
-	 *
-	 * @param	object		element: the element being edited, if any
-	 *
-	 * @return	object		the fieldset configuration object
-	 */
-	buildLanguageFieldsetConfig: function (element) {
-		var itemsConfig = [];
-		var languagePlugin = this.getPluginInstance('Language');
-		var termDataUrl;
-		if (this.editorConfiguration.buttons && this.editorConfiguration.buttons.annotateelement && this.editorConfiguration.buttons.annotateelement.dataUrl) {
-			termDataUrl = this.editorConfiguration.buttons.annotateelement.dataUrl;
-		}
-		if (languagePlugin && termDataUrl && this.removedProperties.indexOf('language') == -1) {
-			var selectedLanguage = !Ext.isEmpty(element) ? languagePlugin.getLanguageAttribute(element) : 'none';
-			function initLanguageStore (store) {
-				if (selectedLanguage !== 'none') {
-					store.removeAt(0);
-					store.insert(0, new store.recordType({
-						text: this.localize('Remove language mark'),
-						value: 'none'
-					}));
-				}
-			}
-			var languageStore = new Ext.data.JsonStore({
-				autoDestroy:  true,
-				autoLoad: true,
-				root: 'options',
-				fields: [ { name: 'text'}, { name: 'value'} ],
-				url: termDataUrl,
-				listeners: {
-					load: initLanguageStore
-				}
-			});
-			itemsConfig.push(Ext.apply({
-				xtype: 'combo',
-				fieldLabel: this.getHelpTip('languageCombo', 'Language'),
-				itemId: 'lang',
-				store: languageStore,
-				width: ((this.properties['language'] && this.properties['language'].width) ? this.properties['language'].width : 200),
-				value: selectedLanguage
-			}, this.configDefaults['combo']));
-		}
-		if (this.removedProperties.indexOf('direction') == -1) {
-			itemsConfig.push(Ext.apply({
-				xtype: 'combo',
-				fieldLabel: this.getHelpTip('directionCombo', 'Text direction'),
-				itemId: 'dir',
-				store: new Ext.data.ArrayStore({
-					autoDestroy:  true,
-					fields: [ { name: 'text'}, { name: 'value'}],
-					data: [
-						[this.localize('Not set'), 'not set'],
-						[this.localize('RightToLeft'), 'rtl'],
-						[this.localize('LeftToRight'), 'ltr']
-					]
-				}),
-				width: ((this.properties['direction'] && this.properties['direction'].width) ? this.properties['direction'].width : 200),
-				value: !Ext.isEmpty(element) && element.dir ? element.dir : 'not set'
-			}, this.configDefaults['combo']));
-		}
-		return {
-			xtype: 'fieldset',
-			title: this.localize('Language'),
-			labelWidth: 100,
-			defaults: {
-				labelSeparator: ':'
-			},
-			items: itemsConfig
-		};
-	},
-	/*
-	 * This function builds the configuration object for the Events fieldset
-	 *
-	 * @param	object		element: the element being edited, if any
-	 *
-	 * @return	object		the fieldset configuration object
-	 */
-	buildEventsFieldsetConfig: function (element) {
-		var itemsConfig = [];
-		var events = ['onkeydown', 'onkeypress', 'onkeyup', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup'];
-		if (!/^(base|bdo|br|frame|frameset|head|html|iframe|meta|param|script|style|title)$/i.test(element.nodeName)) {
-			Ext.each(events, function (event) {
-				if (this.removedProperties.indexOf(event) == -1) {
-					itemsConfig.push({
-						itemId: event,
-						fieldLabel: this.getHelpTip(event, event),
-						value: element ? element.getAttribute(event) : ''
-					});
-				}
-			}, this);
-		}
-		return itemsConfig.length ? {
-			xtype: 'fieldset',
-			title: this.getHelpTip('events', 'events'),
-			defaultType: 'textfield',
-			labelWidth: 100,
-			defaults: {
-				labelSeparator: ':',
-				width: ((this.properties['event'] && this.properties['event'].width) ? this.properties['event'].width : 300)
-			},
-			items: itemsConfig
-		} : null;
-	},
-	/*
-	 * Build the dialogue buttons config
-	 *
-	 * @param	object		element: the element being edited, if any
-	 * @param	function	okHandler: the handler for the ok button
-	 * @param	function	deleteHandler: the handler for the delete button
-	 *
-	 * @return	object		the buttons configuration
-	 */
-	buildButtonsConfig: function (element, okHandler, deleteHandler) {
-		var buttonsConfig = [this.buildButtonConfig('OK', okHandler)];
+	setDirAttribute : function (buttonId) {
+		var direction = (buttonId == "RightToLeft") ? "rtl" : "ltr";
+		var element = this.editor.getParentElement();
 		if (element) {
-			buttonsConfig.push(this.buildButtonConfig('Delete', deleteHandler));
-		}
-		buttonsConfig.push(this.buildButtonConfig('Cancel', this.onCancel));
-		return buttonsConfig;
-	},
-	/*
-	 * Handler when the ok button is pressed
-	 */
-	okHandler: function (button, event) {
-		this.restoreSelection();
-		var textFields = this.dialog.findByType('textfield');
-		Ext.each(textFields, function (field) {
-			this.element.setAttribute(field.getItemId(), field.getValue());
-		}, this);
-		var comboFields = this.dialog.findByType('combo');
-		Ext.each(comboFields, function (field) {
-			var itemId = field.getItemId();
-			var value = field.getValue();
-			switch (itemId) {
-				case 'className':
-					this.stylePlugin.applyClassChange(this.element, value);
-					break;
-				case 'lang':
-					this.getPluginInstance('Language').setLanguageAttributes(this.element, value);
-					break;
-				case 'dir':
-					this.element.setAttribute(itemId, (value == 'not set') ? '' : value);
-					break;
+			if (element.nodeName.toLowerCase() === "bdo") {
+				element.dir = direction;
+			} else {
+				element.dir = (element.dir == direction || element.style.direction == direction) ? "" : direction;
 			}
-		}, this);
-		this.close();
-		event.stopEvent();
-	},
-	/*
-	 * Handler when the delete button is pressed
-	 */
-	deleteHandler: function (button, event) {
-		this.restoreSelection();
-		if (this.element) {
-				// Delete the element
-			HTMLArea.removeFromParent(this.element);
+			element.style.direction = "";
 		}
-		this.close();
-		event.stopEvent();
+	 },
+
+	/*
+	 * Toggles the display of language marks
+	 *
+	 * @param	boolean		forceLanguageMarks: if set, language marks are displayed whatever the current state
+	 *
+	 * @return	void
+	 */
+	toggleLanguageMarks : function (forceLanguageMarks) {
+		var body = this.editor._doc.body;
+		if (!HTMLArea.DOM.hasClass(body, 'htmlarea-show-tagged-terms')) {
+			HTMLArea.DOM.addClass(body,'htmlarea-show-tagged-terms');
+		} else if (!forceLanguageMarks) {
+			HTMLArea.DOM.removeClass(body,'htmlarea-show-tagged-terms');
+		}
 	},
+
+	/*
+	 * This function gets called when some language was selected in the drop-down list
+	 */
+	onChange : function (editor, combo, record, index) {
+		this.applyLanguageMark(combo.getValue());
+	},
+
+	/*
+	 * This function applies the langauge mark to the selection
+	 */
+	applyLanguageMark : function (language) {
+		var selection = this.editor._getSelection();
+		var statusBarSelection = this.editor.statusBar ? this.editor.statusBar.getSelection() : null;
+		var range = this.editor._createRange(selection);
+		var parent = this.editor.getParentElement(selection, range);
+		var selectionEmpty = this.editor._selectionEmpty(selection);
+		var endPointsInSameBlock = this.editor.endPointsInSameBlock();
+		var fullNodeSelected = false;
+		if (!selectionEmpty) {
+			if (endPointsInSameBlock) {
+				var ancestors = this.editor.getAllAncestors();
+				for (var i = 0; i < ancestors.length; ++i) {
+					fullNodeSelected = (statusBarSelection === ancestors[i])
+						&& ((!Ext.isIE && ancestors[i].textContent === range.toString()) || (Ext.isIE && ((selection.type !== "Control" && ancestors[i].innerText === range.text) || (selection.type === "Control" && ancestors[i].innerText === range.item(0).text))));
+					if (fullNodeSelected) {
+						parent = ancestors[i];
+						break;
+					}
+				}
+					// Working around bug in Safari selectNodeContents
+				if (!fullNodeSelected && Ext.isWebKit && statusBarSelection && statusBarSelection.textContent === range.toString()) {
+					fullNodeSelected = true;
+					parent = statusBarSelection;
+				}
+			}
+		}
+		if (selectionEmpty || fullNodeSelected) {
+				// Selection is empty or parent is selected in the status bar
+			if (parent) {
+					// Set language attributes
+				this.setLanguageAttributes(parent, language);
+			}
+		} else if (endPointsInSameBlock) {
+				// The selection is not empty, nor full element
+			if (language != "none") {
+					// Add span element with lang attribute(s)
+				var newElement = this.editor._doc.createElement("span");
+				this.setLanguageAttributes(newElement, language);
+				this.editor.wrapWithInlineElement(newElement, selection, range);
+				if (!Ext.isIE) {
+					range.detach();
+				}
+			}
+		} else {
+			this.setLanguageAttributeOnBlockElements(language);
+		}
+	},
+
+	/*
+	 * This function gets the language attribute on the given element
+	 *
+	 * @param	object		element: the element from which to retrieve the attribute value
+	 *
+	 * @return	string		value of the lang attribute, or of the xml:lang attribute
+	 */
+	getLanguageAttribute : function (element) {
+		var xmllang = "none";
+		try {
+				// IE7 complains about xml:lang
+			xmllang = element.getAttribute("xml:lang") ? element.getAttribute("xml:lang") : "none";
+		} catch(e) { }
+		return element.getAttribute("lang") ? element.getAttribute("lang") : xmllang;
+	},
+
+	/*
+	 * This function sets the language attributes on the given element
+	 *
+	 * @param	object		element: the element on which to set the value of the lang and/or xml:lang attribute
+	 * @param	string		language: value of the lang attributes, or "none", in which case, the attribute(s) is(are) removed
+	 *
+	 * @return	void
+	 */
+	setLanguageAttributes : function (element, language) {
+		if (language == "none") {
+				// Remove language mark, if any
+			element.removeAttribute("lang");
+				// Remove the span tag if it has no more attribute
+			if ((element.nodeName.toLowerCase() == "span") && !HTMLArea.hasAllowedAttributes(element, this.allowedAttributes)) {
+				this.editor.removeMarkup(element);
+			}
+		} else {
+			if (this.useAttribute.lang) {
+				element.setAttribute("lang", language);
+			}
+		}
+	},
+
+	/*
+	 * This function gets the language attributes from blocks sibling of the block containing the start container of the selection
+	 *
+	 * @return	string		value of the lang attribute, or of the xml:lang attribute, or "none", if all blocks sibling do not have the same attribute value as the block containing the start container
+	 */
+	getLanguageAttributeFromBlockElements : function() {
+		var selection = this.editor._getSelection();
+		var endBlocks = this.editor.getEndBlocks(selection);
+		var startAncestors = this.editor.getBlockAncestors(endBlocks.start);
+		var endAncestors = this.editor.getBlockAncestors(endBlocks.end);
+		var index = 0;
+		while (index < startAncestors.length && index < endAncestors.length && startAncestors[index] === endAncestors[index]) {
+			++index;
+		}
+		if (endBlocks.start === endBlocks.end) {
+			--index;
+		}
+		var language = this.getLanguageAttribute(startAncestors[index]);
+		for (var block = startAncestors[index]; block; block = block.nextSibling) {
+			if (HTMLArea.isBlockElement(block)) {
+				if (this.getLanguageAttribute(block) != language || this.getLanguageAttribute(block) == "none") {
+					language = "none";
+					break;
+				}
+			}
+			if (block == endAncestors[index]) {
+				break;
+			}
+		}
+		return language;
+	},
+
+	/*
+	 * This function sets the language attributes on blocks sibling of the block containing the start container of the selection
+	 */
+	setLanguageAttributeOnBlockElements : function(language) {
+		var selection = this.editor._getSelection();
+		var endBlocks = this.editor.getEndBlocks(selection);
+		var startAncestors = this.editor.getBlockAncestors(endBlocks.start);
+		var endAncestors = this.editor.getBlockAncestors(endBlocks.end);
+		var index = 0;
+		while (index < startAncestors.length && index < endAncestors.length && startAncestors[index] === endAncestors[index]) {
+			++index;
+		}
+		if (endBlocks.start === endBlocks.end) {
+			--index;
+		}
+		for (var block = startAncestors[index]; block; block = block.nextSibling) {
+			if (HTMLArea.isBlockElement(block)) {
+				this.setLanguageAttributes(block, language);
+			}
+			if (block == endAncestors[index]) {
+				break;
+			}
+		}
+	},
+
 	/*
 	 * This function gets called when the toolbar is updated
 	 */
-	onUpdateToolbar: function (button, mode, selectionEmpty, ancestors) {
-		if ((mode === 'wysiwyg') && this.editor.isEditable()) {
-				// Disable the button if the first ancestor is the document body
-			button.setDisabled(!ancestors.length || /^body$/i.test(ancestors[0].nodeName));
-			if (this.dialog) {
-				this.dialog.focus();
+	onUpdateToolbar: function (button, mode, selectionEmpty, ancestors, endPointsInSameBlock) {
+		if (mode === 'wysiwyg' && this.editor.isEditable()) {
+			var selection = this.editor._getSelection();
+			var statusBarSelection = this.editor.statusBar ? this.editor.statusBar.getSelection() : null;
+			var range = this.editor._createRange(selection);
+			var parent = this.editor.getParentElement(selection);
+			switch (button.itemId) {
+				case 'RightToLeft':
+				case 'LeftToRight':
+					if (parent) {
+						var direction = (button.itemId === 'RightToLeft') ? 'rtl' : 'ltr';
+						button.setInactive(parent.dir != direction && parent.style.direction != direction);
+						button.setDisabled(/^body$/i.test(parent.nodeName));
+					} else {
+						button.setDisabled(true);
+					}
+					break;
+				case 'ShowLanguageMarks':
+					button.setInactive(!HTMLArea.DOM.hasClass(this.editor._doc.body, 'htmlarea-show-tagged-terms'));
+					break;
+				case 'Language':
+						// Updating the language drop-down
+					var fullNodeSelected = false;
+					var language = this.getLanguageAttribute(parent);
+					if (!selectionEmpty) {
+						if (endPointsInSameBlock) {
+							for (var i = 0; i < ancestors.length; ++i) {
+								fullNodeSelected = (statusBarSelection === ancestors[i])
+									&& ((!Ext.isIE && ancestors[i].textContent === range.toString()) || (Ext.isIE && ((selection.type !== "Control" && ancestors[i].innerText === range.text) || (selection.type === "Control" && ancestors[i].innerText === range.item(0).text))));
+								if (fullNodeSelected) {
+									parent = ancestors[i];
+									break;
+								}
+							}
+								// Working around bug in Safari selectNodeContents
+							if (!fullNodeSelected && Ext.isWebKit && statusBarSelection && statusBarSelection.textContent === range.toString()) {
+								fullNodeSelected = true;
+								parent = statusBarSelection;
+							}
+							language = this.getLanguageAttribute(parent);
+						} else {
+							language = this.getLanguageAttributeFromBlockElements();
+						}
+					}
+					this.updateValue(button, language, selectionEmpty, fullNodeSelected, endPointsInSameBlock);
+					break;
+				default:
+					break;
 			}
 		}
+	},
+
+	/*
+	* This function updates the language drop-down list
+	*/
+	updateValue : function (select, language, selectionEmpty, fullNodeSelected, endPointsInSameBlock) {
+		var store = select.getStore();
+		store.removeAt(0);
+		if ((store.findExact('value', language) != -1) && (selectionEmpty || fullNodeSelected || !endPointsInSameBlock)) {
+			select.setValue(language);
+			store.insert(0, new store.recordType({
+				text: this.localize('Remove language mark'),
+				value: 'none'
+			}));
+		} else {
+			store.insert(0, new store.recordType({
+				text: this.localize('No language mark'),
+				value: 'none'
+			}));
+			select.setValue('none');
+		}
+		select.setDisabled(!(store.getCount()>1) || (selectionEmpty && this.editor.getParentElement().nodeName.toLowerCase() === 'body'));
 	}
 });

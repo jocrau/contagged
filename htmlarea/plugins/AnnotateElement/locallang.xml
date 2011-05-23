@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <T3locallang>
 	<meta type="array">
-		<description>Labels for Annotate Element plugin of htmlArea RTE</description>
+		<description>Labels for Language plugin of htmlArea RTE</description>
 		<type>module</type>
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="annotateElement">Annotate</label>
-			<label index="general">General</label>
-			<label index="identification">Identification</label>
-			<label index="id">Id</label>
-			<label index="title">Title</label>
-			<label index="className">Class</label>
-			<label index="events">Events</label>
-			<label index="onkeydown">Onkeydown</label>
-			<label index="onkeypress">Onkeypress</label>
-			<label index="onkeyup">Onkeyup</label>
-			<label index="onclick">Onclick</label>
-			<label index="ondblclick">Ondblclick</label>
-			<label index="onmousedown">Onmousedown</label>
-			<label index="onmousemove">Onmousemove</label>
-			<label index="onmouseout">Onmouseout</label>
-			<label index="onmouseover">Onmouseover</label>
-			<label index="onmouseup">Onmouseup</label>
+			<label index="LeftToRight-Tooltip">Direction left to right</label>
+			<label index="RightToLeft-Tooltip">Direction right to left</label>
+			<label index="TermSelector-Tooltip">Language</label>
+			<label index="ShowLanguageMarks-Tooltip">Show language marks</label>
 		</languageKey>
 	</data>
+	<orig_hash type="array">
+		<languageKey index="default" type="array">
+		</languageKey>
+	</orig_hash>
+	<orig_text type="array">
+		<languageKey index="default" type="array">
+		</languageKey>
+	</orig_text>
 </T3locallang>

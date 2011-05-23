@@ -33,24 +33,22 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 	protected $extensionKey = 'contagged';		// The key of the extension that is extending htmlArea RTE
 	protected $prefixId = 'tx_contagged';
 	protected $pluginName = 'AnnotateElement';			// The name of the plugin registered by the extension
-	protected $relativePathToLocallangFile = '';		// Path to this main locallang file of the extension relative to the extension dir.
+	protected $relativePathToLocallangFile = 'extensions/AnnotateElement/locallang.xml';	// Path to this main locallang file of the extension relative to the extension dir.
 	protected $relativePathToSkin = 'extensions/AnnotateElement/skin/htmlarea.css';		// Path to the skin (css) file relative to the extension dir
 	protected $htmlAreaRTE;					// Reference to the invoking object
 	protected $thisConfig;					// Reference to RTE PageTSConfig
 	protected $toolbar;					// Reference to RTE toolbar array
 	protected $LOCAL_LANG; 					// Frontend language array
-		// The comma-separated list of names of prerequisite plugins
-	protected $requiredPlugins = 'BlockStyle,TextStyle,Language';
-	protected $pluginButtons = 'annotateelement';
+
+	protected $pluginButtons = 'termselector,showannotatedterms';
 	protected $convertToolbarForHtmlAreaArray = array (
-		'annotateelement'	=> 'AnnotateElement',
+		'termselector'			=> 'TermSelector',
+		'showanntotatedterms'		=> 'ShowAnnotatedTerms',
 		);
-	protected $acronymIndex = 0;
-	protected $abbreviationIndex = 0;
 
 	public function main($parentObject) {
 		if (!t3lib_extMgm::isLoaded('contagged')) {
-			$this->pluginButtons = t3lib_div::rmFromList('annotateelement', $this->pluginButtons);
+			$this->pluginButtons = t3lib_div::rmFromList('termselector', $this->pluginButtons);
 		} else {
 			require_once(t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_terms.php');
 		}
@@ -69,7 +67,7 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 	 * 	RTEarea['.$RTEcounter.'].buttons.button-id.property = "value";
 	 */
 	public function buildJavascriptConfiguration($RTEcounter) {
-		$button = 'annotateelement';
+		$button = 'termselector';
 		$registerRTEinJavascriptString = '';
 		if (!is_array( $this->thisConfig['buttons.']) || !is_array($this->thisConfig['buttons.'][$button . '.'])) {
 			$registerRTEinJavascriptString .= '
@@ -120,8 +118,12 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 		$template->runThroughTemplates($rootline, $rootlineIndex);
 		$template->generateConfig();
 
-		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $template->setup['plugin.'][$this->prefixId.'.']);
-		$termsArray = $model->findAllTerms();
+		if (is_array($template->setup['plugin.'][$this->prefixId.'.'])) {
+			$model = t3lib_div::makeInstance('tx_contagged_model_terms', $template->setup['plugin.'][$this->prefixId.'.']);
+			$termsArray = $model->findAllTerms();
+		} else {
+			$termsArray = array();
+		}
 		//debug($termsArray);
 		return $termsArray;
 	}
@@ -132,7 +134,7 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 			return (int) $pageId;
 		}
 
-		preg_match('/(?<=id=)[0-9]*/', urldecode(t3lib_div::_GET('returnUrl')), $matches);
+		preg_match('/(?<=id=)[0-9]+/', urldecode(t3lib_div::_GET('returnUrl')), $matches);
 		if (count($matches) > 0) {
 			return (int) $matches[0];
 		}

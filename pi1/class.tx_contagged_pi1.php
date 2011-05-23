@@ -83,8 +83,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->typesArray = $this->conf['types.'];
 
 		// get the model (an associated array of terms)
-		$this->mapper = t3lib_div::makeInstance('tx_contagged_model_mapper', $this);
-		$this->model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
+		$this->mapper = t3lib_div::makeInstance('tx_contagged_model_mapper', $this->conf);
+		$this->model = t3lib_div::makeInstance('tx_contagged_model_terms', $this->conf);
 
 		if (!is_null($termKey)) {
 			$content .= $this->renderSingleItemByKey($dataSource, $uid);
