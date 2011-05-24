@@ -1,53 +1,41 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <T3locallang>
 	<meta type="array">
-		<description>CSH for Annotate Element Extension of htmlArea RTE</description>
+		<description>CSH for Language Extension of htmlArea RTE</description>
 		<type>CSH</type>
-		<csh_table>xEXT_contagged_AnnotateElement</csh_table>
+		<csh_table>xEXT_rtehtmlarea_Language</csh_table>
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index=".alttitle">htmlArea RTE &gt; Edit Element</label>
-			<label index=".description">The "Edit element" dialogue allows to edit the general attributes of an element in the RTE editing area.</label>
-			<label index=".details">Clicking the "Edit element" icon in the RTE tool bar opens a dialogue that allows to edit the general attributes of an element.
-The dialogue allows to edit the id, title, class, lang and dir attributes of the element. It also allows to specify handlers for keyboard and mouse events.</label>
-			<label index=".image">EXT:rtehtmlarea/extensions/EditElement/skin/images/element-annotate.png</label>
-			<label index=".image_descr">"Edit element" icon in the editor tool bar.</label>
-			<label index=".seeAlso">xEXT_rtehtmlarea_EditElement:id,
-xEXT_rtehtmlarea_EditElement:title,
-xEXT_rtehtmlarea_EditElement:className,
-xEXT_rtehtmlarea_Language:languageCombo,
-xEXT_rtehtmlarea_Language:directionCombo,
-xEXT_rtehtmlarea_EditElement:events
+			<label index=".alttitle">htmlArea RTE &gt; Language</label>
+			<label index=".description">The Language feature allows to edit the language and text direction attributes of an element in the RTE editing area.</label>
+			<label index=".details">The following items may appear in the RTE toolbar:
+- a selector box that allows to assign the language of contents of an element;
+- two buttons that allow to set the direction of text;
+- another button that allows to make the language marks visible wittin the RTE editing area.
+The language selector box may also appear in some dialogues along with a text direction selector box.</label>
+			<label index=".image">EXT:rtehtmlarea/extensions/Language/skin/images/left_to_right.gif,
+EXT:rtehtmlarea/extensions/Language/skin/images/right_to_left.gif,
+EXT:rtehtmlarea/extensions/Language/skin/images/show-language-marks.gif</label>
+			<label index=".image_descr">"Left to right" icon in the editor tool bar.
+"Right to left" icon in the editor tool bar.
+"Show language marks" icon in the editor tool bar.
 </label>
-			<label index="id.alttitle">Id attribute</label>
-			<label index="id.description">Enter or edit the value of the id attribute of the element.</label>
-			<label index="title.alttitle">Title attribute</label>
-			<label index="title.description">Enter or edit the value of the title attribute of the element.</label>
-			<label index="className.alttitle">Class attribute</label>
-			<label index="className.description">Choose a CSS class selector to be assigned to the element.</label>
-			<label index="events.alttitle">Event handlers</label>
-			<label index="events.description">Using this fieldset, edit handlers for keyboard and mouse events.</label>
-			<label index="onkeydown.alttitle">Onkeydown event handler</label>
-			<label index="onkeydown.description">Enter or edit the script to be run when a key is pressed.</label>
-			<label index="onkeypress.alttitle">Onkeypress event handler</label>
-			<label index="onkeypress.description">Enter or edit the script to be run when a key is pressed and released.</label>
-			<label index="onkeyup.alttitle">Onkeyup event handler</label>
-			<label index="onkeyup.description">Enter or edit the script to be run when a key is pressed and released.</label>
-			<label index="onclick.alttitle">Onclick event handler</label>
-			<label index="onclick.description">Enter or edit the script to be run on a mouse click.</label>
-			<label index="ondblclick.alttitle">Ondblclick event handler</label>
-			<label index="ondblclick.description">Enter or edit the script to be run on a mouse double-click.</label>
-			<label index="onmousedown.alttitle">Onmousedown event handler</label>
-			<label index="onmousedown.description">Enter or edit the script to be run when a mouse button is pressed.</label>
-			<label index="onmousemove.alttitle">Onmousemove event handler</label>
-			<label index="onmousemove.description">Enter or edit the script to be run when the mouse pointer moves.</label>
-			<label index="onmouseout.alttitle">Onmouseout event handler</label>
-			<label index="onmouseout.description">Enter or edit the script to be run when mouse pointer moves out of the element.</label>
-			<label index="onmouseover.alttitle">Onmouseover event handler</label>
-			<label index="onmouseover.description">Enter or edit the script to be run when mouse pointer moves over the element.</label>
-			<label index="onmouseup.alttitle">Onmouseup event handler</label>
-			<label index="onmouseup.description">Enter or edit the script to be run when a mouse button is released.</label>
+			<label index=".seeAlso">xEXT_rtehtmlarea_Language:languageCombo,
+xEXT_rtehtmlarea_Language:directionCombo,
+</label>
+			<label index="languageCombo.alttitle">Language of contents</label>
+			<label index="languageCombo.description">Select the language of the contents of the element.</label>
+			<label index="languageCombo.details">The language selector box may appear in the RTE toolbar and in some dialogues.
+The selector shows the language currently assigned to the current element, if any.
+Selecting a language assigns it to the element. If a language was already assigned to the element, it is replaced by the newly selected language.
+Any currently assigned language may be removed by selecting the "Remove language mark" item at the top of the list of the selector box.</label>
+			<label index="directionCombo.alttitle">Direction of text</label>
+			<label index="directionCombo.description">Select the direction of text within the contents of the element.</label>
+			<label index="directionCombo.details">The text direction selector box may appear in some dialogues.
+The selector shows the direction of text currently set on the current element, if any.
+Selecting a direction sets it on the element. If a direction was already set on the element, it is replaced by the newly selected direction.
+Any currently set direction may be removed by selecting the "Not set" item at the top of the list of the selector box.</label>
 		</languageKey>
 	</data>
 </T3locallang>

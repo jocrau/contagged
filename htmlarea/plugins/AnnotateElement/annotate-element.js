@@ -90,9 +90,15 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		if (this.buttonsConfiguration[buttonId.toLowerCase()] && this.buttonsConfiguration[buttonId.toLowerCase()].dataUrl) {
 			var dropDownConfiguration = {
 				id		: buttonId,
-				tooltip		: this.localize(buttonId + '-Tooltip'),
-				storeUrl	: this.buttonsConfiguration[buttonId.toLowerCase()].dataUrl,
-				action		: 'onChange'
+				tooltip	: this.localize(buttonId + '-Tooltip'),
+				store	: new Ext.data.JsonStore({
+							autoDestroy: true,
+							autoLoad: true,
+							root: 'options',
+							fields: [{ name: 'text'}, { name: 'value'}, { name: 'description'}, { name: 'tagName'}],
+							url: this.buttonsConfiguration[buttonId.toLowerCase()].dataUrl
+						}),
+				action	: 'onChange'
 			};
 			if (this.buttonsConfiguration.language) {
 				dropDownConfiguration.width = this.buttonsConfiguration.language.width ? parseInt(this.buttonsConfiguration.language.width, 10) : 200;
@@ -172,13 +178,14 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 * This function gets called when some language was selected in the drop-down list
 	 */
 	onChange : function (editor, combo, record, index) {
-		this.applyLanguageMark(combo.getValue());
+		this.applyLanguageMark(combo);
 	},
 
 	/*
 	 * This function applies the langauge mark to the selection
 	 */
-	applyLanguageMark : function (language) {
+	applyLanguageMark : function (combo) {
+		var language = combo.getValue();
 		var selection = this.editor._getSelection();
 		var statusBarSelection = this.editor.statusBar ? this.editor.statusBar.getSelection() : null;
 		var range = this.editor._createRange(selection);
@@ -213,9 +220,19 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		} else if (endPointsInSameBlock) {
 				// The selection is not empty, nor full element
 			if (language != "none") {
+				var tagName = "span";
+				var description = "";
+				var store = combo.getStore();
+				var index = store.findExact('value', language);
+				if (index != -1) {
+					var term = store.getAt(index);
+					tagName = term.get('tagName');
+					description = term.get('description');
+				}
+
 					// Add tag with lang attribute(s)
-				var newElement = this.editor._doc.createElement("acronym");
-				this.setLanguageAttributes(newElement, language);
+				var newElement = this.editor._doc.createElement(tagName);
+				this.setLanguageAttributes(newElement, description);
 				this.editor.wrapWithInlineElement(newElement, selection, range);
 				if (!Ext.isIE) {
 					range.detach();
@@ -250,16 +267,16 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 *
 	 * @return	void
 	 */
-	setLanguageAttributes : function (element, language) {
-		if (language == "none") {
+	setLanguageAttributes : function (element, description) {
+		if (description == "") {
 				// Remove language mark, if any
 			element.removeAttribute("title");
 				// Remove the span tag if it has no more attribute
-			if ((element.nodeName.toLowerCase() == "acronym") && !HTMLArea.hasAllowedAttributes(element, this.allowedAttributes)) {
+			if ((element.nodeName.toLowerCase() == "span") && !HTMLArea.hasAllowedAttributes(element, this.allowedAttributes)) {
 				this.editor.removeMarkup(element);
 			}
 		} else {
-			element.setAttribute("title", language);
+			element.setAttribute("title", description);
 		}
 	},
 

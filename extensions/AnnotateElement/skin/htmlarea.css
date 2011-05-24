@@ -1,5 +1,5 @@
 /* Selectors for the Edit Element extension of htmlArea RTE */
-.htmlarea-action-element-edit {
-	background-image: url('images/element-annotate.gif') !important;
+.htmlarea-action-show-annotated-terms {
+	background-image: url('images/show-annotated-terms.gif') !important;
 	background-position: 0 0 !important;
 }

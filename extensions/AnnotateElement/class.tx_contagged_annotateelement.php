@@ -40,10 +40,13 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 	protected $toolbar;					// Reference to RTE toolbar array
 	protected $LOCAL_LANG; 					// Frontend language array
 
+	protected $conf; // The generated term configuration
+	protected $termsArray; // an array holding the terms data
+	
 	protected $pluginButtons = 'termselector,showannotatedterms';
 	protected $convertToolbarForHtmlAreaArray = array (
 		'termselector'			=> 'TermSelector',
-		'showanntotatedterms'		=> 'ShowAnnotatedTerms',
+		'showannotatedterms'		=> 'ShowAnnotatedTerms',
 		);
 
 	public function main($parentObject) {
@@ -51,6 +54,8 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 			$this->pluginButtons = t3lib_div::rmFromList('termselector', $this->pluginButtons);
 		} else {
 			require_once(t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_terms.php');
+			$this->buildConfiguration();
+			$this->loadTerms();
 		}
 		return parent::main($parentObject);
 	}
@@ -73,11 +78,17 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 			$registerRTEinJavascriptString .= '
 		RTEarea['.$RTEcounter.'].buttons.'. $button .' = new Object();';
 		}
-		$termsArray = array('none' => 'Select Term');
-		$termsArray = array_merge($termsArray, $this->getTerms());
+		$termsArray = array('none' => array('term_main' => 'Select Term'));
+		$termsArray = array_merge($termsArray, $this->termsArray);
 		$termsJSArray = array();
-		foreach ($termsArray as $key => $value) {
-			$termsJSArray[] = array('text' => $value['term_main'], 'value' => $key);
+		foreach ($termsArray as $key => $termArray) {
+			$termConf = $this->conf['types.'][$termArray['term_type'] . '.'];
+			$termsJSArray[] = array(
+				'text' => $termArray['term_main'],
+				'value' => $key,
+				'description' => $termArray['desc_short'],
+				'tagName' => $termConf['tag']
+			);
 		}
 		if ($this->htmlAreaRTE->is_FE()) {
 			$GLOBALS['TSFE']->csConvObj->convArray($termsJSArray, $this->htmlAreaRTE->OutputCharset, 'utf-8');
@@ -89,16 +100,8 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 	RTEarea['.$RTEcounter.'].buttons.'. $button .'.dataUrl = "' . $this->htmlAreaRTE->writeTemporaryFile('', $button, 'js', $termsJSArray) . '";';
 		return $registerRTEinJavascriptString;
 	}
-	
-	/**
-	 * Getting all languages into an array
-	 * 	where the key is the ISO alpha-2 code of the language
-	 * 	and where the value are the name of the language in the current language
-	 * 	Note: we exclude sacred and constructed languages
-	 *
-	 * @return	array		An array of names of languages
-	 */
-	protected function getTerms() {
+
+	protected function buildConfiguration() {
 		require_once (PATH_t3lib.'class.t3lib_page.php');
 		require_once (PATH_t3lib.'class.t3lib_tstemplate.php');
 		require_once (PATH_t3lib.'class.t3lib_tsparser_ext.php');
@@ -119,14 +122,21 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 		$template->generateConfig();
 
 		if (is_array($template->setup['plugin.'][$this->prefixId.'.'])) {
-			$model = t3lib_div::makeInstance('tx_contagged_model_terms', $template->setup['plugin.'][$this->prefixId.'.']);
-			$termsArray = $model->findAllTerms();
+			$this->conf = $template->setup['plugin.'][$this->prefixId.'.'];
 		} else {
-			$termsArray = array();
+			$this->conf = array();
 		}
-		//debug($termsArray);
-		return $termsArray;
 	}
+
+	protected function loadTerms() {
+		if (!is_array($this->termsArray)) {
+			if (!empty($this->conf)) {
+				$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this->conf);
+				$this->termsArray = $model->findAllTerms();
+			}
+		}
+	}
+
 
 	protected function getCurrentPageId() {
 		$pageId = (integer)t3lib_div::_GP('id');
