@@ -32,6 +32,7 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 
 	protected $extensionKey = 'contagged';		// The key of the extension that is extending htmlArea RTE
 	protected $prefixId = 'tx_contagged';
+	protected $relativePathToResources = '/resources/contagged/'; // This is used to tag terms with RDFa
 	protected $pluginName = 'AnnotateElement';			// The name of the plugin registered by the extension
 	protected $relativePathToLocallangFile = 'extensions/AnnotateElement/locallang.xml';	// Path to this main locallang file of the extension relative to the extension dir.
 	protected $relativePathToSkin = 'extensions/AnnotateElement/skin/htmlarea.css';		// Path to the skin (css) file relative to the extension dir
@@ -85,9 +86,7 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 			$termConf = $this->conf['types.'][$termArray['term_type'] . '.'];
 			$termsJSArray[] = array(
 				'text' => $termArray['term_main'],
-				'value' => $key,
-				'description' => $termArray['desc_short'],
-				'tagName' => $termConf['tag']
+				'value' => $key
 			);
 		}
 		if ($this->htmlAreaRTE->is_FE()) {
@@ -97,7 +96,8 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 		}
 		$termsJSArray = json_encode(array('options' => $termsJSArray));
 		$registerRTEinJavascriptString .= '
-	RTEarea['.$RTEcounter.'].buttons.'. $button .'.dataUrl = "' . $this->htmlAreaRTE->writeTemporaryFile('', $button, 'js', $termsJSArray) . '";';
+	RTEarea['.$RTEcounter.'].buttons.'. $button .'.dataUrl = "' . $this->htmlAreaRTE->writeTemporaryFile('', $button, 'js', $termsJSArray) . '";
+	RTEarea['.$RTEcounter.'].buttons.'. $button .'.relativePathToResource = "' . $this->relativePathToResources . '";';
 		return $registerRTEinJavascriptString;
 	}
 

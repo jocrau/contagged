@@ -1,29 +1,29 @@
 /***************************************************************
-*  Copyright notice
-*
-*  (c) 2010-2011 Stanislas Rolland <typo3(arobas)sjbr.ca>
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*  A copy is found in the textfile GPL.txt and important notices to the license
-*  from the author is found in LICENSE.txt distributed with these scripts.
-*
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+ *  Copyright notice
+ *
+ *  (c) 2010-2011 Stanislas Rolland <typo3(arobas)sjbr.ca>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  A copy is found in the textfile GPL.txt and important notices to the license
+ *  from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 /*
  * EditElement plugin for htmlArea RTE
  */
@@ -43,7 +43,7 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 			this.useAttribute.lang = true;
 		}
 
-			// Importing list of allowed attributes
+		// Importing list of allowed attributes
 		if (this.getPluginInstance("TextStyle")) {
 			this.allowedAttributes = this.getPluginInstance("TextStyle").allowedAttributes;
 		}
@@ -92,23 +92,17 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 				id		: buttonId,
 				tooltip	: this.localize(buttonId + '-Tooltip'),
 				store	: new Ext.data.JsonStore({
-							autoDestroy: true,
-							autoLoad: true,
-							root: 'options',
-							fields: [{ name: 'text'}, { name: 'value'}, { name: 'description'}, { name: 'tagName'}],
-							url: this.buttonsConfiguration[buttonId.toLowerCase()].dataUrl
-						}),
+					autoDestroy: true,
+					autoLoad: true,
+					root: 'options',
+					url: this.buttonsConfiguration[buttonId.toLowerCase()].dataUrl,
+					fields: [
+						{ name: 'text'},
+						{ name: 'value'}
+					]
+				}),
 				action	: 'onChange'
 			};
-			if (this.buttonsConfiguration.language) {
-				dropDownConfiguration.width = this.buttonsConfiguration.language.width ? parseInt(this.buttonsConfiguration.language.width, 10) : 200;
-				if (this.buttonsConfiguration.language.listWidth) {
-					dropDownConfiguration.listWidth = parseInt(this.buttonsConfiguration.language.listWidth, 10);
-				}
-				if (this.buttonsConfiguration.language.maxHeight) {
-					dropDownConfiguration.maxHeight = parseInt(this.buttonsConfiguration.language.maxHeight, 10);
-				}
-			}
 			this.registerDropDown(dropDownConfiguration);
 		}
 		return true;
@@ -117,9 +111,9 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 * This function gets called when the editor is generated
 	 */
 	onGenerate: function () {
-			// Add rules to the stylesheet for language mark highlighting
-			// Model: body.htmlarea-show-tagged-terms *[lang=en]:before { content: "en: "; }
-			// Works in IE8, but not in earlier versions of IE
+		// Add rules to the stylesheet for language mark highlighting
+		// Model: body.htmlarea-show-tagged-terms *[lang=en]:before { content: "en: "; }
+		// Works in IE8, but not in earlier versions of IE
 		var select = this.getButton('Language');
 		if (select) {
 			var styleSheet = this.editor._doc.styleSheets[0];
@@ -138,8 +132,10 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 				}
 				return true;
 			}, this);
-				// Monitor the combo's store being loaded
-			select.mon(select.getStore(), 'load', function () { this.updateValue(select); }, this);
+			// Monitor the combo's store being loaded
+			select.mon(select.getStore(), 'load', function () {
+				this.updateValue(select);
+			}, this);
 		}
 	},
 	/*
@@ -151,7 +147,7 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 * @return	boolean		false if action is completed
 	 */
 	onButtonPress : function (editor, id, target) {
-			// Could be a button or its hotkey
+		// Could be a button or its hotkey
 		var buttonId = this.translateHotKey(id);
 		buttonId = buttonId ? buttonId : id;
 		this.toggleLanguageMarks();
@@ -168,9 +164,9 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	toggleLanguageMarks : function (forceLanguageMarks) {
 		var body = this.editor._doc.body;
 		if (!HTMLArea.DOM.hasClass(body, 'htmlarea-show-tagged-terms')) {
-			HTMLArea.DOM.addClass(body,'htmlarea-show-tagged-terms');
+			HTMLArea.DOM.addClass(body, 'htmlarea-show-tagged-terms');
 		} else if (!forceLanguageMarks) {
-			HTMLArea.DOM.removeClass(body,'htmlarea-show-tagged-terms');
+			HTMLArea.DOM.removeClass(body, 'htmlarea-show-tagged-terms');
 		}
 	},
 
@@ -178,14 +174,13 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 * This function gets called when some language was selected in the drop-down list
 	 */
 	onChange : function (editor, combo, record, index) {
-		this.applyLanguageMark(combo);
+		this.applyLanguageMark(combo.getValue());
 	},
 
 	/*
 	 * This function applies the langauge mark to the selection
 	 */
-	applyLanguageMark : function (combo) {
-		var language = combo.getValue();
+	applyLanguageMark : function (language) {
 		var selection = this.editor._getSelection();
 		var statusBarSelection = this.editor.statusBar ? this.editor.statusBar.getSelection() : null;
 		var range = this.editor._createRange(selection);
@@ -198,13 +193,13 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 				var ancestors = this.editor.getAllAncestors();
 				for (var i = 0; i < ancestors.length; ++i) {
 					fullNodeSelected = (statusBarSelection === ancestors[i])
-						&& ((!Ext.isIE && ancestors[i].textContent === range.toString()) || (Ext.isIE && ((selection.type !== "Control" && ancestors[i].innerText === range.text) || (selection.type === "Control" && ancestors[i].innerText === range.item(0).text))));
+							&& ((!Ext.isIE && ancestors[i].textContent === range.toString()) || (Ext.isIE && ((selection.type !== "Control" && ancestors[i].innerText === range.text) || (selection.type === "Control" && ancestors[i].innerText === range.item(0).text))));
 					if (fullNodeSelected) {
 						parent = ancestors[i];
 						break;
 					}
 				}
-					// Working around bug in Safari selectNodeContents
+				// Working around bug in Safari selectNodeContents
 				if (!fullNodeSelected && Ext.isWebKit && statusBarSelection && statusBarSelection.textContent === range.toString()) {
 					fullNodeSelected = true;
 					parent = statusBarSelection;
@@ -212,27 +207,19 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 			}
 		}
 		if (selectionEmpty || fullNodeSelected) {
-				// Selection is empty or parent is selected in the status bar
+			// Selection is empty or parent is selected in the status bar
 			if (parent) {
-					// Set language attributes
-				this.setLanguageAttributes(parent, language);
+				// Set language attributes
+				this.setAttributes(parent, language);
 			}
 		} else if (endPointsInSameBlock) {
-				// The selection is not empty, nor full element
+			// The selection is not empty, nor full element
 			if (language != "none") {
 				var tagName = "span";
-				var description = "";
-				var store = combo.getStore();
-				var index = store.findExact('value', language);
-				if (index != -1) {
-					var term = store.getAt(index);
-					tagName = term.get('tagName');
-					description = term.get('description');
-				}
 
-					// Add tag with lang attribute(s)
+				// Add tag with attribute(s)
 				var newElement = this.editor._doc.createElement(tagName);
-				this.setLanguageAttributes(newElement, description);
+				this.setAttributes(newElement, language);
 				this.editor.wrapWithInlineElement(newElement, selection, range);
 				if (!Ext.isIE) {
 					range.detach();
@@ -250,13 +237,8 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 *
 	 * @return	string		value of the lang attribute, or of the xml:lang attribute
 	 */
-	getLanguageAttribute : function (element) {
-		var xmllang = "none";
-		try {
-				// IE7 complains about xml:lang
-			xmllang = element.getAttribute("xml:lang") ? element.getAttribute("xml:lang") : "none";
-		} catch(e) { }
-		return element.getAttribute("lang") ? element.getAttribute("lang") : xmllang;
+	getAttribute : function (element) {
+		return element.getAttribute("property") ? element.getAttribute("property") : 'none';
 	},
 
 	/*
@@ -267,16 +249,19 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 *
 	 * @return	void
 	 */
-	setLanguageAttributes : function (element, description) {
-		if (description == "") {
-				// Remove language mark, if any
-			element.removeAttribute("title");
-				// Remove the span tag if it has no more attribute
+	setAttributes : function (element, termId) {
+		if (termId == "") {
+			// Remove attributes, if any
+			element.removeAttribute("about");
+			element.removeAttribute("property");
+			// Remove the span tag if it has no more attribute
 			if ((element.nodeName.toLowerCase() == "span") && !HTMLArea.hasAllowedAttributes(element, this.allowedAttributes)) {
 				this.editor.removeMarkup(element);
 			}
 		} else {
-			element.setAttribute("title", description);
+			var relativePathToResource = this.buttonsConfiguration['termselector'].relativePathToResource;
+			element.setAttribute("property", "http://www.w3.org/2004/02/skos/core#altLabel");
+			element.setAttribute("about", relativePathToResource + termId);
 		}
 	},
 
@@ -297,10 +282,10 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		if (endBlocks.start === endBlocks.end) {
 			--index;
 		}
-		var language = this.getLanguageAttribute(startAncestors[index]);
+		var language = this.getAttribute(startAncestors[index]);
 		for (var block = startAncestors[index]; block; block = block.nextSibling) {
 			if (HTMLArea.isBlockElement(block)) {
-				if (this.getLanguageAttribute(block) != language || this.getLanguageAttribute(block) == "none") {
+				if (this.getAttribute(block) != language || this.getAttribute(block) == "none") {
 					language = "none";
 					break;
 				}
@@ -329,7 +314,7 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		}
 		for (var block = startAncestors[index]; block; block = block.nextSibling) {
 			if (HTMLArea.isBlockElement(block)) {
-				this.setLanguageAttributes(block, language);
+				this.setAttributes(block, language);
 			}
 			if (block == endAncestors[index]) {
 				break;
@@ -351,25 +336,25 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 					button.setInactive(!HTMLArea.DOM.hasClass(this.editor._doc.body, 'htmlarea-show-tagged-terms'));
 					break;
 				case 'TermSelector':
-						// Updating the language drop-down
+					// Updating the language drop-down
 					var fullNodeSelected = false;
-					var language = this.getLanguageAttribute(parent);
+					var language = this.getAttribute(parent);
 					if (!selectionEmpty) {
 						if (endPointsInSameBlock) {
 							for (var i = 0; i < ancestors.length; ++i) {
 								fullNodeSelected = (statusBarSelection === ancestors[i])
-									&& ((!Ext.isIE && ancestors[i].textContent === range.toString()) || (Ext.isIE && ((selection.type !== "Control" && ancestors[i].innerText === range.text) || (selection.type === "Control" && ancestors[i].innerText === range.item(0).text))));
+										&& ((!Ext.isIE && ancestors[i].textContent === range.toString()) || (Ext.isIE && ((selection.type !== "Control" && ancestors[i].innerText === range.text) || (selection.type === "Control" && ancestors[i].innerText === range.item(0).text))));
 								if (fullNodeSelected) {
 									parent = ancestors[i];
 									break;
 								}
 							}
-								// Working around bug in Safari selectNodeContents
+							// Working around bug in Safari selectNodeContents
 							if (!fullNodeSelected && Ext.isWebKit && statusBarSelection && statusBarSelection.textContent === range.toString()) {
 								fullNodeSelected = true;
 								parent = statusBarSelection;
 							}
-							language = this.getLanguageAttribute(parent);
+							language = this.getAttribute(parent);
 						} else {
 							language = this.getLanguageAttributeFromBlockElements();
 						}
@@ -383,8 +368,8 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	},
 
 	/*
-	* This function updates the language drop-down list
-	*/
+	 * This function updates the language drop-down list
+	 */
 	updateValue : function (select, language, selectionEmpty, fullNodeSelected, endPointsInSameBlock) {
 		var store = select.getStore();
 		store.removeAt(0);
@@ -401,6 +386,6 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 			}));
 			select.setValue('none');
 		}
-		select.setDisabled(!(store.getCount()>1) || (selectionEmpty && this.editor.getParentElement().nodeName.toLowerCase() === 'body'));
+		select.setDisabled(!(store.getCount() > 1) || (selectionEmpty && this.editor.getParentElement().nodeName.toLowerCase() === 'body'));
 	}
 });

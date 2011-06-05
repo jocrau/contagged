@@ -10,10 +10,10 @@ t3lib_extMgm::addUserTSConfig('
 t3lib_extMgm::addPageTSConfig('
 RTE.default {
 	proc.allowTags := addToList(exclude)
-	proc.entryHTMLparser_db = 1
+	proc.entryHTMLparser_db = 0
 	proc.entryHTMLparser_db.allowTags := addToList(exclude)
+	proc.entryHTMLparser_db.tags.span.allowedAttribs := addToList(property, rel, resource, rev, typeof, content, about, datatype)
 	FE.proc.allowTags := addToList(exclude)
-	FE.proc.entryHTMLparser_db = 1
 	FE.proc.entryHTMLparser_db.allowTags := addToList(exclude)
 }');
 

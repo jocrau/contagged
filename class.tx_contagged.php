@@ -109,16 +109,18 @@ class tx_contagged extends tslib_pibase {
 		$tagsToOmitt = $this->getTagsToOmitt();
 
 		// TODO split recursively
+		/* @var t3lib_parsehtml $parseObj */
 		$parseObj = t3lib_div::makeInstance('t3lib_parsehtml');
 		$splittedContent = $parseObj->splitIntoBlock($tagsToOmitt, $content);
 		foreach ((array)$splittedContent as $intKey => $HTMLvalue) {
 			if (!($intKey % 2)) {
 				$positionsArray = array();
+				$this->getPositionsOfTaggedTerms($splittedContent[$intKey],$positionsArray);
 				foreach ($sortedTerms as $termAndKey) {
 					if (empty($termAndKey['term'])) {
 						continue;
 					}
-					$this->getPositions($splittedContent[$intKey], $positionsArray, $termAndKey['term'], $termAndKey['key']);
+					$this->getPositions($splittedContent[$intKey],$positionsArray,$termAndKey['term'],$termAndKey['key']);
 				}
 				ksort($positionsArray);
 				$splittedContent[$intKey] = $this->doReplace($splittedContent[$intKey], $positionsArray);
@@ -154,8 +156,8 @@ class tx_contagged extends tslib_pibase {
 			return ($aTermLength < $bTermLength) ? +1 : -1;
 		}
 	}
-
-	function getPositions($content, &$positionsArray, $term, $termKey) {
+	
+	function getPositions($content,&$positionsArray,$term,$termKey) {
 		$termArray = $this->termsArray[$termKey];
 		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
 		if ($typeConfigArray['termIsRegEx'] > 0) {
@@ -219,6 +221,7 @@ class tx_contagged extends tslib_pibase {
 					$positionsArray[$matchStart] = array(
 						'termKey' => $termKey,
 						'matchedTerm' => $matchedTerm,
+						'matchLength' => strlen($matchedTerm),
 						'preMatch' => $preMatch[0],
 						'postMatch' => $postMatch[0]
 					);
@@ -233,11 +236,11 @@ class tx_contagged extends tslib_pibase {
 		$newContent = '';
 		if ($positionsArray) {
 			foreach ($positionsArray as $matchStart => $matchArray) {
-				$matchLength = strlen($matchArray['matchedTerm']);
+				$matchLength = $matchArray['matchLength'];
 				$termKey = $matchArray['termKey'];
 				$replacement = $this->getReplacement($termKey, $matchArray['matchedTerm'], $matchArray['preMatch'], $matchArray['postMatch']);
 				$replacementLength = strlen($replacement);
-				$newContent = $newContent . substr($content, $posStart, $matchStart - $posStart) . $replacement;
+				$newContent = $newContent.substr($content,$posStart,$matchStart-$posStart).$replacement;
 				$posStart = $matchStart + $matchLength;
 			}
 			$newContent = $newContent . substr($content, $posStart);

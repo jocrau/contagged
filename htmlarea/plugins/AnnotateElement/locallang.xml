@@ -7,7 +7,7 @@
 	<data type="array">
 		<languageKey index="default" type="array">
 			<label index="TermSelector-Tooltip">Select a term</label>
-			<label index="ShowTaggedTerms-Tooltip">Show tagged terms</label>
+			<label index="ShowAnnotatedTerms-Tooltip">Show tagged terms</label>
 		</languageKey>
 	</data>
 </T3locallang>
