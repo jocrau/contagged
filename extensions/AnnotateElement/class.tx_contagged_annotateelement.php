@@ -79,16 +79,15 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 			$registerRTEinJavascriptString .= '
 		RTEarea['.$RTEcounter.'].buttons.'. $button .' = new Object();';
 		}
-		$termsArray = array('none' => array('term_main' => 'Select Term'));
-		$termsArray = array_merge($termsArray, $this->termsArray);
 		$termsJSArray = array();
-		foreach ($termsArray as $key => $termArray) {
+		foreach ($this->termsArray as $key => $termArray) {
 			$termConf = $this->conf['types.'][$termArray['term_type'] . '.'];
 			$termsJSArray[] = array(
 				'text' => $termArray['term_main'],
 				'value' => $key
 			);
 		}
+		array_unshift($termsJSArray, array('text' => 'Select term', 'value' => 'none'));
 		if ($this->htmlAreaRTE->is_FE()) {
 			$GLOBALS['TSFE']->csConvObj->convArray($termsJSArray, $this->htmlAreaRTE->OutputCharset, 'utf-8');
 		} else {
@@ -133,6 +132,8 @@ class tx_contagged_annotateelement extends tx_rtehtmlarea_api {
 			if (!empty($this->conf)) {
 				$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this->conf);
 				$this->termsArray = $model->findAllTerms();
+			} else {
+				$this->termsArray = array();
 			}
 		}
 	}
