@@ -237,8 +237,14 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 *
 	 * @return	string		value of the lang attribute, or of the xml:lang attribute
 	 */
-	getAttribute : function (element) {
-		return element.getAttribute("property") ? element.getAttribute("property") : 'none';
+	getTermKey : function (element) {
+		if (element.getAttribute("about")) {
+			var resourceUri = element.getAttribute("about");
+			var relativePathToResource = this.buttonsConfiguration['termselector'].relativePathToResource;
+			return resourceUri.substring(relativePathToResource.length, resourceUri.length);
+		} else {
+			return 'none';
+		}
 	},
 
 	/*
@@ -282,10 +288,10 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		if (endBlocks.start === endBlocks.end) {
 			--index;
 		}
-		var language = this.getAttribute(startAncestors[index]);
+		var language = this.getTermKey(startAncestors[index]);
 		for (var block = startAncestors[index]; block; block = block.nextSibling) {
 			if (HTMLArea.isBlockElement(block)) {
-				if (this.getAttribute(block) != language || this.getAttribute(block) == "none") {
+				if (this.getTermKey(block) != language || this.getTermKey(block) == "none") {
 					language = "none";
 					break;
 				}
@@ -338,7 +344,7 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 				case 'TermSelector':
 					// Updating the language drop-down
 					var fullNodeSelected = false;
-					var language = this.getAttribute(parent);
+					var termKey = this.getTermKey(parent);
 					if (!selectionEmpty) {
 						if (endPointsInSameBlock) {
 							for (var i = 0; i < ancestors.length; ++i) {
@@ -354,12 +360,12 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 								fullNodeSelected = true;
 								parent = statusBarSelection;
 							}
-							language = this.getAttribute(parent);
+							termKey = this.getTermKey(parent);
 						} else {
-							language = this.getLanguageAttributeFromBlockElements();
+							termKey = this.getLanguageAttributeFromBlockElements();
 						}
 					}
-					this.updateValue(button, language, selectionEmpty, fullNodeSelected, endPointsInSameBlock);
+					this.updateValue(button, termKey, selectionEmpty, fullNodeSelected, endPointsInSameBlock);
 					break;
 				default:
 					break;
@@ -370,18 +376,18 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	/*
 	 * This function updates the language drop-down list
 	 */
-	updateValue : function (select, language, selectionEmpty, fullNodeSelected, endPointsInSameBlock) {
+	updateValue : function (select, termKey, selectionEmpty, fullNodeSelected, endPointsInSameBlock) {
 		var store = select.getStore();
 		store.removeAt(0);
-		if ((store.findExact('value', language) != -1) && (selectionEmpty || fullNodeSelected || !endPointsInSameBlock)) {
-			select.setValue(language);
+		if ((store.findExact('value', termKey) != -1) && (selectionEmpty || fullNodeSelected || !endPointsInSameBlock)) {
+			select.setValue(termKey);
 			store.insert(0, new store.recordType({
-				text: this.localize('Remove language mark'),
+				text: this.localize('RemoveAnnotation'),
 				value: 'none'
 			}));
 		} else {
 			store.insert(0, new store.recordType({
-				text: this.localize('No language mark'),
+				text: this.localize('SelectTerm'),
 				value: 'none'
 			}));
 			select.setValue('none');

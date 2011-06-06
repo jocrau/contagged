@@ -7,6 +7,9 @@
 	<data type="array">
 		<languageKey index="default" type="array">
 			<label index="TermSelector-Tooltip">Select a term</label>
+			<label index="SelectTerm">Select a term</label>
+			<label index="RemoveAnnotation">Remove existing annotation</label>
+			<label index="TermSelector-Tooltip">Select a term</label>
 			<label index="ShowAnnotatedTerms-Tooltip">Show tagged terms</label>
 		</languageKey>
 	</data>
