@@ -156,7 +156,40 @@ class tx_contagged extends tslib_pibase {
 			return ($aTermLength < $bTermLength) ? +1 : -1;
 		}
 	}
-	
+
+	/**
+	 * This method searches for manually tagged terms in the given content. The tagging is done via RTE extension. The
+	 * tag it searches for is <span about="/resources/contagged/default_1">Foo Bar</span> and not yet configurable.
+	 *
+	 * @param  $content The content to be scanned for occurrences
+	 * @param  $positionsArray The resuling array of positions (as reference)
+	 * @return void
+	 */
+	protected function getPositionsOfTaggedTerms($content,&$positionsArray) {
+		$regEx = '%<span about="/resources/contagged/(?P<term_key>[^"\']*)"[^>]*>(?P<matched_term>.*)?</span>%' . $this->conf['modifier'];
+		$matchesArray = array();
+		preg_match_all($regEx, $content, $matchesArray, PREG_SET_ORDER+PREG_OFFSET_CAPTURE);
+		foreach ($matchesArray as $match) {
+			$positionsArray[$match[0][1]] = array(
+				'termKey' => $match['term_key'][0],
+				'matchedTerm' => $match['matched_term'][0],
+				'matchLength' => strlen($match[0][0]),
+				'preMatch' => '',
+				'postMatch' => ''
+				);
+			$GLOBALS['contagged']['occurences'][$match['term_key'][0]]++;
+		}
+	}
+
+	/**
+	 * This method takes a term and searches for occurances in the given content.
+	 *
+	 * @param  $content The content to be scanned for occurrences
+	 * @param  $positionsArray The resuling array of positions (as reference)
+	 * @param  $term The term to be searched for
+	 * @param  $termKey The term key
+	 * @return void
+	 */
 	function getPositions($content,&$positionsArray,$term,$termKey) {
 		$termArray = $this->termsArray[$termKey];
 		$typeConfigArray = $this->typesArray[$termArray['term_type'] . '.'];
