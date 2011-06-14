@@ -256,7 +256,7 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 	 * @return	void
 	 */
 	setAttributes : function (element, termId) {
-		if (termId == "") {
+		if (termId == "none") {
 			// Remove attributes, if any
 			element.removeAttribute("about");
 			element.removeAttribute("property");

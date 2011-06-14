@@ -116,6 +116,8 @@ class tx_contagged extends tslib_pibase {
 			if (!($intKey % 2)) {
 				$positionsArray = array();
 				$this->getPositionsOfTaggedTerms($splittedContent[$intKey],$positionsArray);
+				$splittedContent[$intKey] = $this->doReplace($splittedContent[$intKey],$positionsArray);
+				$positionsArray = array();
 				foreach ($sortedTerms as $termAndKey) {
 					if (empty($termAndKey['term'])) {
 						continue;
@@ -166,7 +168,7 @@ class tx_contagged extends tslib_pibase {
 	 * @return void
 	 */
 	protected function getPositionsOfTaggedTerms($content,&$positionsArray) {
-		$regEx = '%<span about="/resources/contagged/(?P<term_key>[^"\']*)"[^>]*>(?P<matched_term>.*)?</span>%' . $this->conf['modifier'];
+		$regEx = '%<span[^>]*about="/resources/contagged/(?P<term_key>[^"\']*)"[^>]*>(?P<matched_term>.*)?</span>%' . $this->conf['modifier'];
 		$matchesArray = array();
 		preg_match_all($regEx, $content, $matchesArray, PREG_SET_ORDER+PREG_OFFSET_CAPTURE);
 		foreach ($matchesArray as $match) {
