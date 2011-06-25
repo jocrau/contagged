@@ -3,3 +3,10 @@
 	background-image: url('images/show-annotated-terms.gif') !important;
 	background-position: 0 0 !important;
 }
+
+/* Make language marks visible */
+body.htmlarea-action-show-annotated-terms span[about] {
+	background: url("images/show-annotated-terms.gif") left top no-repeat;
+    padding-left: 14px;
+    text-decoration: underline;
+}

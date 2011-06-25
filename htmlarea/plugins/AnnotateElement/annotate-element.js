@@ -114,25 +114,8 @@ HTMLArea.AnnotateElement = Ext.extend(HTMLArea.Plugin, {
 		// Add rules to the stylesheet for language mark highlighting
 		// Model: body.htmlarea-show-tagged-terms *[lang=en]:before { content: "en: "; }
 		// Works in IE8, but not in earlier versions of IE
-		var select = this.getButton('Language');
+		var select = this.getButton('TermSelector');
 		if (select) {
-			var styleSheet = this.editor._doc.styleSheets[0];
-			select.getStore().each(function (option) {
-				var selector = 'body.htmlarea-show-tagged-terms *[' + 'lang="' + option.get('value') + '"]:before';
-				var style = 'content: "' + option.get('value') + ': ";';
-				var rule = selector + ' { ' + style + ' }';
-				if (!Ext.isIE) {
-					try {
-						styleSheet.insertRule(rule, styleSheet.cssRules.length);
-					} catch (e) {
-						this.appendToLog('onGenerate', 'Error inserting css rule: ' + rule + ' Error text: ' + e, 'warn');
-					}
-				} else {
-					styleSheet.addRule(selector, style);
-				}
-				return true;
-			}, this);
-			// Monitor the combo's store being loaded
 			select.mon(select.getStore(), 'load', function () {
 				this.updateValue(select);
 			}, this);

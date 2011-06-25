@@ -21,7 +21,7 @@ t3lib_extMgm::addPItoST43($_EXTKEY, 'pi1/class.tx_contagged_pi1.php', '_pi1', 'l
 
 $TYPO3_CONF_VARS['EXTCONF']['rtehtmlarea']['plugins']['AnnotateElement'] = array();
 $TYPO3_CONF_VARS['EXTCONF']['rtehtmlarea']['plugins']['AnnotateElement']['objectReference'] = 'EXT:'.$_EXTKEY.'/extensions/AnnotateElement/class.tx_contagged_annotateelement.php:&tx_contagged_annotateelement';
-$TYPO3_CONF_VARS['EXTCONF']['rtehtmlarea']['plugins']['AnnotateElement']['addIconsToSkin'] = 0;
+$TYPO3_CONF_VARS['EXTCONF']['rtehtmlarea']['plugins']['AnnotateElement']['addIconsToSkin'] = 1;
 $TYPO3_CONF_VARS['EXTCONF']['rtehtmlarea']['plugins']['AnnotateElement']['disableInFE'] = 0;
 
 ?>
