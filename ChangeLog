@@ -1,3 +1,11 @@
+v1.7.0 2012-07-27 Jochen Rau <jochen.rau@typoplanet.de>
+
+	[+BUGFIX] Improved sorting of terms with multibyte charsets (by length descending before replacement). Thanks to Francois Suter. Resolves #38148.
+	[+BUGFIX] LIKE statement on fe_group works with mssql now. Thanks to Dimitri Koenig. Resolves #26124.
+	[+FEATURE] You can now specify, whether related terms should be fetched or not by setting fetchRelatedTerms. Thanks to Dimitri Koenig. Resolves #26145.
+	[TASK] Bumped version number to 1.7.0 and deployed to TER.
+	[+FEATURE] Reimplemented stdWrap for term (use termStdWrap in type defintion).
+
 v1.6.5 2010-12-15 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Parse template in TCA works now with rootpage on level > 0. Thanks to Christopher Hlubek. Resolves #11454.
@@ -8,7 +16,7 @@ v1.6.4 2010-10-06 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Reverted a change that led to a non-functional control flow. Thanks to Fatoux Sébastien. Resolves #6743.
 	[+BUGFIX] Removed an obsolete line causing PHP warnings. Thanks to Armin Guenther.
-	
+
 v1.6.3 2010-04-24 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Parsed fields in a single view are no longer htmlspecialchared by lib.parseFunc_RTE.
@@ -21,13 +29,13 @@ v1.6.2 2010-03-09 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+BUGFIX] Re-enabled support for non non-UTF-8 sites in main RegEx.
 	[+BUGFIX] Fixed a bug where the short terms are in favour to be replaced compared to longer terms with the same beginning.
-	
+
 v1.6.1 2010-03-09 Jochen Rau <jochen.rau@typoplanet.de>
 
-	[+FEATURE] It is now possible to add additionalParams to the link via mapping. The additionalParams are processed by stdWrap again. (link.value = 164 [CR] link.additionalParams.stdWrap.dataWrap = &tx_myext_pi1[id]={register:contagged_theid})	
+	[+FEATURE] It is now possible to add additionalParams to the link via mapping. The additionalParams are processed by stdWrap again. (link.value = 164 [CR] link.additionalParams.stdWrap.dataWrap = &tx_myext_pi1[id]={register:contagged_theid})
 	[+BUGFIX] Fixed a problem where spaces and invisible characters are tagged for an empty term.
 	[+BUGFIX] Added missing initialization of an array before foreach is invoked.
-	
+
 v1.6.0 2010-02-06 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[~TASK] Deployed version 1.6.0 to TER. Tagged version 1.6.0.
@@ -37,7 +45,7 @@ v1.5.2 2010-02-05 Jochen Rau <jochen.rau@typoplanet.de>
 	[+FEATURE] Implemented CSS based tooltip. New term type "Definition (tooltip)".
 	[-CONFIGURATION] The default CSS has moved to the static template. The default CSS for abbr, dfn, and acronym was dropped.
 	[~CONFIGURATION] Improved setup for tooltip. desc_short is now default. desc_long overrides it if empty.
- 
+
 v1.5.1 2010-01-26 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[+TASK] Performance optimization and refactorings after an extensive profiling session.
@@ -64,7 +72,7 @@ v1.4.1 2009-11-16 Jochen Rau <jochen.rau@typoplanet.de>
 	[+BUGFIX] Added missing option "showRange" to pagebrowser.
 	[+FEATURE] You can now pass additional table tag params (pagebrowser.tableParams= class="foo"). This is only active if you don't overwrite the wraps.
 	[+FEATURE] You can now specify, if the "prev." link should always be shown (pagebrowser.alwaysPrev = 1).
-	
+
 v1.4.0 2009-10-01 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[~TASK] Deployed version 1.4.0 to TER. Tagged version 1.4.0.
@@ -73,7 +81,7 @@ v1.3.2 2009-10-01 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[!!!][+FEATURE] Added configuration option plugin.tx_contagged.pagebrowser.wraps to define wraps for the pagebrowser (passed to piBase). Switched from tables to divs. Please check the styling of your output!
 	[+BUGFIX] Added Icon for hidden terms. Thanks to Matthias Koch.
-	
+
 v1.3.1 2009-09-22 Jochen Rau <jochen.rau@typoplanet.de>
 
 	[!!!][+FEATURE] Content of tables, uploads, captions, and html-cObj are now parsed, too. Please check, if this is the expected behaviour for your site. Comment out the appropriate lines in the setup if necessary.
@@ -92,7 +100,7 @@ v1.2.1 2009-08-31 Jochen Rau <jochen.rau@typoplanet.de>
 
 v1.2.0 2009-08-26 Jochen Rau <jochen.rau@typoplanet.de>
 
-	[+BUGFIX] Removed dependency to TYPO3 4.3 (t3lib_div::makeInstance()) which caused a Fatal error: Uncaught exception 'RuntimeException' with message 'No 
+	[+BUGFIX] Removed dependency to TYPO3 4.3 (t3lib_div::makeInstance()) which caused a Fatal error: Uncaught exception 'RuntimeException' with message 'No
 configuration. Please include the static template.'
 
 v1.1.0 2009-08-14 Jochen Rau <jochen.rau@typoplanet.de>
@@ -109,7 +117,7 @@ v1.0.4 2009-07-10 Jochen Rau <jochen.rau@typoplanet.de>
 
 v1.0.3 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
 
-	* FIX Page browser is not localised. Resolves #3017. 
+	* FIX Page browser is not localised. Resolves #3017.
 	* IMP Cache handling (useCacheHash = 1 default for all links)
 
 v1.0.2 2009-05-28 Jochen Rau <jochen.rau@typoplanet.de>
@@ -124,7 +132,7 @@ v1.0.1 2009-03-31 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX Links in list view support cache again (removed typolink.target = _blank from default TS settings). Resolves #3010.
 	* CHG Enabled edit icons for the upcoming fe_edit of v4.3 (3rd parameter of editIcons() must be an array)
-	
+
 	FYI: From now on the patch level version number (0.0.x) will only be used for revisions in the svn repository. The sub versions (0.x.0) and main versions (x.0.0) will be deployed to TER.
 
 v1.0.0 2009-03-20 Jochen Rau <jochen.rau@typoplanet.de>
@@ -135,19 +143,19 @@ v1.0.0 2009-03-20 Jochen Rau <jochen.rau@typoplanet.de>
 	* FIX $dataSourceConfigArray['mapping.']['uid.']['field'] was never used as an unique identifier -- thanks to Carine
 	* FIX Labels could not be overwritten by _LOCAL_LANG ($this->conf was set after $this->pi_loadLL() was invoked)
 	* FIX Unititialized $wrappedSubpartArray in contagged_pi1
-	
+
 v0.2.2 2009-03-10 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX Labels could not be overwritten by _LOCAL_LANG ($this->conf was set after $this->pi_loadLL() was invoked)
 	* FIX Uninitialized variables (arrays) if $tableArray is NULL
 	* FIX Handling of UTF-8 (if you have UTF-8 enabled, please add "u" to "contagged.modifier = Uisu" in your TS constants)
-	
+
 v0.2.1 2009-03-10 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX Uninitialized variables (arrays) if result from fetchRelatedTerms() and fetchIndex() is NULL (drops a warning)
 	* FIX Uninitialized variables (arrays) if $tableArray is NULL
 	* FIX Handling of UTF-8 (if you have UTF-8 enabled, please add "u" to "contagged.modifier = Uisu" in your TS constants)
-	
+
 v0.2.0 2008-11-30 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* CHG Restructured TS Setup for FE-List (please adapt your local TS Setup!)
@@ -162,13 +170,13 @@ v0.2.0 2008-11-30 Jochen Rau <jochen.rau@typoplanet.de>
 	* IMP Some code clean-up and refactorings
 	* CHG Labels in list module are now term_replace, term_main, term_alt
 	* CHG CSS-margins for index chars set to 0px
-	
+
 v0.1.5 2008-09-24 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* IMP The parser is now invoked also for bullet lists and headers (if <h[1-6]> is not an excluded tag)
 	* IMP If maxRecurrences is set, the matches are now spread over the cObj constantly
 	* FIX It's not necessary anymore to set maxRecurrences to invoke the parser
-	
+
 v0.1.4 2008-09-23 Jochen Rau <jochen.rau@typoplanet.de>
 
 	* FIX Fixed typo in TS Setup
