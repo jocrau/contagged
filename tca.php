@@ -9,7 +9,7 @@ $TCA["tx_contagged_terms"] = array (
 	),
 	"feInterface" => $TCA["tx_contagged_terms"]["feInterface"],
 	"columns" => array (
-		't3ver_label' => array (		
+		't3ver_label' => array (
 			'label'  => 'LLL:EXT:lang/locallang_general.xml:LGL.versionLabel',
 			'config' => array (
 				'type' => 'input',
@@ -17,7 +17,7 @@ $TCA["tx_contagged_terms"] = array (
 				'max'  => '30',
 			)
 		),
-		'sys_language_uid' => array (		
+		'sys_language_uid' => array (
 			'exclude' => 1,
 			'label'  => 'LLL:EXT:lang/locallang_general.xml:LGL.language',
 			'config' => array (
@@ -30,7 +30,7 @@ $TCA["tx_contagged_terms"] = array (
 				)
 			)
 		),
-		'l18n_parent' => array (		
+		'l18n_parent' => array (
 			'displayCond' => 'FIELD:sys_language_uid:>:0',
 			'exclude'     => 1,
 			'label'       => 'LLL:EXT:lang/locallang_general.xml:LGL.l18n_parent',
@@ -43,12 +43,12 @@ $TCA["tx_contagged_terms"] = array (
 				'foreign_table_where' => 'AND tx_contagged_terms.pid=###CURRENT_PID### AND tx_contagged_terms.sys_language_uid IN (-1,0)',
 			)
 		),
-		'l18n_diffsource' => array (		
+		'l18n_diffsource' => array (
 			'config' => array (
 				'type' => 'passthrough'
 			)
 		),
-		'hidden' => array (		
+		'hidden' => array (
 			'exclude' => 1,
 			'label'   => 'LLL:EXT:lang/locallang_general.xml:LGL.hidden',
 			'config'  => array (
@@ -56,7 +56,7 @@ $TCA["tx_contagged_terms"] = array (
 				'default' => '0'
 			)
 		),
-		'starttime' => array (		
+		'starttime' => array (
 			'exclude' => 1,
 			'label'   => 'LLL:EXT:lang/locallang_general.xml:LGL.starttime',
 			'config'  => array (
@@ -68,7 +68,7 @@ $TCA["tx_contagged_terms"] = array (
 				'checkbox' => '0'
 			)
 		),
-		'endtime' => array (		
+		'endtime' => array (
 			'exclude' => 1,
 			'label'   => 'LLL:EXT:lang/locallang_general.xml:LGL.endtime',
 			'config'  => array (
@@ -84,7 +84,7 @@ $TCA["tx_contagged_terms"] = array (
 				)
 			)
 		),
-		'fe_group' => array (		
+		'fe_group' => array (
 			'exclude' => 1,
 			'label'   => 'LLL:EXT:lang/locallang_general.xml:LGL.fe_group',
 			'config'  => array (
@@ -127,12 +127,12 @@ $TCA["tx_contagged_terms"] = array (
 					"disableNoMatchingValueElement" => 1,
 				)
 			),
-			"term_lang" => Array (		
-				"exclude" => 1,		
-				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang",		
+			"term_lang" => Array (
+				"exclude" => 1,
+				"label" => "LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang",
 				"config" => Array (
 					"type" => "select",
-					// TODO Make selectable languages configurable. 
+					// TODO Make selectable languages configurable.
 					"items" => Array (
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.0", ""),
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.1", "en"),
@@ -142,7 +142,7 @@ $TCA["tx_contagged_terms"] = array (
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.5", "es"),
 						Array("LLL:EXT:contagged/locallang_db.xml:tx_contagged_terms.term_lang.I.6", "un"),
 					),
-					"size" => 1,	
+					"size" => 1,
 					"maxitems" => 1,
 				)
 			),
@@ -254,7 +254,7 @@ $TCA["tx_contagged_terms"] = array (
 			"2" => array("showitem" => "")
 		)
 	);
-	
+
 $extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
 if ( $extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam') ) {
 	$TCA["tx_contagged_terms"]['columns'] = array_merge_recursive($TCA["tx_contagged_terms"]['columns'],array(
@@ -317,67 +317,6 @@ if ( $extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam') ) {
 require_once (PATH_t3lib.'class.t3lib_page.php');
 require_once (PATH_t3lib.'class.t3lib_tstemplate.php');
 require_once (PATH_t3lib.'class.t3lib_tsparser_ext.php');
-	
-function user_addTermTypes(&$params,&$pObj) {
-	global $BE_USER;
-	
-	$template = t3lib_div::makeInstance('t3lib_TStemplate');
-	$template->tt_track = 0;
-	$template->init();
-	$sysPage = t3lib_div::makeInstance('t3lib_pageSelect');
-	$rootline = $sysPage->getRootLine(getCurrentPageId());
-	$rootlineIndex = 0;
-	foreach ($rootline as $index => $rootlinePart) {
-		if ($rootlinePart['is_siteroot'] == 1) {
-			$rootlineIndex = $index;
-			break;
-		}
-	}
-	$template->runThroughTemplates($rootline, $rootlineIndex);
-	$template->generateConfig();
-	$conf = $template->setup['plugin.']['tx_contagged.'];
-
-	// make localized labels
-	$LOCAL_LANG_ARRAY = array();
-	if (!empty($conf['types.'])) {
-		foreach ($conf['types.'] as $typeName => $typeConfigArray ) {
-			unset($LOCAL_LANG_ARRAY);
-			if ( !$typeConfigArray['hideSelection']>0 && !$typeConfigArray['dataSource'] ) {
-				if (is_array($typeConfigArray['label.'])) {
-					foreach ($typeConfigArray['label.'] as $langKey => $labelText) {
-						$LOCAL_LANG_ARRAY[$langKey]['label'] = $labelText;
-					}
-				}
-				$LOCAL_LANG_ARRAY['default']['label'] = $typeConfigArray['label'] ? $typeConfigArray['label'] : $typeConfigArray['label.']['default'];
-				$params['items'][]= array( $GLOBALS['LANG']->getLLL('label',$LOCAL_LANG_ARRAY), substr($typeName,0,-1) );
-			}
-		}
-	}
-}
-
-function getCurrentPageId() {
-	$pageId = (integer)t3lib_div::_GP('id');
-	if ($pageId > 0) {
-		return $pageId;
-	}
-	
-	preg_match('/(?<=id=)[0-9]a/', urldecode(t3lib_div::_GET('returnUrl')), $matches);
-	if (count($matches) > 0) {
-		return $matches[0];
-	}
-
-	$rootTemplates = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pid', 'sys_template', 'deleted=0 AND hidden=0 AND root=1', '', '', '1');
-	if (count($rootTemplates) > 0) {
-		return $rootTemplates[0]['pid'];
-	}
-	
-	$rootPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid', 'pages', 'deleted=0 AND hidden=0 AND is_siteroot=1', '', '', '1');
-	if (count($rootPages) > 0) {
-		return $rootPages[0]['uid'];
-	}
-	
-	// take pid 1 as fallback
-	return 1;
-}
+require_once(t3lib_extMgM::extPath('contagged').'tx_contagged_userfunction.php');
 
 ?>
