@@ -84,7 +84,9 @@
 			<label index="tx_contagged_terms.related">Voir aussi</label>
 			<label index="tx_contagged_terms.link">Lien</label>
 			<label index="tx_contagged_terms.exclude">Ne pas afficher dans le glossaire</label>
-			<label index="pages.tx_contagged_dont_parse">Ne pas remplacer automatiquement les sigles et abbréviations (du glossaire)</label>
+			<label index="pages.tx_contagged_dont_parse">Ne pas remplacer automatiquement les sigles et abbréviations
+				(du glossaire)
+			</label>
 		</languageKey>
 	</data>
 </T3locallang>

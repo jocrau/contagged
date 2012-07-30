@@ -1,26 +1,21 @@
 <?php
 /***************************************************************
-	*  Copyright notice
-	*
-	*  (c) 2007 Jochen Rau <j.rau@web.de>
-	*  All rights reserved
-	*
-	*  This script is part of the TYPO3 project. The TYPO3 project is
-	*  free software; you can redistribute it and/or modify
-	*  it under the terms of the GNU General Public License as published by
-	*  the Free Software Foundation; either version 2 of the License, or
-	*  (at your option) any later version.
-	*
-	*  The GNU General Public License can be found at
-	*  http://www.gnu.org/copyleft/gpl.html.
-	*
-	*  This script is distributed in the hope that it will be useful,
-	*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	*  GNU General Public License for more details.
-	*
-	*  This copyright notice MUST APPEAR in all copies of the script!
-	***************************************************************/
+ *  Copyright notice
+ *  (c) 2007 Jochen Rau <j.rau@web.de>
+ *  All rights reserved
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
 require_once (PATH_tslib . 'class.tslib_pibase.php');
 require_once (t3lib_extMgm::extPath('contagged') . 'class.tx_contagged.php');
@@ -30,31 +25,35 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
 /**
  * contagged list plugin
  *
- * @author	Jochen Rau <j.rau@web.de>
- * @package	TYPO3
- * @subpackage	tx_contagged_pi1
+ * @author    Jochen Rau <j.rau@web.de>
+ * @package    TYPO3
+ * @subpackage    tx_contagged_pi1
  */
 class tx_contagged_pi1 extends tslib_pibase {
+
 	var $prefixId = 'tx_contagged'; // same as class name
 	var $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
 	var $extKey = 'contagged'; // the extension key
 	var $templateFile = 'EXT:contagged/pi1/contagged.tmpl';
+
 	var $conf; // the TypoScript configuration array
 	var $templateCode; // template file
 	var $local_cObj;
+
 	var $typolinkConf;
+
 	var $backPid; // pid of the last visited page (from piVars)
 	var $indexChar; // char of the given index the user has clicked on (from piVars)
 
 	/**
 	 * main method of the contagged list plugin
 	 *
-	 * @param	string		$content: The content of the cObj
-	 * @param	array		$conf: The configuration
-	 * @return	string			a single or list view of terms
+	 * @param    string        $content: The content of the cObj
+	 * @param    array        $conf: The configuration
+	 * @return    string            a single or list view of terms
 	 */
 	function main($content, $conf) {
-		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'];
+		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
 		$this->parser = t3lib_div::makeInstance('tx_contagged');
 		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
 		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
@@ -62,7 +61,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'], $conf);
 		}
 		$this->pi_loadLL();
-		$this->templateCode = $this->cObj->fileResource($this->conf['templateFile']?$this->conf['templateFile']:$this->templateFile);
+		$this->templateCode = $this->cObj->fileResource($this->conf['templateFile'] ? $this->conf['templateFile'] : $this->templateFile);
 		$this->typolinkConf = is_array($this->conf['typolink.']) ? $this->conf['typolink.'] : array();
 		$this->typolinkConf['parameter.']['current'] = 1;
 		if (!empty($this->typolinkConf['additionalParams'])) {
@@ -77,7 +76,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$dataSource = stripslashes($this->piVars['source']);
 			$uid = intval($this->piVars['uid']);
 			$termKey = stripslashes($this->piVars['source']) . '_' . intval($this->piVars['uid']);
-		}		
+		}
 		$sword = $this->piVars['sword'] ? htmlspecialchars(urldecode($this->piVars['sword'])) : NULL;
 
 		// get an array of all type configurations
@@ -87,27 +86,27 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->mapper = t3lib_div::makeInstance('tx_contagged_model_mapper', $this);
 		$this->model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
 
-		if ( !is_null($termKey) ) {
+		if (!is_null($termKey)) {
 			$content .= $this->renderSingleItemByKey($dataSource, $uid);
 		} elseif ((strtolower($this->conf['layout']) == 'minilist') || (strtolower($this->cObj->data['select_key']) == 'minilist')) {
 			$content .= $this->renderMiniList();
-		} elseif ( is_null($termKey) && is_null($sword) ) {
+		} elseif (is_null($termKey) && is_null($sword)) {
 			$content .= $this->renderList();
-		} elseif ( is_null($termKey) && !is_null($sword) ) {
+		} elseif (is_null($termKey) && !is_null($sword)) {
 			$content .= $this->renderListBySword($sword);
-		} 
+		}
 
 		// TODO hook "newRenderFunctionName"
 
 		$content = $this->removeUnfilledMarker($content);
-				
+
 		return $this->pi_wrapInBaseClass($content);
 	}
 
 	/**
 	 * Renders the list of terms
 	 *
-	 * @return	$string	The list as HTML
+	 * @return    $string    The list as HTML
 	 */
 	function renderList() {
 		$markerArray = array();
@@ -118,22 +117,22 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->renderIndex($markerArray, $termsArray);
 		$this->renderSearchBox($markerArray);
 		$indexedTerms = array();
-		foreach ( $termsArray as $termKey => $termArray ) {
-			if ( $this->indexChar==NULL || $termArray['indexChar']==$this->indexChar ) {
+		foreach ($termsArray as $termKey => $termArray) {
+			if ($this->indexChar == NULL || $termArray['indexChar'] == $this->indexChar) {
 				$indexedTerms[$termKey] = $termArray;
 			}
 		}
-		if ( $this->conf['pagebrowser.']['enable'] > 0 ) {
+		if ($this->conf['pagebrowser.']['enable'] > 0) {
 			$this->renderPageBrowser($markerArray, count($indexedTerms));
 			$terms = array_slice($indexedTerms, ($this->pointer * $this->internal['results_at_a_time']), $this->internal['results_at_a_time'], TRUE);
 		} else {
 			$terms = $indexedTerms;
 		}
-		foreach ( $terms as $termKey => $termArray ) {
-			$this->renderSingleItem($termArray,$markerArray,$wrappedSubpartArray);
-			$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
+		foreach ($terms as $termKey => $termArray) {
+			$this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
+			$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
 		}
-		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);
+		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
 		return $content;
 	}
@@ -141,16 +140,16 @@ class tx_contagged_pi1 extends tslib_pibase {
 	/**
 	 * Renders the mini list of terms
 	 *
-	 * @return	$string	The list as HTML
+	 * @return    $string    The list as HTML
 	 */
 	function renderMiniList() {
 		$subparts = $this->getSubparts('MINILIST');
 		$terms = $this->model->findAllTermsToListOnPage();
-		foreach ( $terms as $termKey => $termArray ) {
-			$this->renderSingleItem($termArray,$markerArray,$wrappedSubpartArray);
-			$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
+		foreach ($terms as $termKey => $termArray) {
+			$this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
+			$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
 		}
-		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);
+		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
 		return $content;
 	}
@@ -161,37 +160,37 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$swordMatched = FALSE;
 		$subparts = $this->getSubparts('LIST');
 		$termsArray = $this->model->findAllTermsToListOnPage();
-		$this->renderLinks($markerArray,$wrappedSubpartArray);
+		$this->renderLinks($markerArray, $wrappedSubpartArray);
 		$this->renderIndex($markerArray, $termsArray);
 		$this->renderSearchBox($markerArray);
-		foreach ( $termsArray as $termKey => $termArray ) {
-			$fieldsToSearch = t3lib_div::trimExplode(',', $this->conf['searchbox.']['fieldsToSearch'] );
-			foreach ($fieldsToSearch as $field) {						
+		foreach ($termsArray as $termKey => $termArray) {
+			$fieldsToSearch = t3lib_div::trimExplode(',', $this->conf['searchbox.']['fieldsToSearch']);
+			foreach ($fieldsToSearch as $field) {
 				if (is_array($termArray[$field])) {
 					foreach ($termArray[$field] as $subFieldValue) {
-						if (preg_match('/' . preg_quote($sword,'/') . '/Uis', strip_tags($subFieldValue)) > 0) {
+						if (preg_match('/' . preg_quote($sword, '/') . '/Uis', strip_tags($subFieldValue)) > 0) {
 							$swordMatched = TRUE;
 							break;
 						}
 					}
 				} else {
-					if (preg_match('/' . preg_quote($sword,'/') . '/Uis', strip_tags($termArray[$field])) > 0) {
+					if (preg_match('/' . preg_quote($sword, '/') . '/Uis', strip_tags($termArray[$field])) > 0) {
 						$swordMatched = TRUE;
 						break;
 					}
 				}
 			}
-			if ( $swordMatched ) {
-				$this->renderSingleItem($termArray,$markerArray,$wrappedSubpartArray);
-				$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
+			if ($swordMatched) {
+				$this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
+				$subpartArray['###LIST###'] .= $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
 				$swordMatched = FALSE;
 			}
 		}
 		if ($subpartArray['###LIST###'] == '') {
-			$subpartArray['###LIST###'] = $this->pi_getLL('no_matches');			
+			$subpartArray['###LIST###'] = $this->pi_getLL('no_matches');
 		}
 
-		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);			
+		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
 		return $content;
 	}
@@ -201,12 +200,12 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$wrappedSubpartArray = array();
 		$termArray = $this->model->findTermByUid($dataSource, $uid);
 		$subparts = $this->getSubparts('SINGLE');
-		$this->renderLinks($markerArray,$wrappedSubpartArray);
+		$this->renderLinks($markerArray, $wrappedSubpartArray);
 		$termsArray = $this->model->findAllTermsToListOnPage();
 		$this->renderIndex($markerArray, $termsArray);
-		$this->renderSingleItem($termArray,$markerArray,$wrappedSubpartArray);
-		$subpartArray['###LIST###'] = $this->cObj->substituteMarkerArrayCached($subparts['item'],$markerArray,$subpartArray,$wrappedSubpartArray);
-		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'],$markerArray,$subpartArray,$wrappedSubpartArray);
+		$this->renderSingleItem($termArray, $markerArray, $wrappedSubpartArray);
+		$subpartArray['###LIST###'] = $this->cObj->substituteMarkerArrayCached($subparts['item'], $markerArray, $subpartArray, $wrappedSubpartArray);
+		$content = $this->cObj->substituteMarkerArrayCached($subparts['template_list'], $markerArray, $subpartArray, $wrappedSubpartArray);
 
 		return $content;
 	}
@@ -214,7 +213,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 	// TODO hook "newRenderFunction"
 
 	function getSubparts($templateName = 'LIST') {
-		$subparts['template_list'] = $this->cObj->getSubpart($this->templateCode,'###TEMPLATE_' . $templateName . '###');
+		$subparts['template_list'] = $this->cObj->getSubpart($this->templateCode, '###TEMPLATE_' . $templateName . '###');
 		$subparts['item'] = $this->cObj->getSubpart($subparts['template_list'], '###ITEM###');
 
 		return $subparts;
@@ -223,7 +222,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 	function renderLinks(&$markerArray, &$wrappedSubpartArray) {
 		// make "back to..." link
 		if ($this->backPid && $this->conf['addBackLink'] !== '0') {
-			if($this->conf['addBackLinkDescription']>0) {
+			if ($this->conf['addBackLinkDescription'] > 0) {
 				$pageSelectObject = new t3lib_pageSelect;
 				$pageSelectObject->init(FALSE);
 				$pageSelectObject->sys_language_uid = $GLOBALS['TSFE']->sys_language_uid;
@@ -240,17 +239,17 @@ class tx_contagged_pi1 extends tslib_pibase {
 		}
 
 		// make "link to all entries"
-	    $markerArray['###INDEX_ALL###'] = $this->pi_linkTP($this->pi_getLL('all'));
+		$markerArray['###INDEX_ALL###'] = $this->pi_linkTP($this->pi_getLL('all'));
 
 		// make "to list ..." link
 		unset($typolinkConf);
 		$markerArray['###TO_LIST###'] = $this->pi_getLL('toList');
 		$typolinkConf = $this->typolinkConf;
-		$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
-		$wrappedSubpartArray['###LINK_TO_LIST###'] = $this->local_cObj->typolinkWrap($typolinkConf);		
+		$typolinkConf['parameter.']['wrap'] = "|," . $GLOBALS['TSFE']->type;
+		$wrappedSubpartArray['###LINK_TO_LIST###'] = $this->local_cObj->typolinkWrap($typolinkConf);
 	}
 
-	function renderSingleItem ($termArray,&$markerArray,&$wrappedSubpartArray) {
+	function renderSingleItem($termArray, &$markerArray, &$wrappedSubpartArray) {
 		$typeConfigArray = $this->conf['types.'][$termArray['term_type'] . '.'];
 
 		$termArray['desc_long'] = $this->cObj->parseFunc($termArray['desc_long'], array(), '< lib.parseFunc_RTE');
@@ -262,43 +261,43 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$termArray[$fieldName] = $this->parser->parse($termArray[$fieldName], array('excludeTerms' => implode(',', $excludeTerms)));
 			}
 		}
-				
+
 		$markerArray['###TERM_TYPE###'] = $typeConfigArray['label'];
 		$markerArray['###TERM###'] = $termArray['term'];
 		$editIconsConf = array(
 			'styleAttribute' => '',
-			);
+		);
 		$markerArray['###TERM_KEY###'] = $termArray['source'] . '_' . $termArray['uid'];
-		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'],'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude',$editIconsConf,'tx_contagged_terms:'.$termArray['uid']);
+		$markerArray['###TERM###'] = $this->cObj->editIcons($termArray['term'], 'tx_contagged_terms:term_main,term_alt,term_type,term_lang,term_replace,desc_short,desc_long,image,dam_images,imagecaption,imagealt,imagetitle,related,link,exclude', $editIconsConf, 'tx_contagged_terms:' . $termArray['uid']);
 		$markerArray['###TERM_MAIN###'] = $termArray['term_main'];
-		$markerArray['###TERM_ALT###'] = $termArray['term_alt']?implode(', ',$termArray['term_alt']):$this->pi_getLL('na');
-		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace']?$termArray['term_replace']:$this->pi_getLL('na');
-		$markerArray['###DESC_SHORT###'] = $termArray['desc_short']?$termArray['desc_short']:$this->pi_getLL('na');
-		$markerArray['###DESC_LONG###'] = $termArray['desc_long']?$termArray['desc_long']:$this->pi_getLL('na');
-		$markerArray['###REFERENCE###'] = $termArray['reference']?$termArray['reference']:$this->pi_getLL('na');
-		$markerArray['###PRONUNCIATION###'] = $termArray['pronunciation']?$termArray['pronunciation']:$this->pi_getLL('na');
+		$markerArray['###TERM_ALT###'] = $termArray['term_alt'] ? implode(', ', $termArray['term_alt']) : $this->pi_getLL('na');
+		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace'] ? $termArray['term_replace'] : $this->pi_getLL('na');
+		$markerArray['###DESC_SHORT###'] = $termArray['desc_short'] ? $termArray['desc_short'] : $this->pi_getLL('na');
+		$markerArray['###DESC_LONG###'] = $termArray['desc_long'] ? $termArray['desc_long'] : $this->pi_getLL('na');
+		$markerArray['###REFERENCE###'] = $termArray['reference'] ? $termArray['reference'] : $this->pi_getLL('na');
+		$markerArray['###PRONUNCIATION###'] = $termArray['pronunciation'] ? $termArray['pronunciation'] : $this->pi_getLL('na');
 		$markerArray['###IMAGES###'] = $this->renderImages($termArray);
 		$multimediaConfiguration = $this->conf['multimedia.'];
 		$multimediaConfiguration['file'] = $termArray['multimedia'];
 		$markerArray['###MULTIMEDIA###'] = $this->cObj->cObjGetSingle('MULTIMEDIA', $multimediaConfiguration);
 		$markerArray['###RELATED###'] = $this->renderRelated($termArray);
-		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.'.$termArray['term_lang'])?$this->pi_getLL('lang.'.$termArray['term_lang']):$this->pi_getLL('na');
+		$markerArray['###TERM_LANG###'] = $this->pi_getLL('lang.' . $termArray['term_lang']) ? $this->pi_getLL('lang.' . $termArray['term_lang']) : $this->pi_getLL('na');
 
 		$labelWrap = array();
-		$labelWrap['wrap'] = $typeConfigArray['labelWrap1']?$typeConfigArray['labelWrap1']:$this->conf['labelWrap1'];
-		$markerArray['###TERM_TYPE_LABEL###'] = $markerArray['###TERM_TYPE###']?$this->local_cObj->stdWrap($this->pi_getLL('term_type'),$labelWrap):'';
-		$markerArray['###TERM_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term'),$labelWrap);
-		$markerArray['###TERM_MAIN_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term_main'),$labelWrap);
-		$markerArray['###TERM_ALT_LABEL###'] = $markerArray['###TERM_ALT###']?$this->local_cObj->stdWrap($this->pi_getLL('term_alt'),$labelWrap):'';
-		$markerArray['###TERM_REPLACE_LABEL###'] = $markerArray['###TERM_REPLACE###']?$this->local_cObj->stdWrap($this->pi_getLL('term_replace'),$labelWrap):'';
-		$markerArray['###DESC_SHORT_LABEL###'] = $markerArray['###DESC_SHORT###']?$this->local_cObj->stdWrap($this->pi_getLL('desc_short'),$labelWrap):'';
-		$markerArray['###DESC_LONG_LABEL###'] = $markerArray['###DESC_LONG###']?$this->local_cObj->stdWrap($this->pi_getLL('desc_long'),$labelWrap):'';
-		$markerArray['###REFERENCE_LABEL###'] = $markerArray['###REFERENCE###']?$this->local_cObj->stdWrap($this->pi_getLL('reference'),$labelWrap):'';
-		$markerArray['###PRONUNCIATION_LABEL###'] = $markerArray['###PRONUNCIATION###']?$this->local_cObj->stdWrap($this->pi_getLL('pronunciation'),$labelWrap):'';
-		$markerArray['###MULTIMEDIA_LABEL###'] = $markerArray['###MULTIMEDIA###']?$this->local_cObj->stdWrap($this->pi_getLL('multimedia'),$labelWrap):'';
-		$markerArray['###RELATED_LABEL###'] = $markerArray['###RELATED###']?$this->local_cObj->stdWrap($this->pi_getLL('related'),$labelWrap):'';
-		$markerArray['###IMAGES_LABEL###'] = $markerArray['###IMAGES###']?$this->local_cObj->stdWrap($this->pi_getLL('images'),$labelWrap):'';
-		$markerArray['###TERM_LANG_LABEL###'] = $markerArray['###TERM_LANG###']?$this->local_cObj->stdWrap($this->pi_getLL('term_lang'),$labelWrap):'';
+		$labelWrap['wrap'] = $typeConfigArray['labelWrap1'] ? $typeConfigArray['labelWrap1'] : $this->conf['labelWrap1'];
+		$markerArray['###TERM_TYPE_LABEL###'] = $markerArray['###TERM_TYPE###'] ? $this->local_cObj->stdWrap($this->pi_getLL('term_type'), $labelWrap) : '';
+		$markerArray['###TERM_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term'), $labelWrap);
+		$markerArray['###TERM_MAIN_LABEL###'] = $this->local_cObj->stdWrap($this->pi_getLL('term_main'), $labelWrap);
+		$markerArray['###TERM_ALT_LABEL###'] = $markerArray['###TERM_ALT###'] ? $this->local_cObj->stdWrap($this->pi_getLL('term_alt'), $labelWrap) : '';
+		$markerArray['###TERM_REPLACE_LABEL###'] = $markerArray['###TERM_REPLACE###'] ? $this->local_cObj->stdWrap($this->pi_getLL('term_replace'), $labelWrap) : '';
+		$markerArray['###DESC_SHORT_LABEL###'] = $markerArray['###DESC_SHORT###'] ? $this->local_cObj->stdWrap($this->pi_getLL('desc_short'), $labelWrap) : '';
+		$markerArray['###DESC_LONG_LABEL###'] = $markerArray['###DESC_LONG###'] ? $this->local_cObj->stdWrap($this->pi_getLL('desc_long'), $labelWrap) : '';
+		$markerArray['###REFERENCE_LABEL###'] = $markerArray['###REFERENCE###'] ? $this->local_cObj->stdWrap($this->pi_getLL('reference'), $labelWrap) : '';
+		$markerArray['###PRONUNCIATION_LABEL###'] = $markerArray['###PRONUNCIATION###'] ? $this->local_cObj->stdWrap($this->pi_getLL('pronunciation'), $labelWrap) : '';
+		$markerArray['###MULTIMEDIA_LABEL###'] = $markerArray['###MULTIMEDIA###'] ? $this->local_cObj->stdWrap($this->pi_getLL('multimedia'), $labelWrap) : '';
+		$markerArray['###RELATED_LABEL###'] = $markerArray['###RELATED###'] ? $this->local_cObj->stdWrap($this->pi_getLL('related'), $labelWrap) : '';
+		$markerArray['###IMAGES_LABEL###'] = $markerArray['###IMAGES###'] ? $this->local_cObj->stdWrap($this->pi_getLL('images'), $labelWrap) : '';
+		$markerArray['###TERM_LANG_LABEL###'] = $markerArray['###TERM_LANG###'] ? $this->local_cObj->stdWrap($this->pi_getLL('term_lang'), $labelWrap) : '';
 
 		// make "more..." link
 		$markerArray['###DETAILS###'] = $this->pi_getLL('details');
@@ -309,10 +308,10 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[source]=' . $termArray['source'] . '&' . $this->prefixId . '[uid]=' . $termArray['uid'];
 		$typolinkConf['parameter'] = array_shift($this->model->getListPidsArray($termArray['term_type']));
 		$this->typolinkConf['parameter.']['current'] = 0;
-		$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
+		$typolinkConf['parameter.']['wrap'] = "|," . $GLOBALS['TSFE']->type;
 		$wrappedSubpartArray['###LINK_DETAILS###'] = $this->local_cObj->typolinkWrap($typolinkConf);
 	}
-	
+
 	function renderRelated($term) {
 		$relatedCode = '';
 		if (is_array($term['related'])) {
@@ -324,7 +323,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				}
 				$typolinkConf['useCacheHash'] = 1;
 				$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[source]=' . $termReference['source'] . '&' . $this->prefixId . '[uid]=' . $termReference['uid'];
-				$typolinkConf['parameter.']['wrap'] = "|,".$GLOBALS['TSFE']->type;
+				$typolinkConf['parameter.']['wrap'] = "|," . $GLOBALS['TSFE']->type;
 				$relatedCode .= $this->local_cObj->stdWrap($this->local_cObj->typoLink($relatedTerm['term'], $typolinkConf), $this->conf['related.']['single.']['stdWrap.']);
 			}
 			return $this->local_cObj->stdWrap(trim($relatedCode), $this->conf['related.']['stdWrap.']);
@@ -332,7 +331,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 			return NULL;
 		}
 	}
-	
+
 	function renderImages($termArray) {
 		$images = array();
 		$imagesCaption = array();
@@ -341,18 +340,18 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$imagesCode = '';
 		$imagesConf = $this->conf['images.']['single.'];
 		$extConfArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['contagged']);
-		if ( $extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam') ) {
+		if ($extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam')) {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
 				'tx_dam.file_path, tx_dam.file_name, tx_dam.alt_text, tx_dam.caption, tx_dam.title',
 				'tx_dam', 'tx_dam_mm_ref', 'tx_contagged_terms',
 				'AND tx_dam_mm_ref.tablenames = "tx_contagged_terms" AND tx_dam_mm_ref.ident="dam_images" ' .
-				'AND tx_dam_mm_ref.uid_foreign = "' . $termArray['uid'] . '"', '', 'tx_dam_mm_ref.sorting_foreign ASC'
-				);
+					'AND tx_dam_mm_ref.uid_foreign = "' . $termArray['uid'] . '"', '', 'tx_dam_mm_ref.sorting_foreign ASC'
+			);
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 				$images[] = $row['file_path'] . $row['file_name'];
-				$imagesCaption[] = str_replace(array(chr(10),chr(13)), ' ', $row['caption'] . ' ');
-				$imagesAltText[] = str_replace(array(chr(10),chr(13)), ' ', $row['alt_text'] . ' ');
-				$imagesTitleText[] = str_replace(array(chr(10),chr(13)), ' ', $row['title'] . ' ');
+				$imagesCaption[] = str_replace(array(chr(10), chr(13)), ' ', $row['caption'] . ' ');
+				$imagesAltText[] = str_replace(array(chr(10), chr(13)), ' ', $row['alt_text'] . ' ');
+				$imagesTitleText[] = str_replace(array(chr(10), chr(13)), ' ', $row['title'] . ' ');
 			}
 		} else {
 			$images = t3lib_div::trimExplode(',', $termArray['image'], 1);
@@ -365,7 +364,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$imagesAltText = t3lib_div::trimExplode(chr(10), $termArray['imagealt']);
 			$imagesTitleText = t3lib_div::trimExplode(chr(10), $termArray['imagetitle']);
 		}
-		
+
 		if (!empty($images)) {
 			foreach ($images as $key => $image) {
 				$imagesConf['image.']['file'] = $image;
@@ -375,25 +374,24 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$imagesCode .= $this->local_cObj->IMAGE($imagesConf['image.']);
 				$imagesCode .= $caption;
 			}
-			return $this->local_cObj->stdWrap(trim($imagesCode), $this->conf['images.']['stdWrap.']);			
+			return $this->local_cObj->stdWrap(trim($imagesCode), $this->conf['images.']['stdWrap.']);
 		} else {
 			return NULL;
 		}
-		
 	}
 
 	function renderIndex(&$markerArray, &$terms) {
 		if ($this->conf['index.']['enable'] > 0) {
 			$subparts = array();
-			$subparts['template_index'] = $this->cObj->getSubpart($this->templateCode,'###TEMPLATE_INDEX###');
-			$subparts['item'] = $this->cObj->getSubpart($subparts['template_index'],'###ITEM###');
+			$subparts['template_index'] = $this->cObj->getSubpart($this->templateCode, '###TEMPLATE_INDEX###');
+			$subparts['item'] = $this->cObj->getSubpart($subparts['template_index'], '###ITEM###');
 
 			$indexArray = $this->getIndexArray($terms);
 
 			// wrap index chars and add a class attribute if there is a selected index char.
 			foreach ($indexArray as $indexChar => $link) {
 				$cssClass = '';
-				if ($this->piVars['index']==$indexChar) {
+				if ($this->piVars['index'] == $indexChar) {
 					$cssClass = " class='tx-contagged-act'";
 				}
 				if ($link) {
@@ -418,27 +416,27 @@ class tx_contagged_pi1 extends tslib_pibase {
 		foreach (t3lib_div::trimExplode(',', $this->pi_getLL('indexChars')) as $key => $value) {
 			$subCharArray = t3lib_div::trimExplode('|', $value);
 			$indexArray[$subCharArray[0]] = NULL;
-	        foreach($subCharArray as $subChar) {
-	            $reverseIndexArray[$subChar] = $subCharArray[0];
-	        }
+			foreach ($subCharArray as $subChar) {
+				$reverseIndexArray[$subChar] = $subCharArray[0];
+			}
 		}
 
 		// The configuered subchars like Ö will be linked as O (see documentation and file "locallang.xml").
 		$typolinkConf = $this->typolinkConf;
 		foreach ($terms as $termKey => $termArray) {
-			if ( $this->conf['types.'][$termArray['term_type'].'.']['dontListTerms']!=1 ) {
+			if ($this->conf['types.'][$termArray['term_type'] . '.']['dontListTerms'] != 1) {
 				foreach ($reverseIndexArray as $subChar => $indexChar) {
-					if ( preg_match('/^'.preg_quote($subChar).'/' . $this->conf['modifier'],$termArray['term'])>0 ) {
+					if (preg_match('/^' . preg_quote($subChar) . '/' . $this->conf['modifier'], $termArray['term']) > 0) {
 						$typolinkConf['additionalParams'] = '&' . $this->prefixId . '[index]=' . $indexChar;
 						$indexArray[$indexChar] = $this->local_cObj->typolink($indexChar, $typolinkConf);
 						$terms[$termKey]['indexChar'] = $indexChar;
 					}
 				}
 				// If the term matches no given index char, crate one if desired and add it to the index
-				if ( ($terms[$termKey]['indexChar'] == '') && ($this->conf['index.']['autoAddIndexChars'] == 1) ) {					
+				if (($terms[$termKey]['indexChar'] == '') && ($this->conf['index.']['autoAddIndexChars'] == 1)) {
 					// get the first char of the term (UTF8)
 					// TODO: Make the RegEx configurable to make ZIP-Codes possible
-					preg_match('/^./' . $this->conf['modifier'],$termArray['term'],$match);
+					preg_match('/^./' . $this->conf['modifier'], $termArray['term'], $match);
 					$newIndexChar = $match[0];
 					$indexArray[$newIndexChar] = NULL;
 					$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[index]=' . urlencode($newIndexChar);
@@ -449,11 +447,11 @@ class tx_contagged_pi1 extends tslib_pibase {
 		}
 
 		// TODO Sorting of the index (UTF8)
-		ksort($indexArray,SORT_LOCALE_STRING);
+		ksort($indexArray, SORT_LOCALE_STRING);
 
 		return $indexArray;
 	}
-	
+
 	function renderPageBrowser(&$markerArray, $resultCount) {
 		$this->internal['res_count'] = $resultCount;
 		$this->internal['results_at_a_time'] = $this->conf['pagebrowser.']['results_at_a_time'] ? intval($this->conf['pagebrowser.']['results_at_a_time']) : 20;
@@ -470,10 +468,10 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$enableHtmlspecialchars = $this->conf['pagebrowser.']['enableHtmlspecialchars'] === '0' ? FALSE : TRUE;
 			$markerArray['###PAGEBROWSER###'] = $this->pi_list_browseresults($this->conf['pagebrowser.']['showResultCount'], $this->conf['pagebrowser.']['tableParams'], $wrapArray, $pointerName, $enableHtmlspecialchars);
 		} else {
-			$markerArray['###PAGEBROWSER###'] = '';			
+			$markerArray['###PAGEBROWSER###'] = '';
 		}
 	}
-	
+
 	function renderSearchBox(&$markerArray) {
 		if ($this->conf['searchbox.']['enable'] > 0) {
 			$markerArray['###SEARCHBOX###'] = $this->pi_list_searchBox();
@@ -481,13 +479,11 @@ class tx_contagged_pi1 extends tslib_pibase {
 			$markerArray['###SEARCHBOX###'] = '';
 		}
 	}
-	
+
 	protected function removeUnfilledMarker($content) {
 		return preg_replace('/###.*?###/', '', $content);
 	}
-	
 }
-
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/contagged/pi1/class.tx_contagged_pi1.php']) {
 	include_once ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/contagged/pi1/class.tx_contagged_pi1.php']);

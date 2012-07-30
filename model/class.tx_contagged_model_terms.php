@@ -1,24 +1,19 @@
 <?php
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2007 Jochen Rau <j.rau@web.de>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_mapper.php');
@@ -26,17 +21,22 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
 /**
  * The model of contagged.
  *
- * @author	Jochen Rau <j.rau@web.de>
- * @package	TYPO3
- * @subpackage	tx_contagged_model_terms
+ * @author    Jochen Rau <j.rau@web.de>
+ * @package    TYPO3
+ * @subpackage    tx_contagged_model_terms
  */
 class tx_contagged_model_terms implements t3lib_Singleton {
+
 	var $conf; // the TypoScript configuration array
 	var $controller;
+
 	var $tablesArray = array(); // array of all tables in the database
 	var $dataSourceArray = array();
+
 	var $terms = array();
+
 	var $configuredSources = array();
+
 	var $listPagesCache = array();
 
 	function __construct($controller) {
@@ -46,7 +46,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
 		}
 
-		$this->mapper  = t3lib_div::makeInstance('tx_contagged_model_mapper', $this->controller);
+		$this->mapper = t3lib_div::makeInstance('tx_contagged_model_mapper', $this->controller);
 
 		// build an array of tables in the database
 		$this->tablesArray = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
@@ -60,14 +60,14 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		}
 
 		$typesArray = $this->conf['types.'];
-		foreach ($typesArray as $type=>$typeConfigArray) {
+		foreach ($typesArray as $type => $typeConfigArray) {
 			$storagePidsArray = $this->getStoragePidsArray($typeConfigArray);
 			$dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
 			foreach ($storagePidsArray as $pid) {
 				// if there is an entry for the data source: check for duplicates before adding the pid
 				// otherwise: create a new entry and add the pid
 				if ($this->dataSourceArray[$dataSource]) {
-					if ( !in_array($pid,$this->dataSourceArray[$dataSource]) ) {
+					if (!in_array($pid, $this->dataSourceArray[$dataSource])) {
 						$this->dataSourceArray[$dataSource][] = intval($pid);
 					}
 				} else {
@@ -75,13 +75,12 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 				}
 			}
 		}
-
 	}
 
 	function findAllTerms($additionalWhereClause = '') {
 		if (empty($this->terms)) {
-			foreach ($this->dataSourceArray as $dataSource => $storagePidsArray ) {
-				$this->terms = array_merge($this->terms, $this->fetchTermsFromSource($dataSource,$storagePidsArray));
+			foreach ($this->dataSourceArray as $dataSource => $storagePidsArray) {
+				$this->terms = array_merge($this->terms, $this->fetchTermsFromSource($dataSource, $storagePidsArray));
 			}
 		}
 		return $this->terms;
@@ -89,12 +88,14 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 
 	function findAllTermsToListOnPage($pid = NULL) {
 		$terms = $this->findAllTerms(' AND exclude=0');
-		if ($pid === NULL) $pid = $GLOBALS['TSFE']->id;
+		if ($pid === NULL) {
+			$pid = $GLOBALS['TSFE']->id;
+		}
 		$filteredTerms = array();
 		foreach ($terms as $key => $term) {
 			$typeConfigurationArray = $this->conf['types.'][$term['term_type'] . '.'];
 			$listPidsArray = $this->getListPidsArray($term['term_type']);
-			if (($typeConfigurationArray['dontListTerms'] == 0) && (in_array($pid, $listPidsArray) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key])) ) {
+			if (($typeConfigurationArray['dontListTerms'] == 0) && (in_array($pid, $listPidsArray) || is_array($GLOBALS['T3_VAR']['ext']['contagged']['index'][$pid][$key]))) {
 				$filteredTerms[$key] = $term;
 			}
 		}
@@ -109,7 +110,9 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 	function findTermByUid($dataSource, $uid) {
 		$additionalWhereClause = ' AND uid=' . intval($uid);
 		$terms = $this->fetchTermsFromSource($dataSource, $storagePidsArray, $additionalWhereClause);
-		if ($this->conf["fetchRelatedTerms"] == 1) $this->fetchRelatedTerms($terms);
+		if ($this->conf["fetchRelatedTerms"] == 1) {
+			$this->fetchRelatedTerms($terms);
+		}
 		if (is_array($terms) && count($terms) > 0) {
 			return array_shift($terms);
 		} else {
@@ -120,19 +123,19 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 	/**
 	 * Build an array of the entries in the tables
 	 *
-	 * @param	[type]		$dataSource: ...
-	 * @param	[type]		$storagePids: ...
-	 * @return	An		array with the terms an their configuration
+	 * @param    string        $dataSource: The identifier of the data source
+	 * @param    array         $storagePids: An array of storage page IDs
+	 * @return   array         An array with the terms an their configuration
 	 */
-	function fetchTermsFromSource($dataSource, $storagePidsArray= array(), $additionalWhereClause = '') {
+	function fetchTermsFromSource($dataSource, $storagePidsArray = array(), $additionalWhereClause = '') {
 		$dataArray = array();
 		$dataSourceConfigArray = $this->conf['dataSources.'][$dataSource . '.'];
 		$tableName = $dataSourceConfigArray['sourceName'];
 		// check if the table exists in the database
-		if (array_key_exists($tableName, $this->tablesArray) ) {				
+		if (array_key_exists($tableName, $this->tablesArray)) {
 			// Build WHERE-clause
 			$whereClause = '1=1';
-			$whereClause .= count($storagePidsArray) > 0 ? ' AND pid IN (' . implode(',',$storagePidsArray) . ')' : '';
+			$whereClause .= count($storagePidsArray) > 0 ? ' AND pid IN (' . implode(',', $storagePidsArray) . ')' : '';
 			$whereClause .= $dataSourceConfigArray['hasSysLanguageUid'] ? ' AND (sys_language_uid=' . intval($GLOBALS['TSFE']->sys_language_uid) . ' OR sys_language_uid=-1)' : '';
 			$whereClause .= $this->cObj->enableFields($tableName);
 			$whereClause .= $additionalWhereClause;
@@ -144,7 +147,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 				$whereClause // WHERE ..
 			);
 			// map the fields
-			$mappedResult = $this->mapper->getDataArray($result,$dataSource);
+			$mappedResult = $this->mapper->getDataArray($result, $dataSource);
 		}
 		if (is_array($mappedResult)) {
 			foreach ($mappedResult as $result) {
@@ -184,42 +187,41 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 	/**
 	 * get the storage pids; cascade: type > dataSource > globalConfig
 	 *
-	 * @param string	$typeConfigArray 
-	 * @return array	An array containing the storage PIDs of the type given by
+	 * @param string    $typeConfigArray
+	 * @return array    An array containing the storage PIDs of the type given by
 	 * @author Jochen Rau
 	 */
 	function getStoragePidsArray($typeConfigArray) {
 		$storagePidsArray = array();
 		$dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
 		if (!empty($typeConfigArray['storagePids'])) {
-			$storagePidsArray = t3lib_div::intExplode(',',$typeConfigArray['storagePids']);
-		} elseif (!empty($this->conf['dataSources.'][$dataSource.'.']['storagePids']) ) {
-			$storagePidsArray = t3lib_div::intExplode(',',$this->conf['dataSources.'][$dataSource.'.']['storagePids']);
+			$storagePidsArray = t3lib_div::intExplode(',', $typeConfigArray['storagePids']);
+		} elseif (!empty($this->conf['dataSources.'][$dataSource . '.']['storagePids'])) {
+			$storagePidsArray = t3lib_div::intExplode(',', $this->conf['dataSources.'][$dataSource . '.']['storagePids']);
 		} elseif (!empty($this->conf['storagePids'])) {
-			$storagePidsArray = t3lib_div::intExplode(',',$this->conf['storagePids']);
+			$storagePidsArray = t3lib_div::intExplode(',', $this->conf['storagePids']);
 		}
 		return $storagePidsArray;
 	}
 
 	/**
-	 * get the lsit pids; cascade: type > globalConfig
+	 * get the list page IDs; cascade: type > globalConfig
 	 *
-	 * @param string	$typeConfigArray 
-	 * @return array	An array containing the list PIDs of the type given by
+	 * @param string    $typeConfigArray
+	 * @return array    An array containing the list PIDs of the type given by
 	 * @author Jochen Rau
 	 */
 	function getListPidsArray($termType) {
-		if (!isset($this->listPagesCache[$termType])) {		
+		if (!isset($this->listPagesCache[$termType])) {
 			$listPidsArray = array();
-			if (!empty($this->conf['types.'][$termArray['term_type'].'.']['listPages'])) {
-				$this->listPagesCache[$termType] = t3lib_div::intExplode(',',$this->conf['types.'][$termArray['term_type'].'.']['listPages']);
+			if (!empty($this->conf['types.'][$termArray['term_type'] . '.']['listPages'])) {
+				$this->listPagesCache[$termType] = t3lib_div::intExplode(',', $this->conf['types.'][$termArray['term_type'] . '.']['listPages']);
 			} elseif (!empty($this->conf['listPages'])) {
-				$this->listPagesCache[$termType] = t3lib_div::intExplode(',',$this->conf['listPages']);
+				$this->listPagesCache[$termType] = t3lib_div::intExplode(',', $this->conf['listPages']);
 			}
 		}
 		return $this->listPagesCache[$termType];
 	}
-
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/contagged/model/class.tx_contagged_model_terms.php']) {

@@ -8,7 +8,8 @@
 	<data type="array">
 		<languageKey index="default" type="array">
 			<label index="header">Glossary</label>
-			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</label>
+			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+			</label>
 			<!-- <label index="indexChars">0,1,2,3,4,5,6,70,71,72,73,74,75,76,77,78,79,8,9,0</label> -->
 			<label index="na">-</label>
 			<label index="details">more details</label>
@@ -45,7 +46,9 @@
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="header">Glossar</label>
-			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A|Ä|AE,B,C,D,E,F,G,H,I,J,K,L,M,N,O|Ö|OE,P,Q,R,S,T,U|Ü|UE,V,W,X,Y,Z</label>
+			<label index="indexChars">
+				0-9|1|2|3|4|5|6|7|8|9|0,A|Ä|AE,B,C,D,E,F,G,H,I,J,K,L,M,N,O|Ö|OE,P,Q,R,S,T,U|Ü|UE,V,W,X,Y,Z
+			</label>
 			<!-- <label index="indexChars">0,1,2,3,4,5,6,70,71,72,73,74,75,76,77,78,79,8,9,0</label> -->
 			<label index="na">-</label>
 			<label index="details">mehr Details</label>
@@ -89,7 +92,8 @@
 			<label index="pronunciation">Prononciation</label>
 			<label index="details">Plus de détails</label>
 			<label index="header">Glossaire</label>
-			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</label>
+			<label index="indexChars">0-9|1|2|3|4|5|6|7|8|9|0,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+			</label>
 			<label index="no_matches">Pas de résultat.</label>
 			<label index="pi_list_searchBox_search">Recherche</label>
 			<label index="multimedia">Media</label>

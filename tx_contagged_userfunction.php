@@ -1,6 +1,6 @@
 <?php
 
-function user_addTermTypes(&$params,&$pObj) {
+function user_addTermTypes(&$params, &$pObj) {
 	global $BE_USER;
 
 	$template = t3lib_div::makeInstance('t3lib_TStemplate');
@@ -22,16 +22,16 @@ function user_addTermTypes(&$params,&$pObj) {
 	// make localized labels
 	$LOCAL_LANG_ARRAY = array();
 	if (!empty($conf['types.'])) {
-		foreach ($conf['types.'] as $typeName => $typeConfigArray ) {
+		foreach ($conf['types.'] as $typeName => $typeConfigArray) {
 			unset($LOCAL_LANG_ARRAY);
-			if ( !$typeConfigArray['hideSelection']>0 && !$typeConfigArray['dataSource'] ) {
+			if (!$typeConfigArray['hideSelection'] > 0 && !$typeConfigArray['dataSource']) {
 				if (is_array($typeConfigArray['label.'])) {
 					foreach ($typeConfigArray['label.'] as $langKey => $labelText) {
 						$LOCAL_LANG_ARRAY[$langKey]['label'] = $labelText;
 					}
 				}
 				$LOCAL_LANG_ARRAY['default']['label'] = $typeConfigArray['label'] ? $typeConfigArray['label'] : $typeConfigArray['label.']['default'];
-				$params['items'][]= array( $GLOBALS['LANG']->getLLL('label',$LOCAL_LANG_ARRAY), substr($typeName,0,-1) );
+				$params['items'][] = array($GLOBALS['LANG']->getLLL('label', $LOCAL_LANG_ARRAY), substr($typeName, 0, -1));
 			}
 		}
 	}
