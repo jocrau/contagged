@@ -24,7 +24,7 @@ CREATE TABLE tx_contagged_terms (
 	hidden tinyint(4) DEFAULT '0' NOT NULL,
 	starttime int(11) DEFAULT '0' NOT NULL,
 	endtime int(11) DEFAULT '0' NOT NULL,
-	fe_group int(11) DEFAULT '0' NOT NULL,
+	fe_group varchar(50) DEFAULT '' NOT NULL,
 	term_main tinytext NOT NULL,
 	term_alt tinytext NOT NULL,
 	term_type tinytext NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE tx_contagged_terms (
 	related int(11) DEFAULT '0' NOT NULL,
 	link tinytext NOT NULL,
 	exclude tinyint(3) DEFAULT '0' NOT NULL,
-	
+
 	PRIMARY KEY (uid),
 	KEY parent (pid),
 	KEY t3ver_oid (t3ver_oid,t3ver_wsid)
