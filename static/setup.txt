@@ -23,6 +23,7 @@ plugin.tx_contagged {
 	excludePages = {$contagged.excludePages}
 	excludeTags = {$contagged.excludeTags}
 	autoExcludeTags = {$contagged.autoExcludeTags}
+	fetchRelatedTerms = {$contagged.fetchRelatedTerms}
 	checkPreAndPostMatches = {$contagged.checkPreAndPostMatches}
 	respectCase = {$contagged.respectCase}
 	addTitleAttribute = {$contagged.addTitleAttribute}

@@ -109,7 +109,7 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 	function findTermByUid($dataSource, $uid) {
 		$additionalWhereClause = ' AND uid=' . intval($uid);
 		$terms = $this->fetchTermsFromSource($dataSource, $storagePidsArray, $additionalWhereClause);
-		$this->fetchRelatedTerms($terms);
+		if ($this->conf["fetchRelatedTerms"] == 1) $this->fetchRelatedTerms($terms);
 		if (is_array($terms) && count($terms) > 0) {
 			return array_shift($terms);
 		} else {
