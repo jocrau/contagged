@@ -103,7 +103,7 @@ class tx_contagged extends tslib_pibase {
 		}
 
 		// sort the array descending by length of the value, so the longest term will match
-		usort($sortedTerms, array($this, 'sortArrayByLengthDescending'));
+		usort($sortedTerms, array($this, 'sortTermsByDescendingLength'));
 
 		// get a comma separated list of all tags which should be omitted
 		$tagsToOmitt = $this->getTagsToOmitt();
@@ -135,11 +135,24 @@ class tx_contagged extends tslib_pibase {
 		return $parsedContent;
 	}
 
-	function sortArrayByLengthDescending($a, $b) {
-		if (strlen($a['term']) == strlen($b['term'])) {
+	/**
+	 * Utility method to sort array items according to the (string) length of their "term" item
+	 *
+	 * Note: the sorting is descending
+	 *
+	 * @param array $a
+	 * @param array $b
+	 * @return integer +1 if term from a is shorter than b, -1 for the contrary, 0 in case of equality
+	 */
+	public function sortTermsByDescendingLength($a, $b) {
+		// Calculate length correctly by relying on t3lib_cs
+		$aTermLength = $GLOBALS['TSFE']->csConvObj->strlen($GLOBALS['TSFE']->renderCharset, $a['term']);
+		$bTermLength = $GLOBALS['TSFE']->csConvObj->strlen($GLOBALS['TSFE']->renderCharset, $b['term']);
+		if ($aTermLength == $bTermLength) {
 			return 0;
+		} else {
+			return ($aTermLength < $bTermLength) ? +1 : -1;
 		}
-		return strlen($a['term']) < strlen($b['term']) ? 1 : -1;
 	}
 
 	function getPositions($content, &$positionsArray, $term, $termKey) {
