@@ -273,7 +273,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###TERM_ALT###'] = $termArray['term_alt'] ? implode(', ', $termArray['term_alt']) : $this->pi_getLL('na');
 		$markerArray['###TERM_REPLACE###'] = $termArray['term_replace'] ? $termArray['term_replace'] : $this->pi_getLL('na');
 		$markerArray['###DESC_SHORT###'] = $termArray['desc_short'] ? $termArray['desc_short'] : $this->pi_getLL('na');
-		$markerArray['###DESC_LONG###'] = $termArray['desc_long'] ? $termArray['desc_long'] : $this->pi_getLL('na');
+		$markerArray['###DESC_LONG###'] = $termArray['desc_long'] ? $this->parser->parse($termArray['desc_long']) : $this->pi_getLL('na');
 		$markerArray['###REFERENCE###'] = $termArray['reference'] ? $termArray['reference'] : $this->pi_getLL('na');
 		$markerArray['###PRONUNCIATION###'] = $termArray['pronunciation'] ? $termArray['pronunciation'] : $this->pi_getLL('na');
 		$markerArray['###IMAGES###'] = $this->renderImages($termArray);
