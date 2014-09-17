@@ -17,10 +17,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (PATH_tslib . 'class.tslib_pibase.php');
-require_once (t3lib_extMgm::extPath('contagged') . 'class.tx_contagged.php');
-require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_terms.php');
-require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_mapper.php');
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * contagged list plugin
@@ -29,8 +26,7 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
  * @package    TYPO3
  * @subpackage    tx_contagged_pi1
  */
-class tx_contagged_pi1 extends tslib_pibase {
-
+class tx_contagged_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	var $prefixId = 'tx_contagged'; // same as class name
 	var $scriptRelPath = 'pi1/class.tx_contagged_pi1.php'; // path to this script relative to the extension dir
 	var $extKey = 'contagged'; // the extension key
@@ -54,11 +50,12 @@ class tx_contagged_pi1 extends tslib_pibase {
 	 */
 	function main($content, $conf) {
 		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
-		$this->parser = t3lib_div::makeInstance('tx_contagged');
-		$this->local_cObj = t3lib_div::makeInstance('tslib_cObj');
+		$this->parser = GeneralUtility::makeInstance('tx_contagged');
+		$this->local_cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
 		$this->local_cObj->setCurrentVal($GLOBALS['TSFE']->id);
 		if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'])) {
-			$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'], $conf);
+			$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_contagged.'];
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
 		}
 		$this->pi_loadLL();
 		$this->templateCode = $this->cObj->fileResource($this->conf['templateFile'] ? $this->conf['templateFile'] : $this->templateFile);
@@ -83,8 +80,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->typesArray = $this->conf['types.'];
 
 		// get the model (an associated array of terms)
-		$this->mapper = t3lib_div::makeInstance('tx_contagged_model_mapper', $this);
-		$this->model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
+		$this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this);
+		$this->model = GeneralUtility::makeInstance('tx_contagged_model_terms', $this);
 
 		if (!is_null($termKey)) {
 			$content .= $this->renderSingleItemByKey($dataSource, $uid);
@@ -164,7 +161,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$this->renderIndex($markerArray, $termsArray);
 		$this->renderSearchBox($markerArray);
 		foreach ($termsArray as $termKey => $termArray) {
-			$fieldsToSearch = t3lib_div::trimExplode(',', $this->conf['searchbox.']['fieldsToSearch']);
+			$fieldsToSearch = GeneralUtility::trimExplode(',', $this->conf['searchbox.']['fieldsToSearch']);
 			foreach ($fieldsToSearch as $field) {
 				if (is_array($termArray[$field])) {
 					foreach ($termArray[$field] as $subFieldValue) {
@@ -223,7 +220,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		// make "back to..." link
 		if ($this->backPid && $this->conf['addBackLink'] !== '0') {
 			if ($this->conf['addBackLinkDescription'] > 0) {
-				$pageSelectObject = new t3lib_pageSelect;
+				$pageSelectObject = new \TYPO3\CMS\Frontend\Page\PageRepository;
 				$pageSelectObject->init(FALSE);
 				$pageSelectObject->sys_language_uid = $GLOBALS['TSFE']->sys_language_uid;
 				$backPage = $pageSelectObject->getPage($this->backPid);
@@ -254,7 +251,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 
 		$termArray['desc_long'] = $this->cObj->parseFunc($termArray['desc_long'], array(), '< lib.parseFunc_RTE');
 		if (!empty($this->conf['fieldsToParse'])) {
-			$fieldsToParse = t3lib_div::trimExplode(',', $this->conf['fieldsToParse']);
+			$fieldsToParse = GeneralUtility::trimExplode(',', $this->conf['fieldsToParse']);
 			$excludeTerms = $termArray['term_alt'];
 			$excludeTerms[] = $termArray['term_main'];
 			foreach ($fieldsToParse as $fieldName) {
@@ -303,7 +300,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$markerArray['###DETAILS###'] = $this->pi_getLL('details');
 		$typolinkConf = $this->typolinkConf;
 		if (!empty($typeConfigArray['typolink.'])) {
-			$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($typolinkConf, $typeConfigArray['typolink.']);
 		}
 		$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[source]=' . $termArray['source'] . '&' . $this->prefixId . '[uid]=' . $termArray['uid'];
 		$typolinkConf['parameter'] = array_shift($this->model->getListPidsArray($termArray['term_type']));
@@ -319,7 +316,7 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$relatedTerm = $this->model->findTermByUid($termReference['source'], $termReference['uid']);
 				$typolinkConf = $this->typolinkConf;
 				if (!empty($typeConfigArray['typolink.'])) {
-					$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
+					\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($typolinkConf, $typeConfigArray['typolink.']);
 				}
 				$typolinkConf['useCacheHash'] = 1;
 				$typolinkConf['additionalParams'] .= '&' . $this->prefixId . '[source]=' . $termReference['source'] . '&' . $this->prefixId . '[uid]=' . $termReference['uid'];
@@ -354,15 +351,15 @@ class tx_contagged_pi1 extends tslib_pibase {
 				$imagesTitleText[] = str_replace(array(chr(10), chr(13)), ' ', $row['title'] . ' ');
 			}
 		} else {
-			$images = t3lib_div::trimExplode(',', $termArray['image'], 1);
+			$images = GeneralUtility::trimExplode(',', $termArray['image'], 1);
 			$imagesWithPath = array();
 			foreach ($images as $image) {
 				$imagesWithPath[] = 'uploads/pics/' . $image;
 			}
 			$images = $imagesWithPath;
-			$imagesCaption = t3lib_div::trimExplode(chr(10), $termArray['imagecaption']);
-			$imagesAltText = t3lib_div::trimExplode(chr(10), $termArray['imagealt']);
-			$imagesTitleText = t3lib_div::trimExplode(chr(10), $termArray['imagetitle']);
+			$imagesCaption = GeneralUtility::trimExplode(chr(10), $termArray['imagecaption']);
+			$imagesAltText = GeneralUtility::trimExplode(chr(10), $termArray['imagealt']);
+			$imagesTitleText = GeneralUtility::trimExplode(chr(10), $termArray['imagetitle']);
 		}
 
 		if (!empty($images)) {
@@ -413,8 +410,8 @@ class tx_contagged_pi1 extends tslib_pibase {
 		$indexArray = array();
 		$reverseIndexArray = array();
 		// Get localized index chars.
-		foreach (t3lib_div::trimExplode(',', $this->pi_getLL('indexChars')) as $key => $value) {
-			$subCharArray = t3lib_div::trimExplode('|', $value);
+		foreach (GeneralUtility::trimExplode(',', $this->pi_getLL('indexChars')) as $key => $value) {
+			$subCharArray = GeneralUtility::trimExplode('|', $value);
 			$indexArray[$subCharArray[0]] = NULL;
 			foreach ($subCharArray as $subChar) {
 				$reverseIndexArray[$subChar] = $subCharArray[0];

@@ -315,9 +315,6 @@ if ($extConfArray['getImagesFromDAM'] > 0 && t3lib_extMgm::isLoaded('dam')) {
 	);
 }
 
-require_once (PATH_t3lib . 'class.t3lib_page.php');
-require_once (PATH_t3lib . 'class.t3lib_tstemplate.php');
-require_once (PATH_t3lib . 'class.t3lib_tsparser_ext.php');
-require_once(t3lib_extMgM::extPath('contagged') . 'tx_contagged_userfunction.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('contagged') . 'tx_contagged_userfunction.php');
 
 ?>

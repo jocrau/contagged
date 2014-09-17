@@ -1,12 +1,10 @@
 <?php
 
 function user_addTermTypes(&$params, &$pObj) {
-	global $BE_USER;
-
-	$template = t3lib_div::makeInstance('t3lib_TStemplate');
+	$template = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\TemplateService');
 	$template->tt_track = 0;
 	$template->init();
-	$sysPage = t3lib_div::makeInstance('t3lib_pageSelect');
+	$sysPage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Frontend\Page\PageRepository');
 	$rootline = $sysPage->getRootLine(getCurrentPageId());
 	$rootlineIndex = 0;
 	foreach ($rootline as $index => $rootlinePart) {
@@ -38,12 +36,12 @@ function user_addTermTypes(&$params, &$pObj) {
 }
 
 function getCurrentPageId() {
-	$pageId = (integer)t3lib_div::_GP('id');
+	$pageId = (integer)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id');
 	if ($pageId > 0) {
 		return $pageId;
 	}
 
-	preg_match('/(?<=id=)[0-9]a/', urldecode(t3lib_div::_GET('returnUrl')), $matches);
+	preg_match('/(?<=id=)[0-9]a/', urldecode(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('returnUrl')), $matches);
 	if (count($matches) > 0) {
 		return $matches[0];
 	}

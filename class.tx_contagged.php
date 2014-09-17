@@ -17,9 +17,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once (PATH_tslib . 'class.tslib_pibase.php');
-require_once (PATH_t3lib . 'class.t3lib_parsehtml.php');
-require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_terms.php');
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * The main class to parse,tag and replace specific terms of the content.
@@ -28,7 +26,7 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
  * @package TYPO3
  * @subpackage    tx_contagged
  */
-class tx_contagged extends tslib_pibase {
+class tx_contagged extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 
 	var $prefixId = 'tx_contagged';
 
@@ -59,10 +57,11 @@ class tx_contagged extends tslib_pibase {
 		if (!is_array($conf)) {
 			$conf = array();
 		}
-		$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'], $conf);
+		$this->conf = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
+		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($this->conf, $conf);
 		$this->pi_setPiVarDefaults();
 		if (!is_object($this->cObj)) {
-			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
+			$this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
 			$this->cObj->setCurrentVal($GLOBALS['TSFE']->id);
 		}
 
@@ -72,7 +71,6 @@ class tx_contagged extends tslib_pibase {
 			unset($this->typolinkConf['additionalParams.']);
 		}
 		$this->typolinkConf['useCacheHash'] = 1;
-
 		// exit if the content should be skipped
 		if ($this->isContentToSkip()) {
 			return $content;
@@ -82,7 +80,7 @@ class tx_contagged extends tslib_pibase {
 		$this->typesArray = $this->conf['types.'];
 
 		// get the model (an associated array of terms)
-		$model = t3lib_div::makeInstance('tx_contagged_model_terms', $this);
+		$model = GeneralUtility::makeInstance('tx_contagged_model_terms', $this);
 		$this->termsArray = $model->findAllTerms();
 
 		$excludeTerms = explode(',', $this->conf['excludeTerms']);
@@ -109,7 +107,7 @@ class tx_contagged extends tslib_pibase {
 		$tagsToOmitt = $this->getTagsToOmitt();
 
 		// TODO split recursively
-		$parseObj = t3lib_div::makeInstance('t3lib_parsehtml');
+		$parseObj = GeneralUtility::makeInstance('TYPO3\CMS\Core\Html\HtmlParser');
 		$splittedContent = $parseObj->splitIntoBlock($tagsToOmitt, $content);
 		foreach ((array)$splittedContent as $intKey => $HTMLvalue) {
 			if (!($intKey % 2)) {
@@ -145,7 +143,7 @@ class tx_contagged extends tslib_pibase {
 	 * @return integer +1 if term from a is shorter than b, -1 for the contrary, 0 in case of equality
 	 */
 	public function sortTermsByDescendingLength($a, $b) {
-		// Calculate length correctly by relying on t3lib_cs
+		// Calculate length correctly by relying on \TYPO3\CMS\Core\Charset\CharsetConverter
 		$aTermLength = $GLOBALS['TSFE']->csConvObj->strlen($GLOBALS['TSFE']->renderCharset, $a['term']);
 		$bTermLength = $GLOBALS['TSFE']->csConvObj->strlen($GLOBALS['TSFE']->renderCharset, $b['term']);
 		if ($aTermLength == $bTermLength) {
@@ -318,7 +316,7 @@ class tx_contagged extends tslib_pibase {
 	}
 
 	function updateIndex($termKey, $matchedTerm) {
-		$currentRecord = t3lib_div::trimExplode(':', $this->cObj->currentRecord);
+		$currentRecord = GeneralUtility::trimExplode(':', $this->cObj->currentRecord);
 		$GLOBALS['T3_VAR']['ext']['contagged']['index'][$GLOBALS['TSFE']->id][$termKey] = array(
 			'matchedTerm' => $matchedTerm,
 			'source' => $this->termsArray[$termKey]['source'],
@@ -340,7 +338,7 @@ class tx_contagged extends tslib_pibase {
 
 		// if there are tags to exclude: add them to the list
 		if ($this->conf['excludeTags']) {
-			$tagArray = t3lib_div::trimExplode(',', $this->conf['excludeTags'], 1);
+			$tagArray = GeneralUtility::trimExplode(',', $this->conf['excludeTags'], 1);
 		}
 
 		// if configured: add tags used by the term definitions
@@ -422,16 +420,16 @@ class tx_contagged extends tslib_pibase {
 			unset($typolinkConf);
 			$typolinkConf = $this->typolinkConf;
 			if (!empty($typeConfigArray['typolink.'])) {
-				$typolinkConf = t3lib_div::array_merge_recursive_overrule($typolinkConf, $typeConfigArray['typolink.']);
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($typolinkConf, $typeConfigArray['typolink.']);
 			}
 			if ($termArray['link']) {
 				$typolinkConf['parameter'] = $termArray['link'];
 				$typolinkConf['additionalParams'] = $termArray['link.']['additionalParams'];
 			} else {
 				if ($typeConfigArray['listPages']) {
-					$typolinkConf['parameter'] = array_shift(t3lib_div::trimExplode(',', $typeConfigArray['listPages'], 1));
+					$typolinkConf['parameter'] = array_shift(GeneralUtility::trimExplode(',', $typeConfigArray['listPages'], 1));
 				} else {
-					$typolinkConf['parameter'] = array_shift(t3lib_div::trimExplode(',', $this->conf['listPages'], 1));
+					$typolinkConf['parameter'] = array_shift(GeneralUtility::trimExplode(',', $this->conf['listPages'], 1));
 				}
 				$GLOBALS['TSFE']->register['contagged_list_page'] = $typolinkConf['parameter'];
 				$additionalParams['source'] = $termArray['source'];
@@ -439,7 +437,7 @@ class tx_contagged extends tslib_pibase {
 				if ($this->checkLocalGlobal($typeConfigArray, 'addBackLink')) {
 					$additionalParams['backPid'] = $GLOBALS['TSFE']->id;
 				}
-				$typolinkConf['additionalParams'] = t3lib_div::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
+				$typolinkConf['additionalParams'] = GeneralUtility::implodeArrayForUrl('tx_contagged', $additionalParams, '', 1);
 			}
 			$GLOBALS['TSFE']->register['contagged_link_url'] = $this->cObj->typoLink_URL($typolinkConf);
 			$matchedTerm = $this->cObj->typolink($matchedTerm, $typolinkConf);
@@ -543,22 +541,22 @@ class tx_contagged extends tslib_pibase {
 			$pageUidsInRootline[] = $rootline["$i"]['uid'];
 		}
 		// check if the root page is in the rootline of the current page
-		$includeRootPagesUids = t3lib_div::trimExplode(',', $this->conf['includeRootPages'], 1);
+		$includeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['includeRootPages'], 1);
 		foreach ($includeRootPagesUids as $includeRootPageUid) {
-			if (t3lib_div::inArray((array)$pageUidsInRootline, $includeRootPageUid)) {
+			if (GeneralUtility::inArray((array)$pageUidsInRootline, $includeRootPageUid)) {
 				$result = false;
 			}
 		}
-		$excludeRootPagesUids = t3lib_div::trimExplode(',', $this->conf['excludeRootPages'], 1);
+		$excludeRootPagesUids = GeneralUtility::trimExplode(',', $this->conf['excludeRootPages'], 1);
 		foreach ($excludeRootPagesUids as $excludeRootPageUid) {
-			if (t3lib_div::inArray((array)$pageUidsInRootline, $excludeRootPageUid)) {
+			if (GeneralUtility::inArray((array)$pageUidsInRootline, $excludeRootPageUid)) {
 				$result = true;
 			}
 		}
-		if (t3lib_div::inList($this->conf['includePages'], $currentPageUid)) {
+		if (GeneralUtility::inList($this->conf['includePages'], $currentPageUid)) {
 			$result = false;
 		}
-		if (t3lib_div::inList($this->conf['excludePages'], $currentPageUid)) {
+		if (GeneralUtility::inList($this->conf['excludePages'], $currentPageUid)) {
 			$result = true;
 		}
 		if ($GLOBALS['TSFE']->page['tx_contagged_dont_parse'] == 1) {

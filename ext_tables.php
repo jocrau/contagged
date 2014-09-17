@@ -3,15 +3,15 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-t3lib_extMgm::allowTableOnStandardPages('tx_contagged_terms');
-t3lib_extMgm::addToInsertRecords('tx_contagged_terms');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_contagged_terms');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToInsertRecords('tx_contagged_terms');
 
 // add contagged to the "insert plugin" content element
-t3lib_extMgm::addPlugin(array('LLL:EXT:contagged/locallang_db.php:tx_contagged_terms.plugin', $_EXTKEY . '_pi1'), 'list_type');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array('LLL:EXT:contagged/locallang_db.php:tx_contagged_terms.plugin', $_EXTKEY . '_pi1'), 'list_type');
 
 // initialize static extension templates
-t3lib_extMgm::addStaticFile($_EXTKEY, 'static/', 'Content parser');
-t3lib_extMgm::addStaticFile($_EXTKEY, 'static/examples/', 'Experimental Setup');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'static/', 'Content parser');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'static/examples/', 'Experimental Setup');
 
 $TCA["tx_contagged_terms"] = array(
 	"ctrl" => array(
@@ -36,8 +36,8 @@ $TCA["tx_contagged_terms"] = array(
 			'fe_group' => 'fe_group',
 		),
 		'useColumnsForDefaultValues' => 'term_type',
-		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'tca.php',
-		'iconfile' => t3lib_extMgm::extRelPath($_EXTKEY) . 'icon_tx_contagged_terms.gif',
+		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'tca.php',
+		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'icon_tx_contagged_terms.gif',
 	),
 	"feInterface" => array(
 		"fe_admin_fieldList" => "sys_language_uid, l18n_parent, l18n_diffsource, hidden, starttime, endtime, fe_group, term_main, term_alt, term_type, term_lang, term_replace, desc_short, desc_long, image, dam_images, imagecaption, imagealt, imagetitle, related, link, exclude",
@@ -55,12 +55,10 @@ $tempColumns = Array(
 	),
 );
 
-t3lib_div::loadTCA("pages");
-t3lib_extMgm::addTCAcolumns("pages", $tempColumns, 1);
-t3lib_extMgm::addToAllTCAtypes("pages", "tx_contagged_dont_parse;;;;1-1-1");
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns("pages", $tempColumns, 1);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes("pages", "tx_contagged_dont_parse;;;;1-1-1");
 
-t3lib_div::loadTCA("tt_content");
-t3lib_extMgm::addTCAcolumns("tt_content", $tempColumns, 1);
-t3lib_extMgm::addToAllTCAtypes("tt_content", "tx_contagged_dont_parse;;;;1-1-1");
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns("tt_content", $tempColumns, 1);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes("tt_content", "tx_contagged_dont_parse;;;;1-1-1");
 
 ?>

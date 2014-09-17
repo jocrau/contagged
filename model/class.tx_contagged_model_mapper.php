@@ -16,6 +16,7 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * The model of contagged.
@@ -24,7 +25,7 @@
  * @package    TYPO3
  * @subpackage    tx_contagged_model_mapper
  */
-class tx_contagged_model_mapper implements t3lib_Singleton {
+class tx_contagged_model_mapper implements \TYPO3\CMS\Core\SingletonInterface {
 
 	var $conf; // the TypoScript configuration array
 	var $controller;
@@ -33,7 +34,7 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 		$this->controller = $controller;
 		$this->conf = $controller->conf;
 		if (!is_object($this->cObj)) {
-			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
+			$this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
 		}
 	}
 
@@ -53,9 +54,9 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 		foreach ($dataSourceConfigArray['mapping.'] as $fieldToMap => $value) {
 			$fieldsToMapArray[] = substr($fieldToMap, 0, -1);
 		}
-		$fieldsToMapfromTS = t3lib_div::trimExplode(',', $this->conf['fieldsToMap'], 1);
+		$fieldsToMapfromTS = GeneralUtility::trimExplode(',', $this->conf['fieldsToMap'], 1);
 		foreach ($fieldsToMapfromTS as $key => $fieldToMap) {
-			if (!t3lib_div::inArray($fieldsToMapArray, $fieldToMap)) {
+			if (!GeneralUtility::inArray($fieldsToMapArray, $fieldToMap)) {
 				$fieldsToMapArray[] = $fieldToMap;
 			}
 		}
@@ -90,7 +91,7 @@ class tx_contagged_model_mapper implements t3lib_Singleton {
 			}
 
 			// post processing
-			$mappedDataArray['term_alt'] = t3lib_div::trimExplode(chr(10), $row['term_alt'], 1);
+			$mappedDataArray['term_alt'] = GeneralUtility::trimExplode(chr(10), $row['term_alt'], 1);
 			// TODO: hook "mappingPostProcessing"
 
 			if (!empty($dataSourceConfigArray['mapping.']['uid.']['field'])) {

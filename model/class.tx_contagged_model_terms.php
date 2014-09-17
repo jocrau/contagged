@@ -16,7 +16,7 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_model_mapper.php');
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * The model of contagged.
@@ -25,7 +25,7 @@ require_once (t3lib_extMgm::extPath('contagged') . 'model/class.tx_contagged_mod
  * @package    TYPO3
  * @subpackage    tx_contagged_model_terms
  */
-class tx_contagged_model_terms implements t3lib_Singleton {
+class tx_contagged_model_terms implements \TYPO3\CMS\Core\SingletonInterface {
 
 	var $conf; // the TypoScript configuration array
 	var $controller;
@@ -43,10 +43,10 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		$this->controller = $controller;
 		$this->conf = $controller->conf;
 		if (!is_object($this->cObj)) {
-			$this->cObj = t3lib_div::makeInstance('tslib_cObj');
+			$this->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
 		}
 
-		$this->mapper = t3lib_div::makeInstance('tx_contagged_model_mapper', $this->controller);
+		$this->mapper = GeneralUtility::makeInstance('tx_contagged_model_mapper', $this->controller);
 
 		// build an array of tables in the database
 		$this->tablesArray = $GLOBALS['TYPO3_DB']->admin_get_tables(TYPO3_db);
@@ -195,11 +195,11 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		$storagePidsArray = array();
 		$dataSource = $typeConfigArray['dataSource'] ? $typeConfigArray['dataSource'] : 'default';
 		if (!empty($typeConfigArray['storagePids'])) {
-			$storagePidsArray = t3lib_div::intExplode(',', $typeConfigArray['storagePids']);
+			$storagePidsArray = GeneralUtility::intExplode(',', $typeConfigArray['storagePids']);
 		} elseif (!empty($this->conf['dataSources.'][$dataSource . '.']['storagePids'])) {
-			$storagePidsArray = t3lib_div::intExplode(',', $this->conf['dataSources.'][$dataSource . '.']['storagePids']);
+			$storagePidsArray = GeneralUtility::intExplode(',', $this->conf['dataSources.'][$dataSource . '.']['storagePids']);
 		} elseif (!empty($this->conf['storagePids'])) {
-			$storagePidsArray = t3lib_div::intExplode(',', $this->conf['storagePids']);
+			$storagePidsArray = GeneralUtility::intExplode(',', $this->conf['storagePids']);
 		}
 		return $storagePidsArray;
 	}
@@ -215,9 +215,9 @@ class tx_contagged_model_terms implements t3lib_Singleton {
 		if (!isset($this->listPagesCache[$termType])) {
 			$listPidsArray = array();
 			if (!empty($this->conf['types.'][$termArray['term_type'] . '.']['listPages'])) {
-				$this->listPagesCache[$termType] = t3lib_div::intExplode(',', $this->conf['types.'][$termArray['term_type'] . '.']['listPages']);
+				$this->listPagesCache[$termType] = GeneralUtility::intExplode(',', $this->conf['types.'][$termArray['term_type'] . '.']['listPages']);
 			} elseif (!empty($this->conf['listPages'])) {
-				$this->listPagesCache[$termType] = t3lib_div::intExplode(',', $this->conf['listPages']);
+				$this->listPagesCache[$termType] = GeneralUtility::intExplode(',', $this->conf['listPages']);
 			}
 		}
 		return $this->listPagesCache[$termType];
